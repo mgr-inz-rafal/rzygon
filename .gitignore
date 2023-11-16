@@ -1,2 +1,4 @@
 mads.exe
 build
+.vscode
+tools/cart_patcher/target
