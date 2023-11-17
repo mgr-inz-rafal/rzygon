@@ -115,4 +115,5 @@ fn main() {
         .expect("cannot open cart file");
     file.write_all(cart.as_slice())
         .expect("unable to write to cart file");
+    println!("written to {CART_PATH}");
 }

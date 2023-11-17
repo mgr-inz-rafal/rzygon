@@ -13,11 +13,14 @@ TITLE_COLOR_TEXT		equ $0f
 ; Displays the picture for the current adventure message
 .proc display_adventure_picture
 				build_advmap_picture_file_name
-				io_find_free_iocb
-				io_open_file_OPT1
-				io_read_binary #screen_mem #40*40
-				io_read_binary #adv_color_1 #3
-				io_close_file
+
+				io_cart_load_picture
+
+;				io_find_free_iocb
+;				io_open_file_OPT1
+;				io_read_binary #screen_mem #40*40
+;				io_read_binary #adv_color_1 #3
+;				io_close_file
 				rts
 .endp
 
@@ -37,61 +40,36 @@ TITLE_COLOR_TEXT		equ $0f
 ; Builds the adventure message picture filename in the io_buffer
 .proc build_advmap_picture_file_name
 				ldy #0
-				lda #'D'
-				sta io_buffer
-				lda #':'
-				sta io_buffer+1
+; #				lda #'D'
+; 				sta io_buffer
+; 				lda #':'
+; 				sta io_buffer+1
 				lda #'P'
-				sta io_buffer+2
+				sta io_buffer_cart
 				
-				lda use_folders
-				cmp #1
-				beq @+
+				; lda use_folders
+				; cmp #1
+				; beq @+
 				
 				
 				lda (show_adventure_message_INTERNAL.id),y
-				sta io_buffer+3
+				sta io_buffer_cart+1
 				iny
 				lda (show_adventure_message_INTERNAL.id),y
-				sta io_buffer+4
+				sta io_buffer_cart+2
 				iny
 				lda (show_adventure_message_INTERNAL.id),y
-				sta io_buffer+5
-				lda #'.'
-				sta io_buffer+6
-				lda #'S'
-				sta io_buffer+7
-				lda #'R'
-				sta io_buffer+8
-				lda #'A'
-				sta io_buffer+9
-				lda #$9b
-				sta io_buffer+10
-				rts
-				
-@				lda #62
-				sta io_buffer+3
-				lda #'P'
-				sta io_buffer+4
-				lda (show_adventure_message_INTERNAL.id),y
-				sta io_buffer+5
-				iny
-				lda (show_adventure_message_INTERNAL.id),y
-				sta io_buffer+6
-				iny
-				lda (show_adventure_message_INTERNAL.id),y
-				sta io_buffer+7
-				lda #'.'
-				sta io_buffer+8
-				lda #'S'
-				sta io_buffer+9
-				lda #'R'
-				sta io_buffer+10
-				lda #'A'
-				sta io_buffer+11
-				lda #$9b
-				sta io_buffer+12
-
+				sta io_buffer_cart+3
+				; lda #'.'
+				; sta io_buffer+6
+				; lda #'S'
+				; sta io_buffer+7
+				; lda #'R'
+				; sta io_buffer+8
+				; lda #'A'
+				; sta io_buffer+9
+				; lda #$9b
+				; sta io_buffer+10
 				rts
 .endp
 

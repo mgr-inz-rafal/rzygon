@@ -29,6 +29,7 @@ sprite_mem		equ $b800
 text_font		equ $b400
 display_list	equ	sprite_mem+$200	; Must fit into unused $300 bytes of sprites memory
 io_buffer		equ	$b900			; Size = io_buffer_size
+io_buffer_cart	equ	1536
 io_buffer_size	equ	$ff
 
 ;MUSIC			equ $af40
@@ -194,3 +195,13 @@ MODUL equ $7750
 				dta a(pstart)
 
 				end
+
+
+
+// TODO:
+// These functions to be removed:
+;				io_find_free_iocb
+;				io_open_file_OPT1
+;				io_read_binary
+;				io_read_binary
+;				io_close_file				

@@ -3,6 +3,10 @@
 				icl 'memcache.asm'
 				icl 'io.asm'
 
+PERSISTENCY_BANK_CTL equ $d500				
+CART_RAM_START	equ $a000
+CART_DISABLE_CTL equ $d580
+
 .var			srom	.byte				
 				
 ;---------------- g_pocket.asm
@@ -891,17 +895,78 @@ sam1
 .proc	io_read_binary(.word buf_addr .word buf_len) .var
 .var	buf_addr .word
 .var	buf_len .word
-		lda #GETCHR
-		sta ICCOM,x
-		lda buf_addr
-		sta ICBAL,x
-		lda buf_addr+1
-		sta ICBAL+1,x
-		lda buf_len
-		sta ICBLL,x
-		lda buf_len+1
-		sta ICBLL+1,x
-		jsr ciov		
+		rts
+.endp
+
+.proc	io_cart_load_picture
+.zpvar	ptr .word
+.zpvar	ptr2 .word
+.var	slot .byte
+		lda #0
+		sta NMIEN
+
+		mva $aa adv_color_1
+		mva $3a adv_color_2
+		mva $ee adv_color_3
+
+		ldx #5	; How many pics per bank
+
+		lda #16
+		sta slot
+
+ioclp_04
+		ldy slot
+		sta PERSISTENCY_BANK_CTL,y
+		sta wsync
+
+		mwa #CART_RAM_START ptr
+
+ioclp_01
+		ldy #0
+		lda (ptr),y
+		cmp io_buffer_cart
+		bne ioclp_03
+		iny
+		lda (ptr),y
+		cmp io_buffer_cart+1
+		bne ioclp_03
+		iny
+		lda (ptr),y
+		cmp io_buffer_cart+2
+		bne ioclp_03
+		iny
+		lda (ptr),y
+		cmp io_buffer_cart+3
+		bne ioclp_03
+
+		; Picture found - copy 1600 bytes into "screen_mem"
+		mwa #screen_mem ptr2
+		adw ptr #4 ; Skip file name
+		ldy #0
+ioclp_05		
+		lda (ptr),y
+		sta (ptr2),y
+		inw ptr
+		inw ptr2
+		#if .word ptr2 = #(screen_mem+40*40+1)
+			jmp ioclp_X
+		#end
+		jmp ioclp_05
+ioclp_03
+		dex
+		cpx #0
+		beq ioclp_00 ; Finish for this bank
+		adw ptr #1607 ; Advance to next slot
+		jmp ioclp_01
+
+ioclp_00
+		inc slot
+		jmp ioclp_04 ; Don't check if we're past the last bank. Musimy znalezc pic inaczej chuj tam niech sie dzieje co chce
+
+ioclp_X
+		sta CART_DISABLE_CTL
+		sta wsync
+
 		rts
 .endp
 
