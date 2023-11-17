@@ -905,10 +905,6 @@ sam1
 		lda #0
 		sta NMIEN
 
-		mva $aa adv_color_1
-		mva $3a adv_color_2
-		mva $ee adv_color_3
-
 		ldx #5	; How many pics per bank
 
 		lda #16
@@ -948,7 +944,15 @@ ioclp_05
 		sta (ptr2),y
 		inw ptr
 		inw ptr2
-		#if .word ptr2 = #(screen_mem+40*40+1)
+		#if .word ptr2 = #(screen_mem+40*40)
+			lda (ptr),y
+			sta adv_color_1
+			iny
+			lda (ptr),y
+			sta adv_color_2
+			iny
+			lda (ptr),y
+			sta adv_color_3
 			jmp ioclp_X
 		#end
 		jmp ioclp_05
