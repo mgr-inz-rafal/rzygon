@@ -11,16 +11,31 @@ EXTRAM_OBJECTS		equ		$4000			; 15kb for "ob"
 EXTRAM_ITEMS		equ		$7400			; 3kb for "it"
 EXTRAM_MESSAGES		equ		$4000			; 16kb for "ms" (in another bank)
 
-; Reads record from the extended memory
-.proc mem_read_record(.word buf_addr_tmp) .var
+.proc adv_buffer_read_record
 				ldy #0
-@				lda (ext_ram_tmp),y
+				mwa #io_buffer_cart buf_addr_tmp
+abrr_01				
+				lda (ext_ram_tmp),y
 				sta (buf_addr_tmp),y
-				tax
+				cmp #$9b
+				beq abrr_X
 				inw ext_ram_tmp
 				inw buf_addr_tmp
-				cpx #$9b
-				bne @-
+				jmp abrr_01
+abrr_X
+				rts
+.endp
+
+; Reads record from the extended memory
+.proc mem_read_record(.word buf_addr_tmp) .var
+; 				ldy #0
+; @				lda (ext_ram_tmp),y
+; 				sta (buf_addr_tmp),y
+; 				tax
+; 				inw ext_ram_tmp
+; 				inw buf_addr_tmp
+; 				cpx #$9b
+; 				bne @-
 				rts
 .endp
 
@@ -37,17 +52,17 @@ EXTRAM_MESSAGES		equ		$4000			; 16kb for "ms" (in another bank)
 ; Reads binary data from the extended memory
 .proc mem_read_binary(.word buf_addr_tmp .byte length) .var
 .var length .byte
-				phr
-				ldx length
-				ldy #0
-@				lda (ext_ram_tmp),y
-				sta (buf_addr_tmp),y
-				inw ext_ram_tmp
-				inw buf_addr_tmp
-				dex
-				cpx #0
-				bne @-
-				plr
+				; phr
+				; ldx length
+				; ldy #0
+; @				lda (ext_ram_tmp),y
+				; sta (buf_addr_tmp),y
+				; inw ext_ram_tmp
+				; inw buf_addr_tmp
+				; dex
+				; cpx #0
+				; bne @-
+				; plr
 				rts
 .endp 
 

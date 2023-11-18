@@ -677,8 +677,8 @@ smp_01
 smp_07
 		lda (ptr),y
 		cmp #$ff ; Last char
-		beq smp_X
 		sta (ptr2),y
+		beq smp_X
 		inw ptr
 		inw ptr2
 		jmp smp_07
@@ -731,6 +731,8 @@ smp_03
 ; 				bne @-2
 ; 				rts
 smp_X
+				sta CART_DISABLE_CTL
+				sta wsync
 				rts
 .endp
 
@@ -927,9 +929,12 @@ pam_S			music_init @
 				set_display_list #dl_adventure_message #dl_adventure_message_len
 								
 				show_message_prerequisites
-				mva #42 line
-sam0			
 
+				mva #42 line
+				mwa #ADV_MESSAGE_BUFFER ext_ram_tmp
+sam0			
+				adv_buffer_read_record
+				
 				; #if .byte ext_ram_banks <> #0
 				; 	extended_mem ext_ram_bank_msg
 				; 	mem_read_record_OPT1
@@ -939,13 +944,12 @@ sam0
 				; 	bmi sam1
 				; #end
 
-				lda io_buffer
-				cmp #$9b
-				beq sam1
+				lda io_buffer_cart
 				cmp #$ff
 				beq sam1 
-				print_string #io_buffer #3 line #0
+				print_string #io_buffer_cart #3 line #0
 				inc line
+				inw ext_ram_tmp
 				jmp sam0
 sam1
 				; #if .byte ext_ram_banks = #0
@@ -954,6 +958,8 @@ sam1
 
 				dli_switch_to_adventure_message
 				enable_antic	
+
+cipeczka
 				
 				play_adventure_music
 				wait_for_fire #0
