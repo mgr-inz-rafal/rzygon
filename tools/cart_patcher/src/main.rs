@@ -137,13 +137,15 @@ fn fill_banks_adventure_messages(banks: &mut [Vec<u8>]) {
                 message_buffer[1] - 48,
                 message_buffer[2] - 48
             );
-            println!("read message {} - {}", msg_id, {
+            println!("\tread message {} - {}", msg_id, {
                 let mut s = String::new();
                 for i in 3..message_buffer.len() {
                     let c = message_buffer[i];
                     if c != 0xFF && c != 0x9B {
-                        if c != 0 && c != 0x0C {
-                            s.push(c as char);
+                        if c != 0 && c != 0x0C && c != 0x0D{
+                            if c.is_ascii() {
+                                s.push(c as char);
+                            }
                         } else {
                             s.push(' ');
                         }
