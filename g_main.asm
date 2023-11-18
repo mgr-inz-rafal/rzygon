@@ -703,12 +703,6 @@ rgd
 lm_ERR			rts
 .endp
 
-; Reads binary font data directly into font memory
-.proc read_font
-				io_read_binary #level_font #$400
-				rts
-.endp
-
 ; Routine for loading the font
 .proc load_font
 				build_font_file_name

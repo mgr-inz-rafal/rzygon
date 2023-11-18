@@ -24,16 +24,11 @@ TITLE_COLOR_TEXT		equ $0f
 				rts
 .endp
 
-; Builds the adventure message font filename in the io_buffer
+; Builds the adventure message font filename in the io_buffer+$60
+; In cart version it just selects the bank with ADVMSG.fnt (27)
 .proc build_advmap_font_file_name
-				ldx #0
-@				lda advmsg_font,x
-				sta io_buffer+$60,x
-				inx
-				cpx #12
-				bne @-
-				lda #$9b
-				sta io_buffer+$60,x
+				ldx #27
+				stx io_buffer+$60
 				rts
 .endp
 
