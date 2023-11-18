@@ -7,11 +7,17 @@
 // ".sra" extension is not included.
 // Data in these banks is terminated with "DUPA"
 //
-// ----- more... -----
+//
+// ----- ADVENTURE MESSAGES -----
+// Banks 23. 24, 25
+//
+// Message file record structure:
+// 0xFF ID Ox9B ROW_1 0x9B ROW_2 ... 0x9B ROW_n
 
 use std::{
+    collections::{BTreeMap, BTreeSet},
     fs::{self, File},
-    io::{Read, Write},
+    io::{self, ErrorKind, Read, Write},
     path::Path,
 };
 
@@ -22,7 +28,8 @@ const BANK_SIZE: usize = 1024 * 8;
 const CART_SIZE: usize = 128 * BANK_SIZE;
 const DATA_PATH: &str = "../../build/";
 
-fn fill_banks(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
+fn fill_banks_adventure_pictures(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
+    println!("\n\n*** ADVENTURE PICTURES ***\n");
     let re = Regex::new(filter).expect("unable to build regex");
 
     let mut current_bank = start;
@@ -88,6 +95,72 @@ fn fill_banks(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
     bank[current_bank_size + 3] = b'A';
 }
 
+fn fill_banks_adventure_messages(banks: &mut [Vec<u8>]) {
+    println!("\n\n*** ADVENTURE MESSAGES ***\n");
+    let paths = [format!("{}/mt", DATA_PATH), format!("{}/ms", DATA_PATH)];
+    let mut all_msgs = BTreeMap::new();
+    for path in paths {
+        println!("processing {path}");
+        let mut buffer = vec![0_u8];
+        let mut file =
+            File::open(path.clone()).unwrap_or_else(|_| panic!("cannot open {:?}", path));
+
+        file.read_exact(&mut buffer)
+            .expect("unable to read from file");
+        assert_eq!(buffer[0], 0xFF);
+
+        let mut finish = false;
+        loop {
+            let mut message_buffer = vec![];
+            loop {
+                match file.read_exact(&mut buffer) {
+                    Ok(_) => {
+                        if buffer[0] == 0xFF {
+                            break;
+                        }
+                        message_buffer.extend(buffer.clone());
+                    }
+                    Err(err) if err.kind() == ErrorKind::UnexpectedEof => {
+                        message_buffer.extend(buffer.clone());
+                        finish = true;
+                        break;
+                    }
+                    Err(err) => {
+                        panic!("read error: {err}");
+                    }
+                }
+            }
+
+            let msg_id = format!(
+                "{}{}{}",
+                message_buffer[0] - 48,
+                message_buffer[1] - 48,
+                message_buffer[2] - 48
+            );
+            println!("read message {} - {}", msg_id, {
+                let mut s = String::new();
+                for i in 3..message_buffer.len() {
+                    let c = message_buffer[i];
+                    if c != 0xFF && c != 0x9B {
+                        if c != 0 && c != 0x0C {
+                            s.push(c as char);
+                        } else {
+                            s.push(' ');
+                        }
+                    }
+                }
+                s
+            });
+
+            all_msgs.insert(msg_id, message_buffer.clone());
+            message_buffer.clear();
+            if finish {
+                break;
+            }
+        }
+    }
+}
+
 fn main() {
     let mut file = File::open(CART_PATH).expect("cannot open cart file");
     let mut buffer = Vec::with_capacity(CART_SIZE); // 128 8kb banks
@@ -101,8 +174,8 @@ fn main() {
         .map(|chunk| chunk.to_vec())
         .collect();
 
-    // Fill pictures
-    fill_banks(16, r"[p|P]\d\d\d\.[s|S][r|R][a|A]", &mut banks);
+    fill_banks_adventure_pictures(16, r"[p|P]\d\d\d\.[s|S][r|R][a|A]", &mut banks);
+    fill_banks_adventure_messages(&mut banks);
 
     let mut cart = vec![];
     for bank in banks {
