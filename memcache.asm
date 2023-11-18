@@ -19,6 +19,8 @@ abrr_01
 				sta (buf_addr_tmp),y
 				cmp #$9b
 				beq abrr_X
+				cmp #$ff
+				beq abrr_X
 				inw ext_ram_tmp
 				inw buf_addr_tmp
 				jmp abrr_01
