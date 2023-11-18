@@ -9,7 +9,7 @@
 //
 //
 // ----- ADVENTURE MESSAGES -----
-// Banks 23. 24, 25
+// Banks 23, 24, 25
 //
 // Message file record structure:
 // 0xFF ID Ox9B ROW_1 0x9B ROW_2 ... 0x9B ROW_n
@@ -95,7 +95,7 @@ fn fill_banks_adventure_pictures(start: usize, filter: &str, banks: &mut [Vec<u8
     bank[current_bank_size + 3] = b'A';
 }
 
-fn fill_banks_adventure_messages(banks: &mut [Vec<u8>]) {
+fn fill_banks_adventure_messages(start: usize, banks: &mut [Vec<u8>]) {
     println!("\n\n*** ADVENTURE MESSAGES ***\n");
     let paths = [format!("{}/mt", DATA_PATH), format!("{}/ms", DATA_PATH)];
     let mut all_msgs = BTreeMap::new();
@@ -107,11 +107,10 @@ fn fill_banks_adventure_messages(banks: &mut [Vec<u8>]) {
 
         file.read_exact(&mut buffer)
             .expect("unable to read from file");
-        assert_eq!(buffer[0], 0xFF);
 
         let mut finish = false;
         loop {
-            let mut message_buffer = vec![];
+            let mut message_buffer = vec![0xFF];
             loop {
                 match file.read_exact(&mut buffer) {
                     Ok(_) => {
@@ -133,16 +132,16 @@ fn fill_banks_adventure_messages(banks: &mut [Vec<u8>]) {
 
             let msg_id = format!(
                 "{}{}{}",
-                message_buffer[0] - 48,
                 message_buffer[1] - 48,
-                message_buffer[2] - 48
+                message_buffer[2] - 48,
+                message_buffer[3] - 48
             );
             println!("\tread message {} - {}", msg_id, {
                 let mut s = String::new();
                 for i in 3..message_buffer.len() {
                     let c = message_buffer[i];
                     if c != 0xFF && c != 0x9B {
-                        if c != 0 && c != 0x0C && c != 0x0D{
+                        if c != 0 && c != 0x0C && c != 0x0D {
                             if c.is_ascii() {
                                 s.push(c as char);
                             }
@@ -161,6 +160,31 @@ fn fill_banks_adventure_messages(banks: &mut [Vec<u8>]) {
             }
         }
     }
+
+    let mut current_bank = start;
+    let mut current_bank_size = 0;
+    for (id, msg) in all_msgs {
+        let mut bank = banks.get_mut(current_bank).unwrap();
+        let left_in_bank = BANK_SIZE - current_bank_size;
+        println!(
+            "processing msg {} (len={}) in bank {}. Bytes left: {}",
+            id,
+            msg.len(),
+            current_bank,
+            left_in_bank,
+        );
+        if left_in_bank >= msg.len() {
+            for i in msg {
+                bank[current_bank_size] = i;
+                current_bank_size += 1;
+            }
+        } else {
+            println!("\tno room in current bank, switching to next");
+            current_bank += 1;
+            bank = banks.get_mut(current_bank).unwrap();
+            current_bank_size = 0;
+        }
+    }
 }
 
 fn main() {
@@ -177,7 +201,7 @@ fn main() {
         .collect();
 
     fill_banks_adventure_pictures(16, r"[p|P]\d\d\d\.[s|S][r|R][a|A]", &mut banks);
-    fill_banks_adventure_messages(&mut banks);
+    fill_banks_adventure_messages(23, &mut banks);
 
     let mut cart = vec![];
     for bank in banks {
