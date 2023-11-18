@@ -46,13 +46,13 @@
 .endp
 
 ; Loads the screen from file whose name is stored in io_buffer
-.proc load_screen(.word tmp_src .word tmp_trg) .var
-				io_find_free_iocb
-				io_open_file_OPT1
-				io_read_binary tmp_src tmp_trg
-				io_close_file
-				rts
-.endp
+; .proc load_screen(.word tmp_src .word tmp_trg) .var
+; 				io_find_free_iocb
+; 				io_open_file_OPT1
+; 				io_read_binary tmp_src tmp_trg
+; 				io_close_file
+; 				rts
+; .endp
 
 ; Invalidates the current font so a correct one will be reloaded from disk
 .proc invalidate_font

@@ -79,7 +79,7 @@ pocket_move_delay	equ	30
 				beq @+
 				build_pocket_file_name
 ;				load_screen #screen_mem #20*40
-				load_screen #pocket_scr_buf #20*40
+				;load_screen #pocket_scr_buf #20*40
 				
 				inc pocket_loaded
 @				

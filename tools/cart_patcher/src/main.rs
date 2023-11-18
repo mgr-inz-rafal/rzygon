@@ -163,8 +163,16 @@ fn fill_banks_adventure_messages(start: usize, banks: &mut [Vec<u8>]) {
 
     let mut current_bank = start;
     let mut current_bank_size = 0;
-    for (id, msg) in all_msgs {
-        let mut bank = banks.get_mut(current_bank).unwrap();
+
+    [23, 24, 25].into_iter().for_each(|bank_num| {
+        let bank = banks.get_mut(bank_num).unwrap();
+        for i in 0..BANK_SIZE {
+            bank[i] = 0xFF;
+        }
+    });
+
+    for (id, msg) in &all_msgs {
+        let bank = banks.get_mut(current_bank).unwrap();
         let left_in_bank = BANK_SIZE - current_bank_size;
         println!(
             "processing msg {} (len={}) in bank {}. Bytes left: {}",
@@ -175,16 +183,25 @@ fn fill_banks_adventure_messages(start: usize, banks: &mut [Vec<u8>]) {
         );
         if left_in_bank >= msg.len() {
             for i in msg {
-                bank[current_bank_size] = i;
+                bank[current_bank_size] = *i;
                 current_bank_size += 1;
             }
         } else {
-            println!("\tno room in current bank, switching to next");
+            println!("\tno room in current bank, filling with FF and switching to next");
+
             current_bank += 1;
-            bank = banks.get_mut(current_bank).unwrap();
             current_bank_size = 0;
         }
     }
+
+    println!(
+        "longest message: {} bytes",
+        all_msgs
+            .into_iter()
+            .map(|(_, msg)| msg.len())
+            .max()
+            .unwrap()
+    );
 }
 
 fn main() {

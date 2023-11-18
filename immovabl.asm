@@ -1093,3 +1093,5 @@ iiip0			lda (object),y
 
 
 IMMOVABLE_CODE_END
+ADV_MESSAGE_BUFFER
+:272 	dta b(0)	; Longest message is 272 bytes long

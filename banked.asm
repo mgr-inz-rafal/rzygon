@@ -622,51 +622,132 @@ lmo_ERR			rts
 ; Prepares the requirements for displaying the message:
 ;   1. Opens the "MS" file
 ;   2. Looks for appropriate message
+;
+; In the cart version it 
 .proc show_message_prerequisites
-				build_and_open_messages_file_name
+.zpvar	ptr .word
+.zpvar  ptr2 .word
+.var	slot .byte
+
+		lda #0
+		sta NMIEN
+
+		lda #23
+		sta slot
+
+smp_06
+		ldy slot
+		sta PERSISTENCY_BANK_CTL,y
+		sta wsync
+		mwa #CART_RAM_START ptr
+
+		ldy #0
+
+smp_02		
+		lda (ptr),y
+		cmp #$ff
+		beq smp_01
+		inw ptr
+		jmp smp_02
+
+		; Some message found
+smp_01
+		iny				; 1
+		lda (ptr),y	
+		cmp #$ff ; two FF in a row means end of bank
+		beq smp_03
+		inw ptr
+		dey
+		lda (ptr),y
+		cmp (show_adventure_message_INTERNAL.id),y
+		bne smp_04
+		iny
+		lda (ptr),y	
+		cmp (show_adventure_message_INTERNAL.id),y
+		bne smp_04
+		iny
+		lda (ptr),y	
+		cmp (show_adventure_message_INTERNAL.id),y
+		bne smp_04
+
+		; Message found, copy it to ADV_MESSAGE_BUFFER
+		mwa #ADV_MESSAGE_BUFFER ptr2
+		adw ptr #4
+		ldy #0
+smp_07
+		lda (ptr),y
+		cmp #$ff ; Last char
+		beq smp_X
+		sta (ptr2),y
+		inw ptr
+		inw ptr2
+		jmp smp_07
+
+smp_04	; Not this message
+		inw ptr
+		ldy #0
+		jmp smp_02
+
+; 				cmp (show_adventure_message_INTERNAL.id),y
+; 				bne @-2
+; 				lda io_buffer+2
+; 				iny
+; 				cmp (show_adventure_message_INTERNAL.id),y
+; 				bne @-2
+; 				lda io_buffer+3
+; 				iny
+; 				cmp (show_adventure_message_INTERNAL.id),y 
+; Next bank
+smp_03		
+		inc slot
+		jmp smp_06
+
+				;build_and_open_messages_file_name
 				
 				; Look for appropriate message
-@				
-				#if .byte ext_ram_banks <> #0
-					extended_mem ext_ram_bank_msg
-					mem_read_record_OPT1
-					main_mem
-				#else
-					jsr io_read_record_OPT1
-				#end
-@				lda io_buffer
-				cmp #$ff			; This indicates that the message ID has been read
-				bne @-1
+;;@				
+; 				#if .byte ext_ram_banks <> #0
+; 					extended_mem ext_ram_bank_msg
+; 					mem_read_record_OPT1
+; 					main_mem
+; 				#else
+; 					jsr io_read_record_OPT1
+; 				#end
+; @				lda io_buffer
+; 				cmp #$ff			; This indicates that the message ID has been read
+; 				bne @-1
 				
-@				lda io_buffer+1
-				ldy #0
-				cmp (show_adventure_message_INTERNAL.id),y
-				bne @-2
-				lda io_buffer+2
-				iny
-				cmp (show_adventure_message_INTERNAL.id),y
-				bne @-2
-				lda io_buffer+3
-				iny
-				cmp (show_adventure_message_INTERNAL.id),y 
-				bne @-2
+; @				lda io_buffer+1
+; 				ldy #0
+; 				cmp (show_adventure_message_INTERNAL.id),y
+; 				bne @-2
+; 				lda io_buffer+2
+; 				iny
+; 				cmp (show_adventure_message_INTERNAL.id),y
+; 				bne @-2
+; 				lda io_buffer+3
+; 				iny
+; 				cmp (show_adventure_message_INTERNAL.id),y 
+; 				bne @-2
+; 				rts
+smp_X
 				rts
 .endp
 
 ; Builds the message filename
-.proc build_and_open_messages_file_name
-				#if .byte ext_ram_banks <> #0
-					; Load from extended RAM
-					mwa #EXTRAM_MESSAGES ext_ram_tmp
-				#else
-					mwa drive_id		io_buffer
-					mwa #$534d io_buffer+2	; "MS"
-					mva #$9b io_buffer+4	; eol
-					io_find_free_iocb
-					io_open_file_OPT1
-				#end
-				rts
-.endp
+; .proc build_and_open_messages_file_name
+; 				#if .byte ext_ram_banks <> #0
+; 					; Load from extended RAM
+; 					mwa #EXTRAM_MESSAGES ext_ram_tmp
+; 				#else
+; 					mwa drive_id		io_buffer
+; 					mwa #$534d io_buffer+2	; "MS"
+; 					mva #$9b io_buffer+4	; eol
+; 					io_find_free_iocb
+; 					io_open_file_OPT1
+; 				#end
+; 				rts
+; .endp
 
 ; Stores the part of the status bar that
 ; displays level name in the buffer.
@@ -708,7 +789,7 @@ lmo_ERR			rts
 				lda id+1
 				sta show_adventure_message_INTERNAL.id+1
 				
-				preload_correct_message_file id
+				;preload_correct_message_file id
 				
 				ldx #%01000000
 				stx NMIEN	
@@ -747,48 +828,48 @@ ssm1
 @				rts
 .endp
 
-.proc preload_correct_message_file(.word id_q) .var
-.zpvar id_q .word
-; Check which message file should be loaded
-				lda #1
-				sta slow
-				ldy #0
-				lda (id_q),y
-				cmp #$32
-				beq @+2
-				tax
-				iny
-				lda (id_q),y
-				cmp #$39
-				bne @+
-				iny
-@				cpx #$31
-				bne @+
-				iny
-@				cpy #3
-				beq @+
-; "ms" file is needed
-				#if .byte game_state.current_msg_file = #0
-					; Already loaded
-					jmp sam2
-				#else
-					preload_messages #$534d
-					mva #0 game_state.current_msg_file
-					jmp sam2
-				#end
-				jmp sam2
-; "mt" file is needed
-@				#if .byte game_state.current_msg_file = #1
-					; Already loaded
-					jmp sam2
-				#else
-					preload_messages #$544d
-					mva #1 game_state.current_msg_file
-					jmp sam2
-				#end
-sam2			
-				rts
-.endp
+; .proc preload_correct_message_file(.word id_q) .var
+; .zpvar id_q .word
+; ; Check which message file should be loaded
+; 				lda #1
+; 				sta slow
+; 				ldy #0
+; 				lda (id_q),y
+; 				cmp #$32
+; 				beq @+2
+; 				tax
+; 				iny
+; 				lda (id_q),y
+; 				cmp #$39
+; 				bne @+
+; 				iny
+; @				cpx #$31
+; 				bne @+
+; 				iny
+; @				cpy #3
+; 				beq @+
+; ; "ms" file is needed
+; 				#if .byte game_state.current_msg_file = #0
+; 					; Already loaded
+; 					jmp sam2
+; 				#else
+; 					preload_messages #$534d
+; 					mva #0 game_state.current_msg_file
+; 					jmp sam2
+; 				#end
+; 				jmp sam2
+; ; "mt" file is needed
+; @				#if .byte game_state.current_msg_file = #1
+; 					; Already loaded
+; 					jmp sam2
+; 				#else
+; 					preload_messages #$544d
+; 					mva #1 game_state.current_msg_file
+; 					jmp sam2
+; 				#end
+; sam2			
+; 				rts
+; .endp
 
 .proc play_adventure_music
 				lda RANDOM
@@ -828,14 +909,14 @@ pam_S			music_init @
 .proc show_adventure_message_INTERNAL(.word id) .var
 .zpvar id .word
 .var line .byte
-				preload_correct_message_file id
+;				preload_correct_message_file id
 				
 				; Prepare the screen screen
 				disable_antic
 				clear_status_bar
 				switch_advmessage_state
-				build_advmsg_file_name
-				load_screen #screen_mem+$640 #12*40
+				;build_advmsg_file_name
+;				load_screen #screen_mem+$640 #12*40
 				hide_hero
 				hide_sprites
 				build_advmap_font_file_name
@@ -849,14 +930,15 @@ pam_S			music_init @
 				mva #42 line
 sam0			
 
-				#if .byte ext_ram_banks <> #0
-					extended_mem ext_ram_bank_msg
-					mem_read_record_OPT1
-					main_mem
-				#else
-					jsr io_read_record_OPT1
-					bmi sam1
-				#end
+				; #if .byte ext_ram_banks <> #0
+				; 	extended_mem ext_ram_bank_msg
+				; 	mem_read_record_OPT1
+				; 	main_mem
+				; #else
+				; 	jsr io_read_record_OPT1
+				; 	bmi sam1
+				; #end
+
 				lda io_buffer
 				cmp #$9b
 				beq sam1
@@ -866,9 +948,9 @@ sam0
 				inc line
 				jmp sam0
 sam1
-				#if .byte ext_ram_banks = #0
-					io_close_file
-				#end
+				; #if .byte ext_ram_banks = #0
+				; 	io_close_file
+				; #end
 
 				dli_switch_to_adventure_message
 				enable_antic	

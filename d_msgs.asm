@@ -74,17 +74,17 @@ TITLE_COLOR_TEXT		equ $0f
 .endp
 
 ; Builds the adventure message filename in the io_buffer
-.proc build_advmsg_file_name
-				ldx #0
-@				lda advmsg_file,x
-				sta io_buffer,x
-				inx
-				cpx #12
-				bne @-
-				lda #$9b
-				sta io_buffer,x
-				rts
-.endp
+; .proc build_advmsg_file_name
+; 				ldx #0
+; @				lda advmsg_file,x
+; 				sta io_buffer,x
+; 				inx
+; 				cpx #12
+; 				bne @-
+; 				lda #$9b
+; 				sta io_buffer,x
+; 				rts
+; .endp
 
 ; Turns "adventure message-state" on and off
 .proc switch_advmessage_state
