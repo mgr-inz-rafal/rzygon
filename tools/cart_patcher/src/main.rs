@@ -13,11 +13,22 @@
 //
 // Message file record structure:
 // 0xFF ID Ox9B ROW_1 0x9B ROW_2 ... 0x9B ROW_n
+//
+//
+// ----- FONTS -----
+// Banks 27..53
+//
+// Bank 27: ADVMSG.fnt
+// Bank 28: pocket.fnt
+// Bank 29: F000.FNT
+// Bank 30: F001.FNT
+// ...
+// Bank 53: f024.fnt
 
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::BTreeMap,
     fs::{self, File},
-    io::{self, ErrorKind, Read, Write},
+    io::{ErrorKind, Read, Write},
     path::Path,
 };
 
@@ -204,6 +215,56 @@ fn fill_banks_adventure_messages(start: usize, banks: &mut [Vec<u8>]) {
     );
 }
 
+fn fill_banks_fonts(start: usize, banks: &mut [Vec<u8>]) {
+    println!("\n\n*** FONTS ***\n");
+
+    let paths = [
+        "ADVMSG.fnt",
+        "pocket.fnt",
+        "F000.FNT",
+        "F001.FNT",
+        "F002.FNT",
+        "F003.FNT",
+        "F004.FNT",
+        "F005.FNT",
+        "F006.FNT",
+        "F007.FNT",
+        "F008.FNT",
+        "F009.FNT",
+        "F010.FNT",
+        "F011.FNT",
+        "F012.FNT",
+        "F013.FNT",
+        "F014.FNT",
+        "F015.FNT",
+        "F016.FNT",
+        "F017.FNT",
+        "F018.FNT",
+        "F019.FNT",
+        "F020.FNT",
+        "F021.FNT",
+        "F022.FNT",
+        "F023.FNT",
+        "F024.FNT",
+    ];
+
+    let mut current_bank = start;
+    for path in paths {
+        println!("processing {path} into bank {current_bank}");
+        let mut buffer = vec![];
+        let mut file = File::open(format!("{}/{}", DATA_PATH, path))
+            .unwrap_or_else(|_| panic!("cannot open {:?}", path));
+
+        file.read_to_end(&mut buffer)
+            .expect("unable to read from file");
+        let bank = banks.get_mut(current_bank).unwrap();
+        for i in 0..1024 {
+            bank[i] = buffer[i];
+        }
+        current_bank += 1;
+    }
+}
+
 fn main() {
     let mut file = File::open(CART_PATH).expect("cannot open cart file");
     let mut buffer = Vec::with_capacity(CART_SIZE); // 128 8kb banks
@@ -219,6 +280,7 @@ fn main() {
 
     fill_banks_adventure_pictures(16, r"[p|P]\d\d\d\.[s|S][r|R][a|A]", &mut banks);
     fill_banks_adventure_messages(23, &mut banks);
+    fill_banks_fonts(27, &mut banks);
 
     let mut cart = vec![];
     for bank in banks {
