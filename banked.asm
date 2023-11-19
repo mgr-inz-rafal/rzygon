@@ -917,6 +917,7 @@ pam_S			music_init @
 				disable_antic
 				clear_status_bar
 				switch_advmessage_state
+				show_advmessage_border
 				;build_advmsg_file_name
 ;				load_screen #screen_mem+$640 #12*40
 				hide_hero

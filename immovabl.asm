@@ -1206,3 +1206,29 @@ rf_00
 				#end
 				jmp rf_00
 .endp
+.proc show_advmessage_border
+.zpvar	ptr .word
+.zpvar	ptr2 .word
+				lda #0
+				sta NMIEN
+
+				sta PERSISTENCY_BANK_CTL+27
+				sta wsync
+
+				mwa #$AFE9 ptr
+				mwa #screen_mem+$640 ptr2
+
+				ldy #0
+sab_0
+				lda (ptr),y
+				sta (ptr2),y
+				#if .word ptr = #$B1C9
+					sta CART_DISABLE_CTL
+					sta wsync
+					rts
+				#end
+				inw ptr
+				inw ptr2
+				jmp sab_0
+.endp
+
