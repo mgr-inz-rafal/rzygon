@@ -85,3 +85,10 @@ io_fnd  rts
  		io_open_file #io_buffer #OPNIN
  		rts
  .endp
+ .proc	io_read_record_OPT1_cart
+ 		// File is stored in `ADV_MESSAGE_BUFFER`.
+		// Each call to this function puts a record (i.e. valued until 9b) into io_buffer_cart
+		// Pointer to next byte to be read (after last 9b) is stored in "szczam"
+ 		rts
+ .endp
+ 

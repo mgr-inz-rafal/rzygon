@@ -894,111 +894,148 @@ pm_02
 				rts
 .endp
 
-; Clears memory used by sprite 0 (hero)
-.proc clear_hero
+				jmp finale_loader
+
+
+IMMOVABLE_CODE_END
+; Reads binary font data directly into font memory
+.proc read_font
+.zpvar	ptr .word
+.zpvar	ptr2 .word
 				lda #0
+				sta NMIEN
+
+				ldy io_buffer+$60
+				sta PERSISTENCY_BANK_CTL,y
+				sta wsync				
+
+				mwa #CART_RAM_START ptr
+				mwa #level_font ptr2
 				ldy #0
-@				sta pmg_hero,y
-				iny
-				cpy #0
-				bne @- 
-				rts
-.endp
 
-; Draws the main hero on the current position
-.proc draw_hero
-				draw_hero_INTERNAL
-				rts
+rf_00
+				lda (ptr),y
+				sta (ptr2),y
+				inw ptr
+				inw ptr2
+				#if .word ptr2 = #level_font+1024
+					sta CART_DISABLE_CTL
+					sta wsync
+					rts
+				#end
+				jmp rf_00
 .endp
+.proc show_advmessage_border
+.zpvar	ptr .word
+.zpvar	ptr2 .word
+				lda #0
+				sta NMIEN
 
-; Writes the action object name on the statusbar
-.proc write_action_name(.word name) .var
-.var name .word				
-				print_string name, #1, #21, #0
-				rts
-.endp
+				sta PERSISTENCY_BANK_CTL+27
+				sta wsync
 
-; Propagates first three rows of the action
-; menu with specified items.
-.proc propagate_action_menu(.word item1 .word item2 .word item3) .var
-.var item1, item2, item3 .word
-			mwa #ACTION_MENU_SLOT_1 tmp_trg
-			mwa item1 tmp_src
-			jsr propagate_single_action_item
-			mwa #ACTION_MENU_SLOT_2 tmp_trg
-			mwa item2 tmp_src
-			jsr propagate_single_action_item
-			mwa #ACTION_MENU_SLOT_3 tmp_trg
-			mwa item3 tmp_src
-			jsr propagate_single_action_item
-			
-			rts
-.endp
-.proc propagate_action_menu_EXEMEM
-			propagate_action_menu #ACT_EXPLORE #ACT_EMPTY #ACT_EMPTY
-			rts
-.endp
-.proc propagate_action_menu_EXOPUS
-			propagate_action_menu #ACT_EXPLORE #ACT_OPEN #ACT_USE
-			rts
-.endp
-.proc propagate_action_menu_EXUSEM
-			propagate_action_menu #ACT_EXPLORE #ACT_USE #ACT_EMPTY
-			rts
-.endp
-
-; Performs the jump
-.proc hero_jump
-				lda hero_state.state
-				cmp #hs_grounded
-				bne @+ 
-				mva #hs_jumping 	hero_state.state
-				mva #hero_jump_time hero_state.jump_counter
-@				rts
-.endp
-
-.proc print_string(.word buffer .byte xpos,ypos .byte translate) .var
-.zpvar buffer	.word
-.var xpos 		.byte
-.var ypos		.byte
-.var translate	.byte
-				txa
-				pha
-
-				mwa #screen_mem screen_tmp
-				ldy ypos
-ps_3			cpy #0
-				beq ps_2
-				adw screen_tmp #40
-				dey
-				jmp ps_3  
-
-ps_2			clc
-				lda screen_tmp
-				adc xpos
-				sta screen_tmp
-				lda screen_tmp+1
-				adc #0
-				sta screen_tmp+1
+				mwa #$AFE9 ptr
+				mwa #screen_mem+$640 ptr2
 
 				ldy #0
-ps_0			lda (buffer),y
-				cmp #$9b
-				beq ps_1
-				ldx translate
-				cpx #1
-				bne ps_4
-				Atascii2Internal @ 
-ps_4			sta (screen_tmp),y
-				iny
-				jmp ps_0 
+sab_0
+				lda (ptr),y
+				sta (ptr2),y
+				#if .word ptr = #$B1C9
+					sta CART_DISABLE_CTL
+					sta wsync
+					rts
+				#end
+				inw ptr
+				inw ptr2
+				jmp sab_0
+.endp
+ADV_MESSAGE_BUFFER
+:1141 	dta b(0)	; Longest map is 1141 bytes long
+; Vidol - version 3
+hero_data
+				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
+				dta b(44),b(28),b(8),b(28),b(20),b(62),b(58),b(63)
+				dta b(93),b(95),b(62),b(62),b(127),b(127),b(65),b(195)
 				
-ps_1			
-				pla
-				tax
-				rts
-.endp
+				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
+				dta b(44),b(28),b(8),b(28),b(20),b(28),b(30),b(26)
+				dta b(62),b(30),b(60),b(62),b(62),b(62),b(38),b(96)
+				
+				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
+				dta b(28),b(8),b(28),b(20),b(28),b(22),b(30),b(26)
+				dta b(26),b(30),b(30),b(30),b(30),b(30),b(28),b(48)
+				
+				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
+				dta b(28),b(8),b(28),b(20),b(28),b(20),b(20),b(22)
+				dta b(28),b(30),b(30),b(30),b(30),b(30),b(24),b(24)
+				
+				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
+				dta b(28),b(8),b(28),b(20),b(30),b(20),b(22),b(22)
+				dta b(30),b(14),b(30),b(30),b(30),b(30),b(52),b(12)
+				
+				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
+				dta b(28),b(8),b(28),b(20),b(28),b(22),b(28),b(46)
+				dta b(46),b(30),b(62),b(62),b(62),b(62),b(98),b(6)
+				
+				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
+				dta b(44),b(28),b(8),b(28),b(20),b(30),b(54),b(62)
+				dta b(46),b(125),b(62),b(62),b(126),b(126),b(193),b(3)
+				
+				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
+				dta b(44),b(28),b(8),b(28),b(20),b(30),b(46),b(62)
+				dta b(93),b(125),b(62),b(62),b(127),b(127),b(65),b(195)
+				
+				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
+				dta b(44),b(28),b(8),b(28),b(20),b(28),b(22),b(44)
+				dta b(46),b(30),b(62),b(62),b(62),b(62),b(38),b(96)
+				
+				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
+				dta b(28),b(8),b(28),b(20),b(30),b(20),b(22),b(30)
+				dta b(14),b(30),b(30),b(30),b(30),b(30),b(28),b(48)
+				
+				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
+				dta b(28),b(8),b(28),b(20),b(28),b(20),b(20),b(22)
+				dta b(28),b(30),b(30),b(30),b(30),b(30),b(24),b(24)
+				
+				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
+				dta b(28),b(8),b(28),b(20),b(28),b(22),b(30),b(26)
+				dta b(26),b(30),b(30),b(30),b(30),b(30),b(52),b(12)
+				
+				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
+				dta b(28),b(8),b(28),b(20),b(28),b(30),b(26),b(62)
+				dta b(30),b(60),b(62),b(62),b(62),b(62),b(98),b(6)
+				
+				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
+				dta b(44),b(28),b(8),b(28),b(20),b(60),b(58),b(62)
+				dta b(93),b(95),b(62),b(62),b(126),b(126),b(193),b(3)
+hero_data_finish
 
+hero_data_dead
+				dta b(0),b(16),b(56),b(16),b(56),b(56),b(0),b(56)
+				dta b(24),b(56),b(16),b(24),b(60),b(200),b(148),b(12)
+				dta b(24),b(12),b(28),b(20),b(34),b(34),b(65),b(195)
+
+				dta b(0),b(16),b(56),b(16),b(56),b(56),b(0),b(56)
+				dta b(24),b(56),b(16),b(24),b(60),b(200),b(148),b(12)
+				dta b(24),b(12),b(20),b(20),b(34),b(34),b(38),b(96)
+				
+				dta b(16),b(56),b(16),b(56),b(56),b(0),b(56),b(24)
+				dta b(56),b(16),b(24),b(252),b(136),b(20),b(12),b(24)
+				dta b(12),b(8),b(12),b(20),b(20),b(20),b(28),b(48)
+				
+				dta b(16),b(56),b(16),b(56),b(56),b(0),b(56),b(24)
+				dta b(56),b(16),b(24),b(252),b(136),b(20),b(12),b(24)
+				dta b(12),b(8),b(8),b(8),b(8),b(24),b(8),b(24)
+				
+				dta b(16),b(56),b(16),b(56),b(56),b(0),b(56),b(24)
+				dta b(56),b(16),b(24),b(60),b(200),b(148),b(12),b(24)
+				dta b(12),b(8),b(8),b(12),b(20),b(20),b(52),b(12)
+				
+				dta b(0),b(16),b(56),b(16),b(56),b(56),b(0),b(56)
+				dta b(24),b(56),b(16),b(24),b(60),b(200),b(148),b(12)
+				dta b(24),b(8),b(28),b(20),b(20),b(34),b(98),b(6)
+hero_data_dead_finish
 ; Puts single char (stored in A) in the
 ; "transparent chars" table.
 .proc add_single_char_to_transparent_chars
@@ -1088,147 +1125,106 @@ iiip0			lda (object),y
 				lda #0		; Entire pocket iterated, item not found
 				rts
 .endp
+.proc print_string(.word buffer .byte xpos,ypos .byte translate) .var
+.zpvar buffer	.word
+.var xpos 		.byte
+.var ypos		.byte
+.var translate	.byte
+				txa
+				pha
 
-				jmp finale_loader
+				mwa #screen_mem screen_tmp
+				ldy ypos
+ps_3			cpy #0
+				beq ps_2
+				adw screen_tmp #40
+				dey
+				jmp ps_3  
 
-
-IMMOVABLE_CODE_END
-ADV_MESSAGE_BUFFER
-:273 	dta b(0)	; Longest message is 272 bytes long (+1 byte for FF terminator)
-; Vidol - version 3
-hero_data
-				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
-				dta b(44),b(28),b(8),b(28),b(20),b(62),b(58),b(63)
-				dta b(93),b(95),b(62),b(62),b(127),b(127),b(65),b(195)
-				
-				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
-				dta b(44),b(28),b(8),b(28),b(20),b(28),b(30),b(26)
-				dta b(62),b(30),b(60),b(62),b(62),b(62),b(38),b(96)
-				
-				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
-				dta b(28),b(8),b(28),b(20),b(28),b(22),b(30),b(26)
-				dta b(26),b(30),b(30),b(30),b(30),b(30),b(28),b(48)
-				
-				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
-				dta b(28),b(8),b(28),b(20),b(28),b(20),b(20),b(22)
-				dta b(28),b(30),b(30),b(30),b(30),b(30),b(24),b(24)
-				
-				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
-				dta b(28),b(8),b(28),b(20),b(30),b(20),b(22),b(22)
-				dta b(30),b(14),b(30),b(30),b(30),b(30),b(52),b(12)
-				
-				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
-				dta b(28),b(8),b(28),b(20),b(28),b(22),b(28),b(46)
-				dta b(46),b(30),b(62),b(62),b(62),b(62),b(98),b(6)
-				
-				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
-				dta b(44),b(28),b(8),b(28),b(20),b(30),b(54),b(62)
-				dta b(46),b(125),b(62),b(62),b(126),b(126),b(193),b(3)
-				
-				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
-				dta b(44),b(28),b(8),b(28),b(20),b(30),b(46),b(62)
-				dta b(93),b(125),b(62),b(62),b(127),b(127),b(65),b(195)
-				
-				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
-				dta b(44),b(28),b(8),b(28),b(20),b(28),b(22),b(44)
-				dta b(46),b(30),b(62),b(62),b(62),b(62),b(38),b(96)
-				
-				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
-				dta b(28),b(8),b(28),b(20),b(30),b(20),b(22),b(30)
-				dta b(14),b(30),b(30),b(30),b(30),b(30),b(28),b(48)
-				
-				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
-				dta b(28),b(8),b(28),b(20),b(28),b(20),b(20),b(22)
-				dta b(28),b(30),b(30),b(30),b(30),b(30),b(24),b(24)
-				
-				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
-				dta b(28),b(8),b(28),b(20),b(28),b(22),b(30),b(26)
-				dta b(26),b(30),b(30),b(30),b(30),b(30),b(52),b(12)
-				
-				dta b(8),b(28),b(8),b(28),b(28),b(0),b(28),b(44)
-				dta b(28),b(8),b(28),b(20),b(28),b(30),b(26),b(62)
-				dta b(30),b(60),b(62),b(62),b(62),b(62),b(98),b(6)
-				
-				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
-				dta b(44),b(28),b(8),b(28),b(20),b(60),b(58),b(62)
-				dta b(93),b(95),b(62),b(62),b(126),b(126),b(193),b(3)
-hero_data_finish
-
-hero_data_dead
-				dta b(0),b(16),b(56),b(16),b(56),b(56),b(0),b(56)
-				dta b(24),b(56),b(16),b(24),b(60),b(200),b(148),b(12)
-				dta b(24),b(12),b(28),b(20),b(34),b(34),b(65),b(195)
-
-				dta b(0),b(16),b(56),b(16),b(56),b(56),b(0),b(56)
-				dta b(24),b(56),b(16),b(24),b(60),b(200),b(148),b(12)
-				dta b(24),b(12),b(20),b(20),b(34),b(34),b(38),b(96)
-				
-				dta b(16),b(56),b(16),b(56),b(56),b(0),b(56),b(24)
-				dta b(56),b(16),b(24),b(252),b(136),b(20),b(12),b(24)
-				dta b(12),b(8),b(12),b(20),b(20),b(20),b(28),b(48)
-				
-				dta b(16),b(56),b(16),b(56),b(56),b(0),b(56),b(24)
-				dta b(56),b(16),b(24),b(252),b(136),b(20),b(12),b(24)
-				dta b(12),b(8),b(8),b(8),b(8),b(24),b(8),b(24)
-				
-				dta b(16),b(56),b(16),b(56),b(56),b(0),b(56),b(24)
-				dta b(56),b(16),b(24),b(60),b(200),b(148),b(12),b(24)
-				dta b(12),b(8),b(8),b(12),b(20),b(20),b(52),b(12)
-				
-				dta b(0),b(16),b(56),b(16),b(56),b(56),b(0),b(56)
-				dta b(24),b(56),b(16),b(24),b(60),b(200),b(148),b(12)
-				dta b(24),b(8),b(28),b(20),b(20),b(34),b(98),b(6)
-hero_data_dead_finish
-; Reads binary font data directly into font memory
-.proc read_font
-.zpvar	ptr .word
-.zpvar	ptr2 .word
-				lda #0
-				sta NMIEN
-
-				ldy io_buffer+$60
-				sta PERSISTENCY_BANK_CTL,y
-				sta wsync				
-
-				mwa #CART_RAM_START ptr
-				mwa #level_font ptr2
-				ldy #0
-
-rf_00
-				lda (ptr),y
-				sta (ptr2),y
-				inw ptr
-				inw ptr2
-				#if .word ptr2 = #level_font+1024
-					sta CART_DISABLE_CTL
-					sta wsync
-					rts
-				#end
-				jmp rf_00
-.endp
-.proc show_advmessage_border
-.zpvar	ptr .word
-.zpvar	ptr2 .word
-				lda #0
-				sta NMIEN
-
-				sta PERSISTENCY_BANK_CTL+27
-				sta wsync
-
-				mwa #$AFE9 ptr
-				mwa #screen_mem+$640 ptr2
+ps_2			clc
+				lda screen_tmp
+				adc xpos
+				sta screen_tmp
+				lda screen_tmp+1
+				adc #0
+				sta screen_tmp+1
 
 				ldy #0
-sab_0
-				lda (ptr),y
-				sta (ptr2),y
-				#if .word ptr = #$B1C9
-					sta CART_DISABLE_CTL
-					sta wsync
-					rts
-				#end
-				inw ptr
-				inw ptr2
-				jmp sab_0
+ps_0			lda (buffer),y
+				cmp #$9b
+				beq ps_1
+				ldx translate
+				cpx #1
+				bne ps_4
+				Atascii2Internal @ 
+ps_4			sta (screen_tmp),y
+				iny
+				jmp ps_0 
+				
+ps_1			
+				pla
+				tax
+				rts
+.endp
+; Clears memory used by sprite 0 (hero)
+.proc clear_hero
+				lda #0
+				ldy #0
+@				sta pmg_hero,y
+				iny
+				cpy #0
+				bne @- 
+				rts
 .endp
 
+; Draws the main hero on the current position
+.proc draw_hero
+				draw_hero_INTERNAL
+				rts
+.endp
+
+; Writes the action object name on the statusbar
+.proc write_action_name(.word name) .var
+.var name .word				
+				print_string name, #1, #21, #0
+				rts
+.endp
+
+; Propagates first three rows of the action
+; menu with specified items.
+.proc propagate_action_menu(.word item1 .word item2 .word item3) .var
+.var item1, item2, item3 .word
+			mwa #ACTION_MENU_SLOT_1 tmp_trg
+			mwa item1 tmp_src
+			jsr propagate_single_action_item
+			mwa #ACTION_MENU_SLOT_2 tmp_trg
+			mwa item2 tmp_src
+			jsr propagate_single_action_item
+			mwa #ACTION_MENU_SLOT_3 tmp_trg
+			mwa item3 tmp_src
+			jsr propagate_single_action_item
+			
+			rts
+.endp
+.proc propagate_action_menu_EXEMEM
+			propagate_action_menu #ACT_EXPLORE #ACT_EMPTY #ACT_EMPTY
+			rts
+.endp
+.proc propagate_action_menu_EXOPUS
+			propagate_action_menu #ACT_EXPLORE #ACT_OPEN #ACT_USE
+			rts
+.endp
+.proc propagate_action_menu_EXUSEM
+			propagate_action_menu #ACT_EXPLORE #ACT_USE #ACT_EMPTY
+			rts
+.endp
+
+; Performs the jump
+.proc hero_jump
+				lda hero_state.state
+				cmp #hs_grounded
+				bne @+ 
+				mva #hs_jumping 	hero_state.state
+				mva #hero_jump_time hero_state.jump_counter
+@				rts
+.endp

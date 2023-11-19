@@ -8,6 +8,7 @@ CART_RAM_START	equ $a000
 CART_DISABLE_CTL equ $d580
 
 .var			srom	.byte				
+.var			szczam	.word
 				
 ;---------------- g_pocket.asm
 ; Shows the items from pocket on the screen

@@ -73,6 +73,15 @@ hic_X			lda current_action
 @				rts
 .endp
 
+// MAP structure:
+// FONT ID - 9b
+// BUILDER COUNT - 9b
+// MAP CHUNK (aka BUILDER) - each separated with 9b
+// LINK TO OTHER MAP - 9b
+// LINK TO OTHER MAP - 9b
+// LINK TO OTHER MAP - 9b
+// LINK TO OTHER MAP - 9b
+
 ; Reads entire map structure from disk and
 ; writes it on the screen
 .proc read_map
@@ -594,30 +603,30 @@ rgd
 .endp
 
 .proc build_file_name
-				mwa drive_id		io_buffer
-				mva #77				io_buffer+2
-				lda use_folders
-				cmp #1
-				beq @+
-				mwa game_state.current_map		io_buffer+3
-				mwa game_state.current_map+2	io_buffer+5
-				mwa	map_file_ext	io_buffer+7
-				mwa	map_file_ext+2	io_buffer+9
+				; mwa drive_id		io_buffer
+				; mva #77				io_buffer+2
+				; lda use_folders
+				; cmp #1
+				; beq @+
+				; mwa game_state.current_map		io_buffer+3
+				; mwa game_state.current_map+2	io_buffer+5
+				; mwa	map_file_ext	io_buffer+7
+				; mwa	map_file_ext+2	io_buffer+9
 				
 				; Not necessary for opening file, but in case
 				; of error it comes in handy for displaying
 				; the filename on screen
-				mva #$9b			io_buffer+11
-				rts
+				; mva #$9b			io_buffer+11
+				; rts
 @				
-				mva game_state.current_map+3	io_buffer+3
-				mva #62	io_buffer+4
-				mva #77				io_buffer+2+3
-				mwa game_state.current_map		io_buffer+3+3
-				mwa game_state.current_map+2	io_buffer+5+3
-				mwa	map_file_ext	io_buffer+7+3
-				mwa	map_file_ext+2	io_buffer+9+3
-				mva #$9b			io_buffer+11+3
+				; mva game_state.current_map+3	io_buffer+3
+				; mva #62	io_buffer+4
+				; mva #77				io_buffer+2+3
+				mwa game_state.current_map		io_buffer_cart
+				mwa game_state.current_map+2	io_buffer_cart+2
+				; mwa	map_file_ext	io_buffer+7+3
+				; mwa	map_file_ext+2	io_buffer+9+3
+				; mva #$9b			io_buffer+11+3
 				
 				
 				rts
@@ -673,6 +682,7 @@ rgd
 ; XXYY is the current map number (for example:
 ; 0000.MAP, A9E1.MAP, 0001.MAP, etc.)
 .proc load_map
+.var	slot .byte
 				; Clear screen memory
 				clear_game_screen
 				
@@ -685,20 +695,86 @@ rgd
 				
 				; Build appropriate filename in the I/O buffer
 				build_file_name
+
+				lda #0
+				sta NMIEN
+
+				lda #55
+				sta slot
+
+lm_04
+				ldy slot
+				sta PERSISTENCY_BANK_CTL,y
+				sta wsync
+				mwa #CART_RAM_START show_message_prerequisites.ptr
+				mwa #ADV_MESSAGE_BUFFER show_message_prerequisites.ptr2
+
+lm_02
+				ldy #0
+
+				lda (show_message_prerequisites.ptr),y
+				cmp #$ff
+				bne @+
+				inc slot
+				jmp lm_04
+@				cmp io_buffer_cart,y
+				bne lm_00
+				iny
+				lda (show_message_prerequisites.ptr),y
+				cmp io_buffer_cart,y
+				bne lm_00
+				iny
+				lda (show_message_prerequisites.ptr),y
+				cmp io_buffer_cart,y
+				bne lm_00
+				iny
+				lda (show_message_prerequisites.ptr),y
+				cmp io_buffer_cart,y
+				bne lm_00
+
+				; Found map, copy all until FF to ADV_MESSAGE_BUFFER
+				adw show_message_prerequisites.ptr #4
+				ldy #0
+lm_05
+				lda (show_message_prerequisites.ptr),y
+				cmp #$ff
+				beq lm_X
+				sta (show_message_prerequisites.ptr2),y
+				inw show_message_prerequisites.ptr
+				inw show_message_prerequisites.ptr2
+				jmp lm_05
+
+lm_00
+				; Not this map, read unitl FF and go up
+				ldy #0
+lm_01
+				inw show_message_prerequisites.ptr
+				lda (show_message_prerequisites.ptr),y
+				cmp #$ff
+				bne lm_01
+				inw show_message_prerequisites.ptr
+				jmp lm_02
+
+lm_X
+				sta CART_DISABLE_CTL
+				sta wsync
 				
 				; Open the file for reading
-				open_map_file
-				stx cio_handle
-				bmi lm_ERR
+				; open_map_file
+				; stx cio_handle
+				; bmi lm_ERR
 				
 				; Read map data
-				ldx cio_handle
+				; ldx cio_handle
+
+				; TODO - continue here as we need to parse loaded map
+
 				read_map reload
-				bmi lm_ERR
+				; bmi lm_ERR
 				
 				; Close map file
-				ldx cio_handle
-				io_close_file
+				; ldx cio_handle
+				; io_close_file
 				
 lm_ERR			rts
 .endp
