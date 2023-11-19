@@ -34,6 +34,12 @@
 // 0xFF ID Ox9B ROW_1 0x9B ROW_2 ... 0x9B ROW_n
 //
 //
+// ----- MAPS -----
+// Banks 55-67: "XXXX.map"
+//
+// ".map" extension is not included.
+// Data in these banks is terminated with "FF"
+//
 
 use std::{
     collections::BTreeMap,
@@ -301,6 +307,81 @@ fn fill_banks_scr_templates(banks: &mut [Vec<u8>]) {
     }
 }
 
+fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
+    println!("\n\n*** MAPS PICTURES ***\n");
+    let re = Regex::new(filter).expect("unable to build regex");
+
+    (55..=67).into_iter().for_each(|bank_num| {
+        let bank = banks.get_mut(bank_num).unwrap();
+        for i in 0..BANK_SIZE {
+            bank[i] = 0xFF;
+        }
+    });
+
+    let mut current_bank = start;
+    let mut current_bank_size = 0;
+    let mut file_counter = 1;
+    let paths = fs::read_dir(DATA_PATH).expect("unable to read data path");
+    for path in paths {
+        let path = path.expect("path error");
+        let filename = path.file_name();
+        let filename_str = filename.to_str().expect("unable to get filename as &str");
+
+        if re.is_match(filename_str) {
+            let file_size = path.metadata().unwrap().len();
+            println!("\nprocessing file #{file_counter} - '{filename_str}' ({file_size} b)...",);
+            file_counter += 1;
+
+            let mut bank = banks.get_mut(current_bank).unwrap();
+
+            let left_in_bank = BANK_SIZE - current_bank_size;
+            println!("\tspace left in bank: {left_in_bank}");
+            // +4 to be able to fit file ID
+            // +1 to be able to fit the 0xFF terminator
+            if left_in_bank < file_size as usize + 4 +1 {
+                println!("\tno room in current bank, switching to next");
+                current_bank += 1;
+                bank = banks.get_mut(current_bank).unwrap();
+                current_bank_size = 0;
+            } else {
+                println!("\tcontinuing with current bank")
+            }
+
+            let mut buffer = vec![];
+            let full_path = Path::new(DATA_PATH);
+            let full_path = full_path.join(filename_str);
+            let mut file = File::open(full_path.clone())
+                .unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+            let _ = file
+                .read_to_end(&mut buffer)
+                .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+            let found_ff = buffer.iter().any(|byte| byte == &0xFF);
+            if found_ff {
+                panic!("0xFF forbidden in maps");
+            }
+
+            bank[current_bank_size] = filename_str.to_uppercase().as_bytes()[1];
+            bank[current_bank_size + 1] = filename_str.to_uppercase().as_bytes()[2];
+            bank[current_bank_size + 2] = filename_str.to_uppercase().as_bytes()[3];
+            bank[current_bank_size + 3] = filename_str.to_uppercase().as_bytes()[4];
+            current_bank_size += 4;
+            bank[current_bank_size..(buffer.len() + current_bank_size)]
+                .copy_from_slice(&buffer[..]);
+            current_bank_size += file_size as usize;
+            current_bank_size += 1;
+
+            println!(
+                "\tadded '{filename_str}' to bank {current_bank} - bank size {current_bank_size}"
+            );
+        }
+    }
+    let bank = banks.get_mut(current_bank).unwrap();
+    bank[current_bank_size] = b'D';
+    bank[current_bank_size + 1] = b'U';
+    bank[current_bank_size + 2] = b'P';
+    bank[current_bank_size + 3] = b'A';
+}
+
 fn main() {
     let mut file = File::open(CART_PATH).expect("cannot open cart file");
     let mut buffer = Vec::with_capacity(CART_SIZE); // 128 8kb banks
@@ -318,6 +399,7 @@ fn main() {
     fill_banks_adventure_messages(23, &mut banks);
     fill_banks_fonts(27, &mut banks);
     fill_banks_scr_templates(&mut banks);
+    fill_banks_maps(55, r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]", &mut banks);
 
     let mut cart = vec![];
     for bank in banks {
