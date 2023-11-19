@@ -24,6 +24,16 @@
 // Bank 30: F001.FNT
 // ...
 // Bank 53: f024.fnt
+//
+//
+// ----- .SCR TEMPLATES -----
+// Bank: 27 ($AFE9..$B1C9) - ADVMSG.SCR - 480 bytes
+// Bank: 27 ($B1CA..$B4EA) - POCKET.SCR - 800 bytes
+//
+// Message file record structure:
+// 0xFF ID Ox9B ROW_1 0x9B ROW_2 ... 0x9B ROW_n
+//
+//
 
 use std::{
     collections::BTreeMap,
@@ -265,6 +275,32 @@ fn fill_banks_fonts(start: usize, banks: &mut [Vec<u8>]) {
     }
 }
 
+fn fill_banks_scr_templates(banks: &mut [Vec<u8>]) {
+    println!("processing ADVMSG.SCR into bank 27 @($AFE9..$B1C9)");
+    let mut buffer = vec![];
+    let mut file = File::open(format!("{}/{}", DATA_PATH, "ADVMSG.SCR"))
+        .unwrap_or_else(|_| panic!("cannot open {:?}", "ADVMSG.SCR"));
+
+    file.read_to_end(&mut buffer)
+        .expect("unable to read from file");
+    let bank = banks.get_mut(27).unwrap();
+    for i in 0..480 {
+        bank[i + 0xAFE9 - 0xA000] = buffer[i];
+    }
+
+    println!("processing POCKET.SCR into bank 27 @($B1CA..$B4EA)");
+    let mut buffer = vec![];
+    let mut file = File::open(format!("{}/{}", DATA_PATH, "POCKET.SCR"))
+        .unwrap_or_else(|_| panic!("cannot open {:?}", "POCKET.SCR"));
+
+    file.read_to_end(&mut buffer)
+        .expect("unable to read from file");
+    let bank = banks.get_mut(27).unwrap();
+    for i in 0..800 {
+        bank[i + 0xB1CA - 0xA000] = buffer[i];
+    }
+}
+
 fn main() {
     let mut file = File::open(CART_PATH).expect("cannot open cart file");
     let mut buffer = Vec::with_capacity(CART_SIZE); // 128 8kb banks
@@ -281,6 +317,7 @@ fn main() {
     fill_banks_adventure_pictures(16, r"[p|P]\d\d\d\.[s|S][r|R][a|A]", &mut banks);
     fill_banks_adventure_messages(23, &mut banks);
     fill_banks_fonts(27, &mut banks);
+    fill_banks_scr_templates(&mut banks);
 
     let mut cart = vec![];
     for bank in banks {
