@@ -195,35 +195,35 @@ synchr2			cmp VCOUNT
 .endp
 
 ; Preloads the object data
-.proc preload_messages(.word which_file) .var
-; $534d = "MS"
-; $544d = "MT"
-.var which_file .word
-				lda slow
-				cmp #0
-				beq @+
-				disable_antic
-@				mwa drive_id		io_buffer
-				mwa which_file io_buffer+2	; "MS"
-				mva #$9b io_buffer+4	; eol
-				io_find_free_iocb
-				io_open_file_OPT1
+; .proc preload_messages(.word which_file) .var
+; ; $534d = "MS"
+; ; $544d = "MT"
+; .var which_file .word
+; 				lda slow
+; 				cmp #0
+; 				beq @+
+; 				disable_antic
+; @				mwa drive_id		io_buffer
+; 				mwa which_file io_buffer+2	; "MS"
+; 				mva #$9b io_buffer+4	; eol
+; 				io_find_free_iocb
+; 				io_open_file_OPT1
 
-				extended_mem ext_ram_bank_msg	
+; 				extended_mem ext_ram_bank_msg	
 				
-				#if .word which_file = #$534d
-					io_read_binary #EXTRAM_MESSAGES #ms_size
-				#else
-					io_read_binary #EXTRAM_MESSAGES #mt_size
-				#end
+; 				#if .word which_file = #$534d
+; 					io_read_binary #EXTRAM_MESSAGES #ms_size
+; 				#else
+; 					io_read_binary #EXTRAM_MESSAGES #mt_size
+; 				#end
 
-				main_mem
-				io_close_file 				
-				lda slow
-				cmp #0
-				beq @+
-				enable_antic
+; 				main_mem
+; 				io_close_file 				
+; 				lda slow
+; 				cmp #0
+; 				beq @+
+; 				enable_antic
 
-@				rts
-.endp
+; @				rts
+; .endp
 

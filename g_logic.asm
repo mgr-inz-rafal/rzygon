@@ -6,7 +6,7 @@
 ;=================================================================================
 				
 .proc build_logic_DLL_file_name
-				mwa drive_id					io_buffer
+;				mwa drive_id					io_buffer
 				lda #$4c
 				sta io_buffer+2
 				sta io_buffer+7
@@ -22,10 +22,10 @@
 ;				rts
 				
 				build_logic_DLL_file_name
-				io_find_free_iocb
-				io_open_file_OPT1
-				io_read_binary #logic_dll #5887
-				io_close_file
+;				io_find_free_iocb
+;				io_open_file_OPT1
+;				io_read_binary #logic_dll #5887
+;				io_close_file
 				rts
 .endp
 
@@ -224,16 +224,3 @@ should_spawn_this_item_COMPARED
 @				lda #0
 				rts
 .endp
-
-RETURN_HERE
-;;------------------------ L000.DLL part starts here
-;				icl 'logic_dlls\L000_DLL.asm'		; FULL
-;				icl 'logic_dlls\L001_DLL.asm'		; FULL
-;				icl 'logic_dlls\L002_DLL.asm'		; FULL
-;				icl 'logic_dlls\L003_DLL.asm'		; FULL
-;				icl 'logic_dlls\L004_DLL.asm'		; Spacy
-;				icl 'logic_dlls\L005_DLL.asm'		; Spacy
-;				icl 'logic_dlls\L006_DLL.asm'		; FULL - Hlejnia + CMC player
-;				icl 'logic_dlls\L007_DLL.asm'		; FULL
-;;------------------------ L000.DLL part ends here
-				org RETURN_HERE

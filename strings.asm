@@ -58,6 +58,9 @@ TITLE_03	; Middle
 ;n - 78
 ;" - 2
 
+KONT
+
+				ORG $9c60
 DISCLAIMER_00	dta "              UWAGA!              ",b($9b)
 DISCLAIMER_01	dta "G",b(76),b(79),"wnym bohaterem niniejszej gry  ",b($9b)
 DISCLAIMER_02	dta "jest ksi",b(65),"dz, istnieje zatem ry-   ",b($9b)
@@ -195,3 +198,4 @@ TITLEPAGE_LAST
 				dta "Potrzebny jest tylko jaki",b(83)," DOS.   "
 				dta "                                  "
 				dta "  Powzwodzenia!                   "
+		org KONT

@@ -69,17 +69,17 @@ abrr_X
 .endp 
 
 ; Switches back to the base memory
-.proc main_mem
-				lda @TAB_MEM_BANKS
-;				and #%11111110
-				sta PORTB
-				rts
-.endp
+; .proc main_mem
+; 				lda @TAB_MEM_BANKS
+; ;				and #%11111110
+; 				sta PORTB
+; 				rts
+; .endp
 
-; Switches to extended RAM
-.proc extended_mem(.byte y) .reg
-				lda @TAB_MEM_BANKS+1,y
-;				and #%11111110
-				sta PORTB
-				rts
-.endp
+; ; Switches to extended RAM
+; .proc extended_mem(.byte y) .reg
+; 				lda @TAB_MEM_BANKS+1,y
+; ;				and #%11111110
+; 				sta PORTB
+; 				rts
+; .endp

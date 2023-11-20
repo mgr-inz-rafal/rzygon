@@ -87,7 +87,7 @@ hic_X			lda current_action
 .proc read_map
 				; Read text records from file
 				; 1. Font to be used
-				jsr io_read_record_OPT1
+;				jsr io_read_record_OPT1
 				lda io_buffer
 				cmp #'9'		; Special (default) font?
 				bne @+
@@ -103,7 +103,7 @@ hic_X			lda current_action
 				
 rmf_0			; 2. Number of builders
 @				ldx cio_handle
-				jsr io_read_record_OPT1
+;				jsr io_read_record_OPT1
 
 				; 3. Read all builders and draw map
 				string2byte #io_buffer
@@ -112,7 +112,7 @@ rm1				cpy #0
 				beq rm2
 				tya
 				pha
-				jsr io_read_record_OPT1
+;				jsr io_read_record_OPT1
 				display_map_chunk
 				pla
 				tay
@@ -120,35 +120,37 @@ rm1				cpy #0
 				jmp rm1
 				
 				; 4. Read links to other maps
-rm2				jsr io_read_record_OPT1
+rm2
+;				jsr io_read_record_OPT1
 				mwa io_buffer		game_state.link_right
 				mwa io_buffer+2		game_state.link_right+2
-				jsr io_read_record_OPT1
+;				jsr io_read_record_OPT1
 				mwa io_buffer		game_state.link_left
 				mwa io_buffer+2		game_state.link_left+2
-				jsr io_read_record_OPT1
+;				jsr io_read_record_OPT1
 				mwa io_buffer		game_state.link_top
 				mwa io_buffer+2		game_state.link_top+2
-				jsr io_read_record_OPT1
+;				jsr io_read_record_OPT1
 				mwa io_buffer		game_state.link_bottom
 				mwa io_buffer+2		game_state.link_bottom+2
 				
 				; 5. Read colors
 				; COLOR1 = text
 				; COLOR2 = background
-				jsr io_read_record_OPT1
+				; jsr io_read_record_OPT1
 				string2byte #io_buffer
 				sta COLOR1
-				jsr io_read_record_OPT1
+				; jsr io_read_record_OPT1
 				string2byte #io_buffer
 				ldy detected_vbxe
 				cpy #1
 				bne @+
 				sta COLOR1
-@				jsr io_read_record_OPT1
+@
+;				jsr io_read_record_OPT1
 				string2byte #io_buffer
 				sta COLOR2
-				jsr io_read_record_OPT1
+;				jsr io_read_record_OPT1
 				string2byte #io_buffer
 				ldy detected_vbxe
 				cpy #1
@@ -167,7 +169,7 @@ rm2				jsr io_read_record_OPT1
 				tax
 				
 				; 6. Number of objects 				
-				jsr io_read_record_OPT1
+				; jsr io_read_record_OPT1
 				string2byte #io_buffer
 				
 				; 7. Read all map objects and draw them
@@ -176,7 +178,7 @@ rm3				cpy #0
 				jeq rm4
 				tya
 				pha
-				jsr io_read_record_OPT1
+				; jsr io_read_record_OPT1
 				txa
 				pha
 				load_map_object
@@ -188,7 +190,8 @@ rm3				cpy #0
 				jmp rm3			
 				
 				; 8. Number of items 				
-rm4				jsr io_read_record_OPT1
+rm4
+; 				jsr io_read_record_OPT1
 				string2byte #io_buffer
 
 				; 9. Read all map items and draw them
@@ -200,7 +203,7 @@ rm6				cpy #0
 				jeq rm5
 				tya
 				pha
-				jsr io_read_record_OPT1
+				; jsr io_read_record_OPT1
 				mwa io_buffer+6 io_buffer+$57
 				mva io_buffer+8 io_buffer+$59
 								
@@ -228,7 +231,7 @@ rm5
 				
 				; 10. Level name 
 				mva #72 io_buffer
-				io_read_record #io_buffer+1 #io_buffer_size
+				;io_read_record #io_buffer+1 #io_buffer_size
 				display_level_name
 				
 rm_ERR			rts
@@ -634,48 +637,48 @@ rgd
 
 ; Creates the font file name in the io_buffer+$60
 .proc build_font_file_name
-				mwa drive_id		io_buffer+$60
-				mva #70				io_buffer+2+$60
-				lda use_folders
-				cmp #1
-				beq @+
-				mwa io_buffer		io_buffer+3+$60
-				mva io_buffer+2		io_buffer+5+$60
-				mwa	font_file_ext	io_buffer+6+$60
-				mwa	font_file_ext+2	io_buffer+8+$60
+				; mwa drive_id		io_buffer+$60
+				; mva #70				io_buffer+2+$60
+				; lda use_folders
+				; cmp #1
+				; beq @+
+				; mwa io_buffer		io_buffer+3+$60
+				; mva io_buffer+2		io_buffer+5+$60
+				; mwa	font_file_ext	io_buffer+6+$60
+				; mwa	font_file_ext+2	io_buffer+8+$60
 				
-				; Not necessary for opening file, but in case
-				; of error it comes in handy for displaying
-				; the filename on screen
-				mva #$9b			io_buffer+10+$60
-				rts
+				; ; Not necessary for opening file, but in case
+				; ; of error it comes in handy for displaying
+				; ; the filename on screen
+				; mva #$9b			io_buffer+10+$60
+				; rts
 
-@				mva #62	io_buffer+3+$60
-				mva #70	io_buffer+4+$60
-				mwa io_buffer		io_buffer+5+$60
-				mva io_buffer+2		io_buffer+7+$60
-				mwa	font_file_ext	io_buffer+8+$60
-				mwa	font_file_ext+2	io_buffer+10+$60
-				mva #$9b			io_buffer+12+$60
+; @				mva #62	io_buffer+3+$60
+				; mva #70	io_buffer+4+$60
+				; mwa io_buffer		io_buffer+5+$60
+				; mva io_buffer+2		io_buffer+7+$60
+				; mwa	font_file_ext	io_buffer+8+$60
+				; mwa	font_file_ext+2	io_buffer+10+$60
+				; mva #$9b			io_buffer+12+$60
 				rts
 				
 .endp
 
 ; Creates the object file name in the io_buffer+$60
-.proc build_object_file_name
-				mwa drive_id		io_buffer+$60
-				mwa #$424f 			io_buffer+$62	; "OB"
-				mva #$9b			io_buffer+$64
-				rts
-.endp
+; .proc build_object_file_name
+				; mwa drive_id		io_buffer+$60
+				; mwa #$424f 			io_buffer+$62	; "OB"
+				; mva #$9b			io_buffer+$64
+				; rts
+; .endp
 
-; Creates the item file name in the io_buffer+$60
-.proc build_item_file_name
-				mwa drive_id		io_buffer+$60
-				mwa #$5449 			io_buffer+$62	; "IT"
-				mva #$9b			io_buffer+$64
-				rts
-.endp
+; ; Creates the item file name in the io_buffer+$60
+; .proc build_item_file_name
+				; mwa drive_id		io_buffer+$60
+				; mwa #$5449 			io_buffer+$62	; "IT"
+				; mva #$9b			io_buffer+$64
+				; rts
+; .endp
 
 ; Loads current map from disk
 ; Maps are stored in files "XXYY.MAP" where
@@ -781,14 +784,14 @@ lm_ERR			rts
 
 ; Routine for loading the font
 .proc load_font
-				build_font_file_name
-				open_object_file		; Reuse the method used to open object
-				bmi lf_ERR
+				; build_font_file_name
+				; open_object_file		; Reuse the method used to open object
+				; bmi lf_ERR
 				
-				read_font
-				bmi lf_ERR
+				; read_font
+				; bmi lf_ERR
 				
-				io_close_file
+				; io_close_file
 				
 lf_ERR			rts
 .endp
@@ -812,179 +815,179 @@ lf_ERR			rts
 .endp
 
 ; Opens the map file
-.proc open_map_file
-				io_find_free_iocb
-				io_open_file_OPT1
-				rts
-.endp
+; .proc open_map_file
+				; io_find_free_iocb
+				; io_open_file_OPT1
+				; rts
+; .endp
 
 ; Opens the object file
-.proc open_object_file
-				io_find_free_iocb
-				io_open_file #io_buffer+$60 #OPNIN
-				rts
-.endp
+; .proc open_object_file
+				; io_find_free_iocb
+				; io_open_file #io_buffer+$60 #OPNIN
+				; rts
+; .endp
 
 ; Loads the current game state from a file
 .proc load_game_state_from_file
-				mva #1 save_load_ok
-				disable_antic
-				io_find_free_iocb
-				io_open_file #save_state_file #OPNIN
-				jmi lgstf_e
+; 				mva #1 save_load_ok
+; 				disable_antic
+; 				io_find_free_iocb
+; 				io_open_file #save_state_file #OPNIN
+; 				jmi lgstf_e
 				
-				; Read pocket offset
-				io_read_binary #pocket_offset #1
-				jmi lgstf_e
+; 				; Read pocket offset
+; 				io_read_binary #pocket_offset #1
+; 				jmi lgstf_e
 
-				; Read pocket content
-				io_read_binary #POCKET #51*5
-				jmi lgstf_e
+; 				; Read pocket content
+; 				io_read_binary #POCKET #51*5
+; 				jmi lgstf_e
 				
-				; Read hero position
-				io_read_binary #hero_XPos #1
-				jmi lgstf_e
-				io_read_binary #hero_YPos #1
-				jmi lgstf_e
+; 				; Read hero position
+; 				io_read_binary #hero_XPos #1
+; 				jmi lgstf_e
+; 				io_read_binary #hero_YPos #1
+; 				jmi lgstf_e
 
-				; Read hero direction (bit in the game_flags)
-				io_read_binary #game_flags #1
-				jmi lgstf_e
+; 				; Read hero direction (bit in the game_flags)
+; 				io_read_binary #game_flags #1
+; 				jmi lgstf_e
 				
-				; Read the logic state of the game
-				io_read_binary #logic_flags_000 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_001 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_002 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_003 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_004 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_005 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_006 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_007 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_008 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_009 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_010 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_011 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_012 #1
-				jmi lgstf_e
-				io_read_binary #logic_flags_013 #1
-				jmi lgstf_e
-				io_read_binary #hanging_skull_pos #1
-				jmi lgstf_e
+; 				; Read the logic state of the game
+; 				io_read_binary #logic_flags_000 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_001 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_002 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_003 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_004 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_005 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_006 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_007 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_008 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_009 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_010 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_011 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_012 #1
+; 				jmi lgstf_e
+; 				io_read_binary #logic_flags_013 #1
+; 				jmi lgstf_e
+; 				io_read_binary #hanging_skull_pos #1
+; 				jmi lgstf_e
 				
-				; Read current map number
-				io_read_binary #game_state.current_map #4
-				jmi lgstf_e
+; 				; Read current map number
+; 				io_read_binary #game_state.current_map #4
+; 				jmi lgstf_e
 				
-				; If hero is dead, turn him dead
-				lda logic_flags_003
-				and #LF_RZYGON_DEAD
-				cmp #LF_RZYGON_DEAD
-				bne @+
+; 				; If hero is dead, turn him dead
+; 				lda logic_flags_003
+; 				and #LF_RZYGON_DEAD
+; 				cmp #LF_RZYGON_DEAD
+; 				bne @+
 
-				; ---- Don't call 'turn hero dead'
-				mwa #hero_data_dead hero_data_offset
-				mva #hero_anim_time hero_anim_count
-				lda #hc_dead
-				sta PCOLR0				
-;				draw_hero
-				; ---- because it will modify logic_flags_003
+; 				; ---- Don't call 'turn hero dead'
+; 				mwa #hero_data_dead hero_data_offset
+; 				mva #hero_anim_time hero_anim_count
+; 				lda #hc_dead
+; 				sta PCOLR0				
+; ;				draw_hero
+; 				; ---- because it will modify logic_flags_003
 				
-@				; Load process OK
-				jmp lgstf0
+; @				; Load process OK
+; 				jmp lgstf0
 	
-lgstf_e			dec save_load_ok
+; lgstf_e			dec save_load_ok
 				
-lgstf0			io_close_file
-				enable_antic
+; lgstf0			io_close_file
+; 				enable_antic
 				rts
 .endp
 
 ; Saves the current game state to a file
 .proc save_game_state_to_file
-				mva #1 save_load_ok
-				disable_antic
-				io_find_free_iocb
-				io_open_file #save_state_file #OPNOT
-				jmi sgstf_e
+				; mva #1 save_load_ok
+				; disable_antic
+				; io_find_free_iocb
+				; io_open_file #save_state_file #OPNOT
+				; jmi sgstf_e
 				
-				; Store pocket offset
-				io_write_binary #pocket_offset #1
-				jmi sgstf_e
+				; ; Store pocket offset
+				; io_write_binary #pocket_offset #1
+				; jmi sgstf_e
 				
-				; Store pocket content
-				io_write_binary #POCKET #51*5
-				jmi sgstf_e
+				; ; Store pocket content
+				; io_write_binary #POCKET #51*5
+				; jmi sgstf_e
 				
-				; Store hero position
-				io_write_binary #hero_XPos #1
-				jmi sgstf_e
-				io_write_binary #hero_YPos #1
-				jmi sgstf_e
+				; ; Store hero position
+				; io_write_binary #hero_XPos #1
+				; jmi sgstf_e
+				; io_write_binary #hero_YPos #1
+				; jmi sgstf_e
 
-				; Store hero direction (bit in the game_flags)
-				io_write_binary #game_flags #1
-				jmi sgstf_e
+				; ; Store hero direction (bit in the game_flags)
+				; io_write_binary #game_flags #1
+				; jmi sgstf_e
 				
-				; Store the logic state of the game
-				io_write_binary #logic_flags_000 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_001 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_002 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_003 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_004 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_005 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_006 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_007 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_008 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_009 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_010 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_011 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_012 #1
-				jmi sgstf_e
-				io_write_binary #logic_flags_013 #1
-				jmi sgstf_e
-				io_write_binary #hanging_skull_pos #1
-				jmi sgstf_e
+				; ; Store the logic state of the game
+				; io_write_binary #logic_flags_000 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_001 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_002 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_003 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_004 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_005 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_006 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_007 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_008 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_009 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_010 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_011 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_012 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_013 #1
+				; jmi sgstf_e
+				; io_write_binary #hanging_skull_pos #1
+				; jmi sgstf_e
 				
-				; Store current map number
-				io_write_binary #game_state.current_map #4
-				jmi sgstf_e
+				; ; Store current map number
+				; io_write_binary #game_state.current_map #4
+				; jmi sgstf_e
 				
-				; Save process OK
-				jmp sgstf0
+				; ; Save process OK
+				; jmp sgstf0
 	
-sgstf_e			dec save_load_ok
+; sgstf_e			dec save_load_ok
 				
-sgstf0			io_close_file
-				enable_antic
+; sgstf0			io_close_file
+				; enable_antic
 				rts
 .endp
 
 ; Some consts to use with files
-drive_id		dta c"D:"
-map_file_ext	dta c".MAP"
-font_file_ext	dta c".FNT"
-save_state_file	dta c"D:SAVSTATE.RZY",b($9b)
+;drive_id		dta c"D:"
+;map_file_ext	dta c".MAP"
+;font_file_ext	dta c".FNT"
+;save_state_file	dta c"D:SAVSTATE.RZY",b($9b)

@@ -46,50 +46,24 @@ pocket_move_delay	equ	30
 				rts
 .endp
 
-; Builds the pocket filename in the io_buffer
-.proc build_pocket_file_name
-				ldx #0
-@				lda pocket_file,x
-				sta io_buffer,x
-				inx
-				cpx #12
-				bne @-
-				lda #$9b
-				sta io_buffer,x
-				rts
-.endp
-
-; Builds the pocket font filename in the io_buffer
-.proc build_pocket_font_file_name
-				ldx #0
-@				lda pocket_font,x
-				sta io_buffer+$60,x
-				inx
-				cpx #12
-				bne @-
-				lda #$9b
-				sta io_buffer+$60,x
-				rts
-.endp
-
 ; Shows the pocket background on the screen
 .proc show_pocket_background
-				lda pocket_loaded
-				cmp #1
-				beq @+
-				build_pocket_file_name
-;				load_screen #screen_mem #20*40
-				;load_screen #pocket_scr_buf #20*40
+				; lda pocket_loaded
+				; cmp #1
+				; beq @+
+				; build_pocket_file_name
+; ;				load_screen #screen_mem #20*40
+				; ;load_screen #pocket_scr_buf #20*40
 				
-				inc pocket_loaded
-@				
-				; Pocket is ready in the pocket_scr_buf - copy it to screen
-				build_pocket_font_file_name
-				open_object_file
-				read_font
-				io_close_file
-				copy_buffer_to_screen
-				invalidate_font
+				; inc pocket_loaded
+; @				
+				; ; Pocket is ready in the pocket_scr_buf - copy it to screen
+				; build_pocket_font_file_name
+				; open_object_file
+				; read_font
+				; io_close_file
+				; copy_buffer_to_screen
+				; invalidate_font
 				
 				rts
 .endp
@@ -532,8 +506,6 @@ icip0
 .endp
 
 
-POCKET			equ LEVEL_NAME_BUFFER2+22
-ONE_USE_NEXT_FREE equ POCKET + 51*5
 POCKET_NAME_1	dta b(0),b(0),b(0),b(0),b(0)
 				dta b(0),b(0),b(0),b(0),b(0)
 				dta b(0),b(0),b(0),b(0),b(0)
@@ -554,5 +526,5 @@ POCKET_NAME_4	dta b(0),b(0),b(0),b(0),b(0)
 				dta b(0),b(0),b(0),b(0),b(0)
 				dta b(0),b(0),b(0),b(0),b(0)
 				dta b(0) ; Eol
-pocket_file		dta c"D:POCKET.SCR"
-pocket_font		dta c"D:POCKET.FNT"
+; pocket_file		dta c"D:POCKET.SCR"
+; pocket_font		dta c"D:POCKET.FNT"
