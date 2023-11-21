@@ -34,11 +34,12 @@
 // 0xFF ID Ox9B ROW_1 0x9B ROW_2 ... 0x9B ROW_n
 //
 //
-// ----- MAPS -----
-// Banks 55-67: "XXXX.map"
+// ----- MAPS (shapes) -----
+// Banks 55-XX: "MXXX.map"
 //
 // ".map" extension is not included.
-// Data in these banks is terminated with "FF"
+// The leading '0' of the 4 digit map number is stripped (there are much less than 1000 maps)
+// Each "shape" is exactly 800b long
 //
 
 use std::{
@@ -307,8 +308,29 @@ fn fill_banks_scr_templates(banks: &mut [Vec<u8>]) {
     }
 }
 
+fn string2num(bytes: &[u8]) -> u8 {
+    (bytes[0] - 0x30) * 100 + (bytes[1] - 0x30) * 10 + (bytes[2] - 0x30)
+}
+
+fn dump_rendered(r: &[u8]) {
+    for i in 0..r.len() {
+        if i % 40 == 0 {
+            println!();
+        }
+        let c = r[i];
+        print!(
+            "{}",
+            match c {
+                0 => ".",
+                _ => "#",
+            }
+        );
+    }
+    println!();
+}
+
 fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
-    println!("\n\n*** MAPS PICTURES ***\n");
+    println!("\n\n*** MAPS ***\n");
     let re = Regex::new(filter).expect("unable to build regex");
 
     (55..=67).into_iter().for_each(|bank_num| {
@@ -329,57 +351,94 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
 
         if re.is_match(filename_str) {
             let file_size = path.metadata().unwrap().len();
-            println!("\nprocessing file #{file_counter} - '{filename_str}' ({file_size} b)...",);
-            file_counter += 1;
-
-            let mut bank = banks.get_mut(current_bank).unwrap();
-
-            let left_in_bank = BANK_SIZE - current_bank_size;
-            println!("\tspace left in bank: {left_in_bank}");
-            // +4 to be able to fit file ID
-            // +1 to be able to fit the 0xFF terminator
-            if left_in_bank < file_size as usize + 4 +1 {
-                println!("\tno room in current bank, switching to next");
-                current_bank += 1;
-                bank = banks.get_mut(current_bank).unwrap();
-                current_bank_size = 0;
-            } else {
-                println!("\tcontinuing with current bank")
-            }
+            println!("\ndissecting map #{file_counter} - '{filename_str}' ({file_size} b)...",);
 
             let mut buffer = vec![];
-            let full_path = Path::new(DATA_PATH);
-            let full_path = full_path.join(filename_str);
-            let mut file = File::open(full_path.clone())
-                .unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
-            let _ = file
-                .read_to_end(&mut buffer)
-                .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
-            let found_ff = buffer.iter().any(|byte| byte == &0xFF);
-            if found_ff {
-                panic!("0xFF forbidden in maps");
+            let mut file = File::open(format!("{}/{}", DATA_PATH, filename_str))
+                .unwrap_or_else(|_| panic!("cannot open {:?}", filename_str));
+
+            file.read_to_end(&mut buffer)
+                .expect("unable to read from file");
+
+            let parts: Vec<_> = buffer.split(|byte| byte == &0x9b).collect();
+
+            let mut stripped: Vec<u8> = vec![];
+            let mut rendered = vec![0u8; 800];
+
+            stripped.extend(parts[0]); // Font number
+            stripped.push(0x9b);
+
+            let num_builders = string2num(parts[1]);
+            println!("\tbuilders: {}", num_builders);
+            let mut current_part = 2;
+            for i in 0..num_builders {
+                let p = parts[current_part];
+                current_part += 1;
+                let mut x = p[0];
+                let y = p[1];
+                let len = p[2];
+                let rep = p[3];
+                println!(
+                    "\t\t{:2}/{num_builders:2} - {x:2},{y:2} - len={len:2} rep={rep:2}",
+                    i + 1
+                );
+                let stamp: Vec<_> = p.iter().skip(4).take(len as usize).collect();
+                for j in 0..rep {
+                    for (i, c) in stamp.iter().enumerate() {
+                        rendered[(y as u32 * 40 + x as u32 + i as u32 + j as u32 * len as u32)
+                            as usize] = **c;
+                    }
+                }
             }
+            println!("\n\nRendered map geometry:");
+            dump_rendered(&rendered);
 
-            bank[current_bank_size] = filename_str.to_uppercase().as_bytes()[1];
-            bank[current_bank_size + 1] = filename_str.to_uppercase().as_bytes()[2];
-            bank[current_bank_size + 2] = filename_str.to_uppercase().as_bytes()[3];
-            bank[current_bank_size + 3] = filename_str.to_uppercase().as_bytes()[4];
-            current_bank_size += 4;
-            bank[current_bank_size..(buffer.len() + current_bank_size)]
-                .copy_from_slice(&buffer[..]);
-            current_bank_size += file_size as usize;
-            current_bank_size += 1;
-
-            println!(
-                "\tadded '{filename_str}' to bank {current_bank} - bank size {current_bank_size}"
-            );
+            // Map structure:
+            // - XXX - Font number (0x9b)
+            // - XXX - Number of "builders" (9b) , where each builder is:
+            //      - xpos - 1 byte
+            //      - ypos - 1 byte
+            //      - len  - 1 byte
+            //      - rep  - 1 byte
+            //      - pattern itself
+            //      - 0x9b
+            // - XXXX - link to map on the right (9b)
+            // - XXXX - link to map on the left (9b)
+            // - XXXX - link to map on the top (9b)
+            // - XXXX - link to map on the bottom (9b)
+            // - XXX - COLOR 1 (9b)
+            // - XXX - COLOR 1 (VBXE) (9b)
+            // - XXX - COLOR 2 (9b)
+            // - XXX - COLOR 2 (VBXE) (9b)
+            // - XX - logic DLL number
+            // - XXX - number of objects (9b), for each object:
+            //      - XXXXX - name of the object (9b)
+            //      - xpos - 1 byte
+            //      - ypos - 1 byte
+            //      - xpos - 1 byte
+            //      - ypos - 1 byte
+            //      - ... repeat until 9b
+            // - XXX - number of items (9b), for each item:
+            //      - XXXXX - name of the item (9b)
+            //      - comma (0x2c)
+            //      - XXX - xpos (9b)
+            //      - comma (0x2c)
+            //      - XXX - ypos (9b)
+            // - Level Name (9b)
         }
     }
-    let bank = banks.get_mut(current_bank).unwrap();
-    bank[current_bank_size] = b'D';
-    bank[current_bank_size + 1] = b'U';
-    bank[current_bank_size + 2] = b'P';
-    bank[current_bank_size + 3] = b'A';
+
+    // let paths = fs::read_dir(DATA_PATH).expect("unable to read data path");
+    // for path in paths {
+    //     let path = path.expect("path error");
+    //     let filename = path.file_name();
+    //     let filename_str = filename.to_str().expect("unable to get filename as &str");
+
+    //     if re.is_match(filename_str) {
+    //         let file_size = path.metadata().unwrap().len();
+    //         println!("\nprocessing file #{file_counter} - '{filename_str}' ({file_size} b)...",);
+    //     }
+    // }
 }
 
 fn main() {
