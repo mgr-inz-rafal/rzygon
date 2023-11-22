@@ -166,12 +166,11 @@ fn fill_banks_adventure_messages(start: usize, banks: &mut [Vec<u8>]) {
             );
             println!("\tread message {} - {}", msg_id, {
                 let mut s = String::new();
-                for i in 3..message_buffer.len() {
-                    let c = message_buffer[i];
-                    if c != 0xFF && c != 0x9B {
-                        if c != 0 && c != 0x0C && c != 0x0D {
+                for c in message_buffer.iter().skip(3) {
+                    if *c != 0xFF && *c != 0x9B {
+                        if *c != 0 && *c != 0x0C && *c != 0x0D {
                             if c.is_ascii() {
-                                s.push(c as char);
+                                s.push(*c as char);
                             }
                         } else {
                             s.push(' ');
@@ -194,8 +193,8 @@ fn fill_banks_adventure_messages(start: usize, banks: &mut [Vec<u8>]) {
 
     [23, 24, 25].into_iter().for_each(|bank_num| {
         let bank = banks.get_mut(bank_num).unwrap();
-        for i in 0..BANK_SIZE {
-            bank[i] = 0xFF;
+        for item in bank.iter_mut().take(BANK_SIZE) {
+            *item = 0xFF;
         }
     });
 
@@ -224,11 +223,7 @@ fn fill_banks_adventure_messages(start: usize, banks: &mut [Vec<u8>]) {
 
     println!(
         "longest message: {} bytes",
-        all_msgs
-            .into_iter()
-            .map(|(_, msg)| msg.len())
-            .max()
-            .unwrap()
+        all_msgs.into_values().map(|msg| msg.len()).max().unwrap()
     );
 }
 
@@ -275,9 +270,7 @@ fn fill_banks_fonts(start: usize, banks: &mut [Vec<u8>]) {
         file.read_to_end(&mut buffer)
             .expect("unable to read from file");
         let bank = banks.get_mut(current_bank).unwrap();
-        for i in 0..1024 {
-            bank[i] = buffer[i];
-        }
+        bank[..1024].copy_from_slice(&buffer[..1024]);
         current_bank += 1;
     }
 }
@@ -313,11 +306,10 @@ fn string2num(bytes: &[u8]) -> u8 {
 }
 
 fn dump_rendered(r: &[u8]) {
-    for i in 0..r.len() {
+    for (i, c) in r.iter().enumerate() {
         if i % 40 == 0 {
             println!();
         }
-        let c = r[i];
         print!(
             "{}",
             match c {
@@ -342,10 +334,10 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
     println!("\n\n*** MAPS ***\n");
     let re = Regex::new(filter).expect("unable to build regex");
 
-    (55..=67).into_iter().for_each(|bank_num| {
+    (55..=67).for_each(|bank_num| {
         let bank = banks.get_mut(bank_num).unwrap();
-        for i in 0..BANK_SIZE {
-            bank[i] = 0xFF;
+        for item in bank.iter_mut().take(BANK_SIZE) {
+            *item = 0xFF;
         }
     });
 
@@ -468,7 +460,7 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
                 println!();
                 let mut st = 5;
                 loop {
-                    let x = name_part[st + 0];
+                    let x = name_part[st];
                     let y = name_part[st + 1];
                     println!("\t\t\tat {},{}", x, y);
                     let obj = all_objects
