@@ -446,7 +446,14 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             stripped.extend(parts[current_part + 1]); // Link to the left
             stripped.extend(parts[current_part + 2]); // Link to the left
             stripped.extend(parts[current_part + 3]); // Link to the left
-            stripped.extend(parts.last().expect("should have last part").iter());
+            let map_name = parts.last().expect("should have last part");
+            print!("\tMap name: ");
+            for c in map_name.iter() {
+                print!("{}", (*c - 128) as char);
+            }
+            println!();
+            println!();
+            stripped.extend(map_name.iter());
             stripped.push(0x9b);
 
             let num_objects = string2num(&parts[num_objects_part][2..]);
