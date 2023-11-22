@@ -334,11 +334,11 @@ struct MapObject<'a> {
     name: Vec<u8>,
     is_transparent: u8,
     width: u8,
-    height: u8,
+    _height: u8,
     bytes: Vec<&'a u8>,
 }
 
-fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
+fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
     println!("\n\n*** MAPS ***\n");
     let re = Regex::new(filter).expect("unable to build regex");
 
@@ -378,14 +378,12 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
                 name: name.to_vec(),
                 is_transparent,
                 width,
-                height,
+                _height: height,
                 bytes,
             }
         })
         .collect();
 
-    let mut current_bank = start;
-    let mut current_bank_size = 0;
     let mut file_counter = 1;
     let paths = fs::read_dir(DATA_PATH).expect("unable to read data path");
     for path in paths {
@@ -396,6 +394,7 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
         if re.is_match(filename_str) {
             let file_size = path.metadata().unwrap().len();
             println!("\ndissecting map #{file_counter} - '{filename_str}' ({file_size} b)...",);
+            file_counter += 1;
 
             let mut buffer = vec![];
             let mut file = File::open(format!("{}/{}", DATA_PATH, filename_str))
@@ -626,7 +625,7 @@ fn main() {
     fill_banks_adventure_messages(23, &mut banks);
     fill_banks_fonts(27, &mut banks);
     fill_banks_scr_templates(&mut banks);
-    fill_banks_maps(55, r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]", &mut banks);
+    maps_dissection(r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]", &mut banks);
 
     let mut cart = vec![];
     for bank in banks {
