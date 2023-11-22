@@ -509,6 +509,9 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
                 current_part += 1;
             }
 
+            stripped.extend(transchars.iter().filter(|c| **c != 0));
+            stripped.push(0x9b);
+
             println!("\n\nRendered map objects on top of geometry:");
             dump_rendered(&rendered);
 
@@ -562,7 +565,7 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             //      - XXX - ypos (9b)
             // - Level Name (9b)
 
-            // Stripped structure
+            // ---------- -------------- ----------- STRIPPED STRUCTURE:
             // XXX  - font number
             // XX   - logic DLL number
             // XXXX - link to map on the right
@@ -570,6 +573,8 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             // XXXX - link to map on the top
             // XXXX - link to map on the bottom
             // - Level Name
+            // X    - 9b
+            // XX?  - TRANSCHARS
             // X    - 9b
             // X    - number of items
             //      XXXXX   - item name
