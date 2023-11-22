@@ -404,13 +404,13 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             file.read_to_end(&mut buffer)
                 .expect("unable to read from file");
 
-            let parts: Vec<_> = buffer.split(|byte| byte == &0x9b).collect();
+            let mut parts: Vec<_> = buffer.split(|byte| byte == &0x9b).collect();
+            parts.remove(parts.len() - 1); // Remove last, lonely part (empty)
 
             let mut stripped: Vec<u8> = vec![];
             let mut rendered = vec![0u8; 800];
 
             stripped.extend(parts[0]); // Font number
-            stripped.push(0x9b);
 
             let num_builders = string2num(parts[1]);
             println!("\tbuilders: {}", num_builders);
@@ -418,7 +418,7 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             for i in 0..num_builders {
                 let p = parts[current_part];
                 current_part += 1;
-                let mut x = p[0];
+                let x = p[0];
                 let y = p[1];
                 let len = p[2];
                 let rep = p[3];
@@ -441,6 +441,13 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             assert_eq!(parts[num_objects_part].len(), 5);
 
             let logic_dll_number = &parts[num_objects_part][0..2];
+            stripped.extend(logic_dll_number); // Logic number dll
+            stripped.extend(parts[current_part]); // Link to the right
+            stripped.extend(parts[current_part + 1]); // Link to the left
+            stripped.extend(parts[current_part + 2]); // Link to the left
+            stripped.extend(parts[current_part + 3]); // Link to the left
+            stripped.extend(parts.last().expect("should have last part").iter());
+            stripped.push(0x9b);
 
             let num_objects = string2num(&parts[num_objects_part][2..]);
             println!("\t{num_objects} object types on this map");
@@ -489,7 +496,25 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
 
             println!("\n\nRendered map objects on top of geometry:");
             dump_rendered(&rendered);
-            
+
+            let num_items = string2num(parts[current_part]);
+            stripped.push(num_items);
+            println!("\t{num_items} items on this map");
+            for ii in 0..num_items {
+                print!("\t\t{}/{} - ", ii + 1, num_items);
+                let item_name = &parts[current_part + 1 + ii as usize][0..5];
+                for c in item_name.iter().take(5) {
+                    print!("{}", *c as char);
+                }
+                let item_x = string2num(&parts[current_part + 1 + ii as usize][6..9]);
+                let item_y = string2num(&parts[current_part + 1 + ii as usize][10..13]);
+                println!(" - at {},{}", item_x, item_y);
+                stripped.extend(item_name);
+                stripped.push(item_x);
+                stripped.push(item_y);
+            }
+            dbg!(&stripped);
+
             // Map structure:
             // - XXX - Font number (0x9b)
             // - XXX - Number of "builders" (9b) , where each builder is:
@@ -522,6 +547,20 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             //      - comma (0x2c)
             //      - XXX - ypos (9b)
             // - Level Name (9b)
+
+            // Stripped structure
+            // XXX  - font number
+            // XX   - logic DLL number
+            // XXXX - link to map on the right
+            // XXXX - link to map on the left
+            // XXXX - link to map on the top
+            // XXXX - link to map on the bottom
+            // - Level Name
+            // X    - 9b
+            // X    - number of items
+            //      XXXXX   - item name
+            //      X       - X pos
+            //      Y       - Y pos
         }
     }
 
