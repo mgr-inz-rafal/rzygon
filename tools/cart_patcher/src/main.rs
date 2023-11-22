@@ -329,6 +329,15 @@ fn dump_rendered(r: &[u8]) {
     println!();
 }
 
+#[derive(Debug)]
+struct MapObject<'a> {
+    name: Vec<u8>,
+    is_transparent: u8,
+    width: u8,
+    height: u8,
+    bytes: Vec<&'a u8>,
+}
+
 fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
     println!("\n\n*** MAPS ***\n");
     let re = Regex::new(filter).expect("unable to build regex");
@@ -339,6 +348,41 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             bank[i] = 0xFF;
         }
     });
+
+    let mut buffer_ob = vec![];
+    let mut file_ob = File::open(format!("{}/{}", DATA_PATH, "ob"))
+        .unwrap_or_else(|_| panic!("cannot open {:?}", "ob"));
+    file_ob
+        .read_to_end(&mut buffer_ob)
+        .expect("unable to read from file");
+    let mut parts_ob: Vec<_> = buffer_ob.split(|c| c == &0xff).collect();
+    parts_ob.remove(0); // Remove first lonely 0xFF
+    println!("Loaded {} map objects, parsing...", parts_ob.len());
+    let all_objects: Vec<_> = parts_ob
+        .iter()
+        .map(|ob_part| {
+            let chunks: Vec<_> = ob_part.split(|c| c == &0x9b).collect();
+
+            let name = chunks[0];
+            print!("\t");
+            for c in name {
+                print!("{}", *c as char);
+            }
+            println!();
+            let is_transparent = chunks[1][0];
+            let width = chunks[1][1];
+            let height = chunks[1][2];
+            let bytes: Vec<_> = chunks.into_iter().skip(2).flatten().collect();
+
+            MapObject {
+                name: name.to_vec(),
+                is_transparent,
+                width,
+                height,
+                bytes,
+            }
+        })
+        .collect();
 
     let mut current_bank = start;
     let mut current_bank_size = 0;
@@ -393,6 +437,59 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             println!("\n\nRendered map geometry:");
             dump_rendered(&rendered);
 
+            let num_objects_part = current_part + 8;
+            assert_eq!(parts[num_objects_part].len(), 5);
+
+            let logic_dll_number = &parts[num_objects_part][0..2];
+
+            let num_objects = string2num(&parts[num_objects_part][2..]);
+            println!("\t{num_objects} object types on this map");
+
+            current_part = num_objects_part + 1;
+            for obi in 0..num_objects {
+                let name_part = parts[current_part];
+                print!("\t\t{}/{} - ", obi + 1, num_objects);
+                for c in name_part.iter().take(5) {
+                    print!("{}", *c as char);
+                }
+                println!();
+                let mut st = 5;
+                loop {
+                    let x = name_part[st + 0];
+                    let y = name_part[st + 1];
+                    println!("\t\t\tat {},{}", x, y);
+                    let obj = all_objects
+                        .iter()
+                        .find(|obj| obj.name == name_part[0..5])
+                        .expect("should have object");
+
+                    let mut cur_x = x;
+                    let mut cur_y = y;
+                    let mut cur_width = obj.width;
+                    for b in &obj.bytes {
+                        rendered[cur_y as usize * 40 + cur_x as usize] = **b;
+                        cur_width -= 1;
+                        if cur_width == 0 {
+                            cur_width = obj.width;
+                            cur_x = x;
+                            cur_y += 1;
+                        } else {
+                            cur_x += 1;
+                        }
+                    }
+
+                    if st + 2 == name_part.len() {
+                        break;
+                    }
+                    st += 2;
+                }
+
+                current_part += 1;
+            }
+
+            println!("\n\nRendered map objects on top of geometry:");
+            dump_rendered(&rendered);
+            
             // Map structure:
             // - XXX - Font number (0x9b)
             // - XXX - Number of "builders" (9b) , where each builder is:
@@ -412,7 +509,7 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             // - XXX - COLOR 2 (VBXE) (9b)
             // - XX - logic DLL number
             // - XXX - number of objects (9b), for each object:
-            //      - XXXXX - name of the object (9b)
+            //      - XXXXX - name of the object
             //      - xpos - 1 byte
             //      - ypos - 1 byte
             //      - xpos - 1 byte
