@@ -1107,7 +1107,7 @@ sab_0
 ; -> Will use the bytes spared by introducing one_use.asm.
 TRANSCHAR_COUNT	dta b(0)
 TRANSCHARS		
-:16 dta b(0)
+:52 dta b(0) ; Max transchars is 52 on MAP0064 (Sala operacyjna)
 POCKET
 :51 dta b(0)
 END_POCKET
