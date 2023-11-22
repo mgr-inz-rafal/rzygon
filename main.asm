@@ -1100,12 +1100,18 @@ sab_0
 				jmp sab_0
 .endp
 
-POCKET			
-END_POCKET equ POCKET + 51*5
-
-
 				org PLAYER
 				icl "rmtplayr.a65"
+
+; Table of transparent chars (hero can move through them)
+; -> Will use the bytes spared by introducing one_use.asm.
+TRANSCHAR_COUNT	dta b(0)
+TRANSCHARS		
+:16 dta b(0)
+POCKET
+:51 dta b(0)
+END_POCKET
+
 
 ; RMT module
 	opt h-						;RMT module is standard Atari binary file already

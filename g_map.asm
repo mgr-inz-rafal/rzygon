@@ -128,7 +128,3 @@ iotla0			iny
 				rts
 .endp
 
-; Table of transparent chars (hero can move through them)
-; -> Will use the bytes spared by introducing one_use.asm.
-TRANSCHAR_COUNT	equ SCREEN_BUFFER+800
-TRANSCHARS		equ TRANSCHAR_COUNT+1
