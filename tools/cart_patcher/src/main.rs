@@ -43,12 +43,13 @@
 //
 
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     fs::{self, File},
     io::{ErrorKind, Read, Write},
     path::Path,
 };
 
+use itertools::Itertools;
 use regex::Regex;
 
 const CART_PATH: &str = "../../build/rzygon.bin";
@@ -365,7 +366,6 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             let width = chunks[1][1];
             let height = chunks[1][2];
             let bytes: Vec<_> = chunks.into_iter().skip(2).flatten().collect();
-
             MapObject {
                 name: name.to_vec(),
                 is_transparent,
@@ -378,12 +378,14 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
 
     let mut file_counter = 1;
     let paths = fs::read_dir(DATA_PATH).expect("unable to read data path");
+    let mut max_transchars: (u8, String) = (0, Default::default());
     for path in paths {
         let path = path.expect("path error");
         let filename = path.file_name();
         let filename_str = filename.to_str().expect("unable to get filename as &str");
 
         if re.is_match(filename_str) {
+            let mut transchars = BTreeSet::<u8>::new();
             let file_size = path.metadata().unwrap().len();
             println!("\ndissecting map #{file_counter} - '{filename_str}' ({file_size} b)...",);
             file_counter += 1;
@@ -467,6 +469,21 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
                         .iter()
                         .find(|obj| obj.name == name_part[0..5])
                         .expect("should have object");
+
+                    if obj.is_transparent == 1 {
+                        print!("\t\t\tthis object is transparent, adding transchars, current: ");
+                        transchars.extend(obj.bytes.iter().copied());
+                        println!("{}", transchars.iter().join(","));
+                        if max_transchars.0 < transchars.len() as u8 {
+                            max_transchars = (
+                                transchars.len() as u8,
+                                filename
+                                    .to_str()
+                                    .expect("should format map name as string")
+                                    .to_string(),
+                            );
+                        }
+                    }
 
                     let mut cur_x = x;
                     let mut cur_y = y;
@@ -586,6 +603,7 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             file.write_all(&rendered).expect("unable to write to file");
         }
     }
+    println!("Maximum count of transchars: {:?}", max_transchars);
 
     // let paths = fs::read_dir(DATA_PATH).expect("unable to read data path");
     // for path in paths {
