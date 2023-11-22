@@ -513,7 +513,6 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
                 stripped.push(item_x);
                 stripped.push(item_y);
             }
-            dbg!(&stripped);
 
             // Map structure:
             // - XXX - Font number (0x9b)
@@ -561,6 +560,32 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             //      XXXXX   - item name
             //      X       - X pos
             //      Y       - Y pos
+
+            let p_stripped = format!(
+                "{}dissected/{}.STRIP",
+                DATA_PATH,
+                filename.to_str().expect("should be able to format path"),
+            );
+            let mut file = fs::OpenOptions::new()
+                .create(true)
+                .append(false)
+                .write(true)
+                .open(p_stripped)
+                .expect("cannot open file");
+            file.write_all(&stripped).expect("unable to write to file");
+
+            let p_rendered = format!(
+                "{}dissected/{}.RENDER",
+                DATA_PATH,
+                filename.to_str().expect("should be able to format path"),
+            );
+            let mut file = fs::OpenOptions::new()
+                .create(true)
+                .append(false)
+                .write(true)
+                .open(p_rendered)
+                .expect("cannot open file");
+            file.write_all(&rendered).expect("unable to write to file");
         }
     }
 
