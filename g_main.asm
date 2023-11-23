@@ -85,154 +85,154 @@ hic_X			lda current_action
 ; Reads entire map structure from disk and
 ; writes it on the screen
 .proc read_map
-				; Read text records from file
-				; 1. Font to be used
-;				jsr io_read_record_OPT1
-				lda io_buffer
-				cmp #'9'		; Special (default) font?
-				bne @+
-				inc default_font
-				jmp rmf_0
-@				mva #0 default_font
-				compare_fonts				
-				cmp #1
-				beq @+
-				mwy io_buffer	game_state.current_font
-				mvy io_buffer+2	game_state.current_font+2
-				load_font
+; 				; Read text records from file
+; 				; 1. Font to be used
+; ;				jsr io_read_record_OPT1
+; 				lda io_buffer
+; 				cmp #'9'		; Special (default) font?
+; 				bne @+
+; 				inc default_font
+; 				jmp rmf_0
+; @				mva #0 default_font
+; 				compare_fonts				
+; 				cmp #1
+; 				beq @+
+; 				mwy io_buffer	game_state.current_font
+; 				mvy io_buffer+2	game_state.current_font+2
+; 				load_font
 				
-rmf_0			; 2. Number of builders
-@				ldx cio_handle
-;				jsr io_read_record_OPT1
+; rmf_0			; 2. Number of builders
+; @				ldx cio_handle
+; ;				jsr io_read_record_OPT1
 
-				; 3. Read all builders and draw map
-				string2byte #io_buffer
-				tay
-rm1				cpy #0
-				beq rm2
-				tya
-				pha
-;				jsr io_read_record_OPT1
-				display_map_chunk
-				pla
-				tay
-				dey
-				jmp rm1
+; 				; 3. Read all builders and draw map
+; 				string2byte #io_buffer
+; 				tay
+; rm1				cpy #0
+; 				beq rm2
+; 				tya
+; 				pha
+; ;				jsr io_read_record_OPT1
+; 				display_map_chunk
+; 				pla
+; 				tay
+; 				dey
+; 				jmp rm1
 				
-				; 4. Read links to other maps
-rm2
-;				jsr io_read_record_OPT1
-				mwa io_buffer		game_state.link_right
-				mwa io_buffer+2		game_state.link_right+2
-;				jsr io_read_record_OPT1
-				mwa io_buffer		game_state.link_left
-				mwa io_buffer+2		game_state.link_left+2
-;				jsr io_read_record_OPT1
-				mwa io_buffer		game_state.link_top
-				mwa io_buffer+2		game_state.link_top+2
-;				jsr io_read_record_OPT1
-				mwa io_buffer		game_state.link_bottom
-				mwa io_buffer+2		game_state.link_bottom+2
+; 				; 4. Read links to other maps
+; rm2
+; ;				jsr io_read_record_OPT1
+; 				mwa io_buffer		game_state.link_right
+; 				mwa io_buffer+2		game_state.link_right+2
+; ;				jsr io_read_record_OPT1
+; 				mwa io_buffer		game_state.link_left
+; 				mwa io_buffer+2		game_state.link_left+2
+; ;				jsr io_read_record_OPT1
+; 				mwa io_buffer		game_state.link_top
+; 				mwa io_buffer+2		game_state.link_top+2
+; ;				jsr io_read_record_OPT1
+; 				mwa io_buffer		game_state.link_bottom
+; 				mwa io_buffer+2		game_state.link_bottom+2
 				
-				; 5. Read colors
-				; COLOR1 = text
-				; COLOR2 = background
-				; jsr io_read_record_OPT1
-				string2byte #io_buffer
-				sta COLOR1
-				; jsr io_read_record_OPT1
-				string2byte #io_buffer
-				ldy detected_vbxe
-				cpy #1
-				bne @+
-				sta COLOR1
-@
-;				jsr io_read_record_OPT1
-				string2byte #io_buffer
-				sta COLOR2
-;				jsr io_read_record_OPT1
-				string2byte #io_buffer
-				ldy detected_vbxe
-				cpy #1
-				bne @+
-				sta COLOR2
-@				
-				; 5.5. Read two bytes representing logic DLL
-				txa
-				pha
-				io_read_binary #logic_dll_name_to_be_used #2
-				#if .word logic_dll_name_to_be_used <> game_state.logic_dll_name 
-					load_logic_block
-					mwa logic_dll_name_to_be_used game_state.logic_dll_name
-				#end
-				pla
-				tax
+; 				; 5. Read colors
+; 				; COLOR1 = text
+; 				; COLOR2 = background
+; 				; jsr io_read_record_OPT1
+; 				string2byte #io_buffer
+; 				sta COLOR1
+; 				; jsr io_read_record_OPT1
+; 				string2byte #io_buffer
+; 				ldy detected_vbxe
+; 				cpy #1
+; 				bne @+
+; 				sta COLOR1
+; @
+; ;				jsr io_read_record_OPT1
+; 				string2byte #io_buffer
+; 				sta COLOR2
+; ;				jsr io_read_record_OPT1
+; 				string2byte #io_buffer
+; 				ldy detected_vbxe
+; 				cpy #1
+; 				bne @+
+; 				sta COLOR2
+; @				
+; 				; 5.5. Read two bytes representing logic DLL
+; 				txa
+; 				pha
+; 				io_read_binary #logic_dll_name_to_be_used #2
+; 				#if .word logic_dll_name_to_be_used <> game_state.logic_dll_name 
+; 					load_logic_block
+; 					mwa logic_dll_name_to_be_used game_state.logic_dll_name
+; 				#end
+; 				pla
+; 				tax
 				
-				; 6. Number of objects 				
-				; jsr io_read_record_OPT1
-				string2byte #io_buffer
+; 				; 6. Number of objects 				
+; 				; jsr io_read_record_OPT1
+; 				string2byte #io_buffer
 				
-				; 7. Read all map objects and draw them
-				tay
-rm3				cpy #0
-				jeq rm4
-				tya
-				pha
-				; jsr io_read_record_OPT1
-				txa
-				pha
-				load_map_object
-				pla
-				tax
-				pla
-				tay
-				dey
-				jmp rm3			
+; 				; 7. Read all map objects and draw them
+; 				tay
+; rm3				cpy #0
+; 				jeq rm4
+; 				tya
+; 				pha
+; 				; jsr io_read_record_OPT1
+; 				txa
+; 				pha
+; 				load_map_object
+; 				pla
+; 				tax
+; 				pla
+; 				tay
+; 				dey
+; 				jmp rm3			
 				
-				; 8. Number of items 				
-rm4
-; 				jsr io_read_record_OPT1
-				string2byte #io_buffer
+; 				; 8. Number of items 				
+; rm4
+; ; 				jsr io_read_record_OPT1
+; 				string2byte #io_buffer
 
-				; 9. Read all map items and draw them
-				pha
-				clear_sprites_memory #1
-				pla
-				tay
-rm6				cpy #0
-				jeq rm5
-				tya
-				pha
-				; jsr io_read_record_OPT1
-				mwa io_buffer+6 io_buffer+$57
-				mva io_buffer+8 io_buffer+$59
+; 				; 9. Read all map items and draw them
+; 				pha
+; 				clear_sprites_memory #1
+; 				pla
+; 				tay
+; rm6				cpy #0
+; 				jeq rm5
+; 				tya
+; 				pha
+; 				; jsr io_read_record_OPT1
+; 				mwa io_buffer+6 io_buffer+$57
+; 				mva io_buffer+8 io_buffer+$59
 								
-				txa
-				pha
+; 				txa
+; 				pha
 				
-				; If object is in pocket, do not load
-				is_item_in_pocket #io_buffer
-				cmp #1
-				beq rm7
-				; Some items are not loaded depending on the
-				; current state of the game logic (for example:
-				; cheese that has been given to a rat already).
-				should_spawn_this_item
-				cmp #1
-				beq rm7
-				load_map_item
-rm7				pla
-				tax
-				pla
-				tay
-				dey
-				jmp rm6			
-rm5
+; 				; If object is in pocket, do not load
+; 				is_item_in_pocket #io_buffer
+; 				cmp #1
+; 				beq rm7
+; 				; Some items are not loaded depending on the
+; 				; current state of the game logic (for example:
+; 				; cheese that has been given to a rat already).
+; 				should_spawn_this_item
+; 				cmp #1
+; 				beq rm7
+; 				load_map_item
+; rm7				pla
+; 				tax
+; 				pla
+; 				tay
+; 				dey
+; 				jmp rm6			
+; rm5
 				
-				; 10. Level name 
-				mva #72 io_buffer
-				;io_read_record #io_buffer+1 #io_buffer_size
-				display_level_name
+; 				; 10. Level name 
+; 				mva #72 io_buffer
+; 				;io_read_record #io_buffer+1 #io_buffer_size
+; 				display_level_name
 				
 rm_ERR			rts
 .endp
@@ -635,6 +635,36 @@ rgd
 				rts
 .endp
 
+.proc build_file_name_map
+				; mwa drive_id		io_buffer
+				; mva #77				io_buffer+2
+				; lda use_folders
+				; cmp #1
+				; beq @+
+				; mwa game_state.current_map		io_buffer+3
+				; mwa game_state.current_map+2	io_buffer+5
+				; mwa	map_file_ext	io_buffer+7
+				; mwa	map_file_ext+2	io_buffer+9
+				
+				; Not necessary for opening file, but in case
+				; of error it comes in handy for displaying
+				; the filename on screen
+				; mva #$9b			io_buffer+11
+				; rts
+@				
+				; mva game_state.current_map+3	io_buffer+3
+				; mva #62	io_buffer+4
+				 mva #77				io_buffer_cart
+				mva game_state.current_map+1	io_buffer_cart+1
+				mwa game_state.current_map+2	io_buffer_cart+2
+				; mwa	map_file_ext	io_buffer+7+3
+				; mwa	map_file_ext+2	io_buffer+9+3
+				; mva #$9b			io_buffer+11+3
+				
+				
+				rts
+.endp
+
 ; Creates the font file name in the io_buffer+$60
 .proc build_font_file_name
 				; mwa drive_id		io_buffer+$60
@@ -697,7 +727,7 @@ rgd
 				mva #0 TRANSCHAR_COUNT
 				
 				; Build appropriate filename in the I/O buffer
-				build_file_name
+				build_file_name_map
 
 				lda #0
 				sta NMIEN
@@ -710,7 +740,7 @@ lm_04
 				sta PERSISTENCY_BANK_CTL,y
 				sta wsync
 				mwa #CART_RAM_START show_message_prerequisites.ptr
-				mwa #ADV_MESSAGE_BUFFER show_message_prerequisites.ptr2
+				mwa #screen_mem show_message_prerequisites.ptr2
 
 lm_02
 				ldy #0
@@ -735,27 +765,24 @@ lm_02
 				cmp io_buffer_cart,y
 				bne lm_00
 
-				; Found map, copy all until FF to ADV_MESSAGE_BUFFER
+				; Found map, copy 800 bytes into screen_mem
 				adw show_message_prerequisites.ptr #4
 				ldy #0
 lm_05
 				lda (show_message_prerequisites.ptr),y
-				cmp #$ff
-				beq lm_X
 				sta (show_message_prerequisites.ptr2),y
 				inw show_message_prerequisites.ptr
 				inw show_message_prerequisites.ptr2
+				#if .word show_message_prerequisites.ptr2 = #screen_mem+800 
+					jmp lm_X
+				#end
 				jmp lm_05
 
 lm_00
-				; Not this map, read unitl FF and go up
+				; Not this map, add 804 and continue
 				ldy #0
 lm_01
-				inw show_message_prerequisites.ptr
-				lda (show_message_prerequisites.ptr),y
-				cmp #$ff
-				bne lm_01
-				inw show_message_prerequisites.ptr
+				adw show_message_prerequisites.ptr #804
 				jmp lm_02
 
 lm_X
@@ -772,7 +799,7 @@ lm_X
 
 				; TODO - continue here as we need to parse loaded map
 
-				read_map reload
+				read_map; reload
 				; bmi lm_ERR
 				
 				; Close map file

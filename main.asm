@@ -757,6 +757,9 @@ ACTI_POEM		dta c"APOEM"
 .proc prepare_map
 				disable_antic
 				load_map
+
+				enable_antic
+cipa			jmp cipa
 				
 				; Check if we are on "Hlejnia" easter egg maps.
 				; If yes, there is no place for post load logic
