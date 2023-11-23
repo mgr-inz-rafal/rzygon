@@ -132,7 +132,7 @@ restart
 
 SCREEN_BUFFER
 ADV_MESSAGE_BUFFER
-:1141 	dta b(0)	; Longest map is 1141 bytes long
+:273 	dta b(0)	; Longest message is ~270 bytes long
 
 .proc read_font
 .zpvar	ptr .word
