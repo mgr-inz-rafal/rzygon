@@ -41,6 +41,14 @@
 // The leading '0' of the 4 digit map number is stripped (there are much less than 1000 maps)
 // Each "shape" is exactly 800b long
 //
+//
+// ----- MAPS (STRIPPED) -----
+// Banks 75-77: "MXXX.map"
+//
+// ".map" extension is not included.
+// The leading '0' of the 4 digit map number is stripped (there are much less than 1000 maps)
+// Each "shape" is exactly 99b long
+//
 
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -124,11 +132,20 @@ fn fill_banks_adventure_pictures(start: usize, filter: &str, banks: &mut [Vec<u8
     bank[current_bank_size + 3] = b'A';
 }
 
-fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
-    println!("\n\n*** MAPS (rendered) ***\n");
+fn fill_banks_maps(
+    start: usize,
+    end: usize,
+    filter: &str,
+    banks: &mut [Vec<u8>],
+    fill_to_99: bool,
+) {
+    println!(
+        "\n\n*** MAPS ({}) ***\n",
+        if fill_to_99 { "STRIP" } else { "RENDER" }
+    );
     let re = Regex::new(filter).expect("unable to build regex");
 
-    (55..=73).for_each(|bank_num| {
+    (start..=end).for_each(|bank_num| {
         let bank = banks.get_mut(bank_num).unwrap();
         for item in bank.iter_mut().take(BANK_SIZE) {
             *item = 0xFF;
@@ -173,6 +190,17 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
                 .read_to_end(&mut buffer)
                 .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
+            if fill_to_99 {
+                loop {
+                    if buffer.len() < 99 {
+                        buffer.push(0xFF)
+                    } else {
+                        break;
+                    }
+                }
+                println!("Filled to 99 bytes");
+            }
+
             bank[current_bank_size] = filename_str.to_uppercase().as_bytes()[0];
             bank[current_bank_size + 1] = filename_str.to_uppercase().as_bytes()[2];
             bank[current_bank_size + 2] = filename_str.to_uppercase().as_bytes()[3];
@@ -180,7 +208,7 @@ fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             current_bank_size += 4;
             bank[current_bank_size..(buffer.len() + current_bank_size)]
                 .copy_from_slice(&buffer[..]);
-            current_bank_size += file_size as usize;
+            current_bank_size += buffer.len();
 
             println!(
                 "\tadded '{filename_str}' to bank {current_bank} - bank size {current_bank_size}"
@@ -705,7 +733,20 @@ fn main() {
     fill_banks_fonts(27, &mut banks);
     fill_banks_scr_templates(&mut banks);
     maps_dissection(r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]", &mut banks);
-    fill_banks_maps(55, r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]\.RENDER", &mut banks);
+    fill_banks_maps(
+        55,
+        73,
+        r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]\.RENDER",
+        &mut banks,
+        false,
+    );
+    fill_banks_maps(
+        75,
+        77,
+        r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]\.STRIP",
+        &mut banks,
+        true,
+    );
 
     let mut cart = vec![];
     for bank in banks {
