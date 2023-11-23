@@ -34,8 +34,8 @@
 // 0xFF ID Ox9B ROW_1 0x9B ROW_2 ... 0x9B ROW_n
 //
 //
-// ----- MAPS (shapes) -----
-// Banks 55-XX: "MXXX.map"
+// ----- MAPS (RENDERED) -----
+// Banks 55-73: "MXXX.map"
 //
 // ".map" extension is not included.
 // The leading '0' of the 4 digit map number is stripped (there are much less than 1000 maps)
@@ -122,6 +122,71 @@ fn fill_banks_adventure_pictures(start: usize, filter: &str, banks: &mut [Vec<u8
     bank[current_bank_size + 1] = b'U';
     bank[current_bank_size + 2] = b'P';
     bank[current_bank_size + 3] = b'A';
+}
+
+fn fill_banks_maps(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
+    println!("\n\n*** MAPS (rendered) ***\n");
+    let re = Regex::new(filter).expect("unable to build regex");
+
+    (55..=73).for_each(|bank_num| {
+        let bank = banks.get_mut(bank_num).unwrap();
+        for item in bank.iter_mut().take(BANK_SIZE) {
+            *item = 0xFF;
+        }
+    });
+
+    let mut current_bank = start;
+    let mut current_bank_size = 0;
+    let mut file_counter = 1;
+    let paths = fs::read_dir(format!("{}dissected", DATA_PATH)).expect("unable to read data path");
+    for path in paths {
+        let path = path.expect("path error");
+        let filename = path.file_name();
+        let filename_str = filename.to_str().expect("unable to get filename as &str");
+        if re.is_match(filename_str) {
+            let file_size = path.metadata().unwrap().len();
+            println!("\nprocessing file #{file_counter} - '{filename_str}' ({file_size} b)...",);
+            file_counter += 1;
+
+            let mut bank = banks.get_mut(current_bank).unwrap();
+
+            let left_in_bank = BANK_SIZE - current_bank_size;
+            println!("\tspace left in bank: {left_in_bank}");
+            // -4 to be able to fit DUPA
+            // +4 to be able to fit file ID
+            if left_in_bank - 4 < file_size as usize + 4 {
+                println!("\tno room in current bank, switching to next");
+                current_bank += 1;
+                bank = banks.get_mut(current_bank).unwrap();
+                current_bank_size = 0;
+            } else {
+                println!("\tcontinuing with current bank")
+            }
+
+            let mut buffer = vec![];
+            let xp = format!("{}dissected", DATA_PATH);
+            let full_path = Path::new(xp.as_str());
+            let full_path = full_path.join(filename_str);
+            let mut file = File::open(full_path.clone())
+                .unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+            let _ = file
+                .read_to_end(&mut buffer)
+                .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+            bank[current_bank_size] = filename_str.to_uppercase().as_bytes()[0];
+            bank[current_bank_size + 1] = filename_str.to_uppercase().as_bytes()[2];
+            bank[current_bank_size + 2] = filename_str.to_uppercase().as_bytes()[3];
+            bank[current_bank_size + 3] = filename_str.to_uppercase().as_bytes()[4];
+            current_bank_size += 4;
+            bank[current_bank_size..(buffer.len() + current_bank_size)]
+                .copy_from_slice(&buffer[..]);
+            current_bank_size += file_size as usize;
+
+            println!(
+                "\tadded '{filename_str}' to bank {current_bank} - bank size {current_bank_size}"
+            );
+        }
+    }
 }
 
 fn fill_banks_adventure_messages(start: usize, banks: &mut [Vec<u8>]) {
@@ -334,13 +399,6 @@ struct MapObject<'a> {
 fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
     println!("\n\n*** MAPS ***\n");
     let re = Regex::new(filter).expect("unable to build regex");
-
-    (55..=67).for_each(|bank_num| {
-        let bank = banks.get_mut(bank_num).unwrap();
-        for item in bank.iter_mut().take(BANK_SIZE) {
-            *item = 0xFF;
-        }
-    });
 
     let mut buffer_ob = vec![];
     let mut file_ob = File::open(format!("{}/{}", DATA_PATH, "ob"))
@@ -647,6 +705,7 @@ fn main() {
     fill_banks_fonts(27, &mut banks);
     fill_banks_scr_templates(&mut banks);
     maps_dissection(r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]", &mut banks);
+    fill_banks_maps(55, r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]\.RENDER", &mut banks);
 
     let mut cart = vec![];
     for bank in banks {
