@@ -1069,10 +1069,6 @@ vbi_routine
 		jsr RASTERMUSICTRACKER+3	;Play
 		jmp XITVBV
 
-; -> Will use the bytes spared by introducing one_use.asm.
-LEVEL_NAME_BUFFER1	equ TRANSCHARS+64
-LEVEL_NAME_BUFFER2	equ LEVEL_NAME_BUFFER1+22 				
-				
 .STRUCT	game
 		current_map			.dword		; Id of the map being displayed
 		link_right			.dword		; Id of the map linked to the right

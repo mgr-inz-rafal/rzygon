@@ -1107,11 +1107,15 @@ sab_0
 ; -> Will use the bytes spared by introducing one_use.asm.
 TRANSCHAR_COUNT	dta b(0)
 TRANSCHARS		
-:52 dta b(0) ; Max transchars is 52 on MAP0064 (Sala operacyjna)
+:54 dta b(0) ; Max transchars is 52 on MAP0064 (Sala operacyjna), we're allowing more for some not "object" realted transchars to be added
 POCKET
 :51 dta b(0)
 END_POCKET
-
+; -> Will use the bytes spared by introducing one_use.asm.
+LEVEL_NAME_BUFFER1
+:22 dta b(0)
+LEVEL_NAME_BUFFER2
+:22 dta b(0)
 
 ; RMT module
 	opt h-						;RMT module is standard Atari binary file already
