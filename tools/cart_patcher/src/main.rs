@@ -439,6 +439,10 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             stripped.extend(parts[current_part + 1]); // Link to the left
             stripped.extend(parts[current_part + 2]); // Link to the left
             stripped.extend(parts[current_part + 3]); // Link to the left
+            let color1 = string2num(&parts[current_part + 4]);
+            let color2 = string2num(&parts[current_part + 6]);
+            stripped.push(color1); // Color 1
+            stripped.push(color2); // Color 2
             let map_name = parts.last().expect("should have last part");
             print!("\tMap name: ");
             for c in map_name.iter() {
@@ -572,6 +576,8 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             // XXXX - link to map on the left
             // XXXX - link to map on the top
             // XXXX - link to map on the bottom
+            // X    - color1
+            // X    - color2
             // - Level Name
             // X    - 9b
             // XX?  - TRANSCHARS
