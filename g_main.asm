@@ -73,30 +73,15 @@ hic_X			lda current_action
 @				rts
 .endp
 
-// MAP structure:
-// FONT ID - 9b
-// BUILDER COUNT - 9b
-// MAP CHUNK (aka BUILDER) - each separated with 9b
-// LINK TO OTHER MAP - 9b
-// LINK TO OTHER MAP - 9b
-// LINK TO OTHER MAP - 9b
-// LINK TO OTHER MAP - 9b
 
-; Reads entire map structure from disk and
-; writes it on the screen
-.proc read_map
-				lda #0
-				sta NMIEN
-
-				lda #75
-				sta load_map.slot
+; Parses things and looks up
+.proc 	parsation
 
 rm_04
 				ldy load_map.slot
 				sta PERSISTENCY_BANK_CTL,y
 				sta wsync
 				mwa #CART_RAM_START show_message_prerequisites.ptr
-				mwa #io_buffer_cart+4 show_message_prerequisites.ptr2
 
 rm_02
 				ldy #0
@@ -129,7 +114,7 @@ rm_05
 				sta (show_message_prerequisites.ptr2),y
 				inw show_message_prerequisites.ptr
 				inw show_message_prerequisites.ptr2
-				#if .word show_message_prerequisites.ptr2 = #io_buffer_cart+4+97
+				#if .word show_message_prerequisites.ptr2 = show_status_message.id_
 					jmp rm_X
 				#end
 				jmp rm_05
@@ -138,10 +123,35 @@ rm_00
 				; Not this map, add 101 and continue
 				ldy #0
 rm_01
-				adw show_message_prerequisites.ptr #101
+				adw show_message_prerequisites.ptr remove_from_pocket.item_
 				jmp rm_02
 
 rm_X
+				rts
+.endp.
+
+// MAP structure:
+// FONT ID - 9b
+// BUILDER COUNT - 9b
+// MAP CHUNK (aka BUILDER) - each separated with 9b
+// LINK TO OTHER MAP - 9b
+// LINK TO OTHER MAP - 9b
+// LINK TO OTHER MAP - 9b
+// LINK TO OTHER MAP - 9b
+
+; Reads entire map structure from disk and
+; writes it on the screen
+.proc read_map
+				lda #0
+				sta NMIEN
+
+				lda #75
+				sta load_map.slot
+				mwa #io_buffer_cart+4 show_message_prerequisites.ptr2
+				mwa #io_buffer_cart+4+97 show_status_message.id_
+				mwa #101 remove_from_pocket.item_
+				parsation
+
 				// Font bank: io_buffer_cart+4
 				ldy io_buffer_cart+4
 				sta PERSISTENCY_BANK_CTL,y
@@ -812,59 +822,12 @@ rgd
 				sta NMIEN
 
 				lda #55
-				sta slot
-
-lm_04
-				ldy slot
-				sta PERSISTENCY_BANK_CTL,y
-				sta wsync
-				mwa #CART_RAM_START show_message_prerequisites.ptr
+				sta load_map.slot
 				mwa #screen_mem show_message_prerequisites.ptr2
+				mwa #screen_mem+800 show_status_message.id_
+				mwa #804 remove_from_pocket.item_
+				parsation
 
-lm_02
-				ldy #0
-
-				lda (show_message_prerequisites.ptr),y
-				cmp #$ff
-				bne @+
-				inc slot
-				jmp lm_04
-@				cmp io_buffer_cart,y
-				bne lm_00
-				iny
-				lda (show_message_prerequisites.ptr),y
-				cmp io_buffer_cart,y
-				bne lm_00
-				iny
-				lda (show_message_prerequisites.ptr),y
-				cmp io_buffer_cart,y
-				bne lm_00
-				iny
-				lda (show_message_prerequisites.ptr),y
-				cmp io_buffer_cart,y
-				bne lm_00
-
-				; Found map, copy 800 bytes into screen_mem
-				adw show_message_prerequisites.ptr #4
-				ldy #0
-lm_05
-				lda (show_message_prerequisites.ptr),y
-				sta (show_message_prerequisites.ptr2),y
-				inw show_message_prerequisites.ptr
-				inw show_message_prerequisites.ptr2
-				#if .word show_message_prerequisites.ptr2 = #screen_mem+800 
-					jmp lm_X
-				#end
-				jmp lm_05
-
-lm_00
-				; Not this map, add 804 and continue
-				ldy #0
-lm_01
-				adw show_message_prerequisites.ptr #804
-				jmp lm_02
-
-lm_X
 				sta CART_DISABLE_CTL
 				sta wsync
 				
