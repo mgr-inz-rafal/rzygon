@@ -542,8 +542,13 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             let num_objects_part = current_part + 8;
             assert_eq!(parts[num_objects_part].len(), 5);
 
-            let logic_dll_number = &parts[num_objects_part][0..2];
-            stripped.push(string2num2(logic_dll_number) + 79); // Logic number dll
+            let logic_dll_number = string2num2(&parts[num_objects_part][0..2]);
+            stripped.push(logic_dll_number + 79); // Logic number dll
+            println!(
+                "\n\nLogic DLL for this map: {} in bank {}",
+                logic_dll_number,
+                logic_dll_number + 79
+            );
             stripped.extend(parts[current_part]); // Link to the right
             stripped.extend(parts[current_part + 1]); // Link to the left
             stripped.extend(parts[current_part + 2]); // Link to the left
