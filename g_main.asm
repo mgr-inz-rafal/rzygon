@@ -169,6 +169,27 @@ rm_17
 				jmp rm_17
 rm_X2
 
+				// Logic DLL: io_buffer_cart+5
+				ldy io_buffer_cart+5
+				ldx io_buffer_cart+5
+				sta PERSISTENCY_BANK_CTL,y
+
+				ldy #0
+				mwa #$a000 show_message_prerequisites.ptr
+				mwa #logic_dll show_message_prerequisites.ptr2
+rm_18
+				lda (show_message_prerequisites.ptr),y
+				sta CART_DISABLE_CTL
+				sta (show_message_prerequisites.ptr2),y
+				sta PERSISTENCY_BANK_CTL,x
+				inw show_message_prerequisites.ptr
+				inw show_message_prerequisites.ptr2
+				#if .word show_message_prerequisites.ptr2 = #logic_dll+5887
+					jmp rm_X3
+				#end
+				jmp rm_18
+
+rm_X3
 				sta CART_DISABLE_CTL
 				sta wsync
 
