@@ -49,6 +49,19 @@
 // The leading '0' of the 4 digit map number is stripped (there are much less than 1000 maps)
 // Each "shape" is exactly 99b long
 //
+//
+// ----- LOGIC DLLs -----
+// Banks 79..86
+//
+// Bank 79: L00.DLL
+// Bank 80: L01.DLL
+// Bank 81: L02.DLL
+// Bank 82: L03.DLL
+// Bank 83: L04.DLL
+// Bank 84: L05.DLL
+// Bank 85: L06.DLL
+// Bank 86: L07.DLL
+//
 
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -725,6 +738,58 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
     // }
 }
 
+fn fill_banks_dlls(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
+    println!("\n\n*** DLLs ***\n");
+    let re = Regex::new(filter).expect("unable to build regex");
+
+    let mut current_bank = start;
+    let mut current_bank_size = 0;
+    let mut file_counter = 1;
+    let paths = fs::read_dir(DATA_PATH).expect("unable to read data path");
+    for path in paths {
+        let path = path.expect("path error");
+        let filename = path.file_name();
+        let filename_str = filename.to_str().expect("unable to get filename as &str");
+
+        if re.is_match(filename_str) {
+            let file_size = path.metadata().unwrap().len();
+            println!("\nprocessing file #{file_counter} - '{filename_str}' ({file_size} b)...",);
+            file_counter += 1;
+
+            let mut bank = banks.get_mut(current_bank).unwrap();
+
+            let left_in_bank = BANK_SIZE - current_bank_size;
+            println!("\tspace left in bank: {left_in_bank}");
+            if true {
+                // Always switch banks for DLLs
+                println!("\tno room in current bank, switching to next");
+                current_bank += 1;
+                bank = banks.get_mut(current_bank).unwrap();
+                current_bank_size = 0;
+            } else {
+                println!("\tcontinuing with current bank")
+            }
+
+            let mut buffer = vec![];
+            let full_path = Path::new(DATA_PATH);
+            let full_path = full_path.join(filename_str);
+            let mut file = File::open(full_path.clone())
+                .unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+            let _ = file
+                .read_to_end(&mut buffer)
+                .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+            bank[current_bank_size..(buffer.len() + current_bank_size)]
+                .copy_from_slice(&buffer[..]);
+            current_bank_size += file_size as usize;
+
+            println!(
+                "\tadded '{filename_str}' to bank {current_bank} - bank size {current_bank_size}"
+            );
+        }
+    }
+}
+
 fn main() {
     let mut file = File::open(CART_PATH).expect("cannot open cart file");
     let mut buffer = Vec::with_capacity(CART_SIZE); // 128 8kb banks
@@ -757,6 +822,8 @@ fn main() {
         &mut banks,
         true,
     );
+    // WARNING: we do not sort these, but rely on the OS, so make sure that files are added in correct order
+    fill_banks_dlls(79 - 1, r"[l|L]\d\d\.[d|D][l|L][l|L]", &mut banks);
 
     let mut cart = vec![];
     for bank in banks {
