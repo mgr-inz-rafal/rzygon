@@ -148,8 +148,8 @@ rm_X
 				lda #75
 				sta load_map.slot
 				mwa #io_buffer_cart+4 show_message_prerequisites.ptr2
-				mwa #io_buffer_cart+4+97 show_status_message.id_
-				mwa #101 remove_from_pocket.item_
+				mwa #io_buffer_cart+4+96 show_status_message.id_
+				mwa #4+96 remove_from_pocket.item_
 				parsation
 
 				// Font bank: io_buffer_cart+4
