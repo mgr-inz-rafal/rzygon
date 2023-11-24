@@ -85,6 +85,85 @@ hic_X			lda current_action
 ; Reads entire map structure from disk and
 ; writes it on the screen
 .proc read_map
+				lda #0
+				sta NMIEN
+
+				lda #75
+				sta load_map.slot
+
+rm_04
+				ldy load_map.slot
+				sta PERSISTENCY_BANK_CTL,y
+				sta wsync
+				mwa #CART_RAM_START show_message_prerequisites.ptr
+				mwa #io_buffer_cart+4 show_message_prerequisites.ptr2
+
+rm_02
+				ldy #0
+
+				lda (show_message_prerequisites.ptr),y
+				cmp #$ff
+				bne @+
+				inc load_map.slot
+				jmp rm_04
+@				cmp io_buffer_cart,y
+				bne rm_00
+				iny
+				lda (show_message_prerequisites.ptr),y
+				cmp io_buffer_cart,y
+				bne rm_00
+				iny
+				lda (show_message_prerequisites.ptr),y
+				cmp io_buffer_cart,y
+				bne rm_00
+				iny
+				lda (show_message_prerequisites.ptr),y
+				cmp io_buffer_cart,y
+				bne rm_00
+
+				; Found map, copy 800 bytes into screen_mem
+				adw show_message_prerequisites.ptr #4
+				ldy #0
+rm_05
+				lda (show_message_prerequisites.ptr),y
+				sta (show_message_prerequisites.ptr2),y
+				inw show_message_prerequisites.ptr
+				inw show_message_prerequisites.ptr2
+				#if .word show_message_prerequisites.ptr2 = #io_buffer_cart+4+97
+					jmp rm_X
+				#end
+				jmp rm_05
+
+rm_00
+				; Not this map, add 101 and continue
+				ldy #0
+rm_01
+				adw show_message_prerequisites.ptr #101
+				jmp rm_02
+
+rm_X
+				// Font bank: io_buffer_cart+4
+				ldy io_buffer_cart+4
+				sta PERSISTENCY_BANK_CTL,y
+				ldy #0
+				mwa #$a000 show_message_prerequisites.ptr
+				mwa #level_font show_message_prerequisites.ptr2
+rm_17
+				lda (show_message_prerequisites.ptr),y
+				sta (show_message_prerequisites.ptr2),y
+				inw show_message_prerequisites.ptr
+				inw show_message_prerequisites.ptr2
+				#if .word show_message_prerequisites.ptr2 = #level_font+1024
+					jmp rm_X2
+				#end
+				jmp rm_17
+rm_X2
+
+				sta CART_DISABLE_CTL
+				sta wsync
+
+
+
 ; 				; Read text records from file
 ; 				; 1. Font to be used
 ; ;				jsr io_read_record_OPT1
