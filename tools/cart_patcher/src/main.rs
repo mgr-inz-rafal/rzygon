@@ -137,11 +137,11 @@ fn fill_banks_maps(
     end: usize,
     filter: &str,
     banks: &mut [Vec<u8>],
-    fill_to_99: bool,
+    fill_to_97: bool,
 ) {
     println!(
         "\n\n*** MAPS ({}) ***\n",
-        if fill_to_99 { "STRIP" } else { "RENDER" }
+        if fill_to_97 { "STRIP" } else { "RENDER" }
     );
     let re = Regex::new(filter).expect("unable to build regex");
 
@@ -190,15 +190,15 @@ fn fill_banks_maps(
                 .read_to_end(&mut buffer)
                 .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-            if fill_to_99 {
+            if fill_to_97 {
                 loop {
-                    if buffer.len() < 99 {
+                    if buffer.len() < 97 {
                         buffer.push(0xFF)
                     } else {
                         break;
                     }
                 }
-                println!("Filled to 99 bytes");
+                println!("Filled to 97 bytes");
             }
 
             bank[current_bank_size] = filename_str.to_uppercase().as_bytes()[0];
@@ -489,7 +489,7 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             let mut stripped: Vec<u8> = vec![];
             let mut rendered = vec![0u8; 800];
 
-            stripped.extend(parts[0]); // Font number
+            stripped.push(string2num(parts[0])+29); // Font number
 
             let num_builders = string2num(parts[1]);
             println!("\tbuilders: {}", num_builders);
@@ -656,7 +656,7 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             // - Level Name (9b)
 
             // ---------- -------------- ----------- STRIPPED STRUCTURE:
-            // XXX  - font number
+            // X    - bank with font
             // XX   - logic DLL number
             // XXXX - link to map on the right
             // XXXX - link to map on the left
