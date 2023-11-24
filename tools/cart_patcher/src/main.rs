@@ -137,11 +137,11 @@ fn fill_banks_maps(
     end: usize,
     filter: &str,
     banks: &mut [Vec<u8>],
-    fill_to_97: bool,
+    fill_to_96: bool,
 ) {
     println!(
         "\n\n*** MAPS ({}) ***\n",
-        if fill_to_97 { "STRIP" } else { "RENDER" }
+        if fill_to_96 { "STRIP" } else { "RENDER" }
     );
     let re = Regex::new(filter).expect("unable to build regex");
 
@@ -171,7 +171,13 @@ fn fill_banks_maps(
             println!("\tspace left in bank: {left_in_bank}");
             // -4 to be able to fit DUPA
             // +4 to be able to fit file ID
-            if left_in_bank - 4 < file_size as usize + 4 {
+            if left_in_bank - 4 < {
+                if fill_to_96 {
+                    96 + 4
+                } else {
+                    file_size as usize + 4
+                }
+            } {
                 println!("\tno room in current bank, switching to next");
                 current_bank += 1;
                 bank = banks.get_mut(current_bank).unwrap();
@@ -190,15 +196,15 @@ fn fill_banks_maps(
                 .read_to_end(&mut buffer)
                 .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-            if fill_to_97 {
+            if fill_to_96 {
                 loop {
-                    if buffer.len() < 97 {
+                    if buffer.len() < 96 {
                         buffer.push(0xFF)
                     } else {
                         break;
                     }
                 }
-                println!("Filled to 97 bytes");
+                println!("Filled to 96 bytes");
             }
 
             bank[current_bank_size] = filename_str.to_uppercase().as_bytes()[0];
@@ -399,6 +405,10 @@ fn string2num(bytes: &[u8]) -> u8 {
     (bytes[0] - 0x30) * 100 + (bytes[1] - 0x30) * 10 + (bytes[2] - 0x30)
 }
 
+fn string2num2(bytes: &[u8]) -> u8 {
+    (bytes[0] - 0x30) * 10 + (bytes[1] - 0x30)
+}
+
 fn dump_rendered(r: &[u8]) {
     for (i, c) in r.iter().enumerate() {
         if i % 40 == 0 {
@@ -489,7 +499,7 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             let mut stripped: Vec<u8> = vec![];
             let mut rendered = vec![0u8; 800];
 
-            stripped.push(string2num(parts[0])+29); // Font number
+            stripped.push(string2num(parts[0]) + 29); // Font number
 
             let num_builders = string2num(parts[1]);
             println!("\tbuilders: {}", num_builders);
@@ -520,7 +530,7 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             assert_eq!(parts[num_objects_part].len(), 5);
 
             let logic_dll_number = &parts[num_objects_part][0..2];
-            stripped.extend(logic_dll_number); // Logic number dll
+            stripped.push(string2num2(logic_dll_number)); // Logic number dll
             stripped.extend(parts[current_part]); // Link to the right
             stripped.extend(parts[current_part + 1]); // Link to the left
             stripped.extend(parts[current_part + 2]); // Link to the left
@@ -657,7 +667,7 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
 
             // ---------- -------------- ----------- STRIPPED STRUCTURE:
             // X    - bank with font
-            // XX   - logic DLL number
+            // X    - logic DLL number
             // XXXX - link to map on the right
             // XXXX - link to map on the left
             // XXXX - link to map on the top
