@@ -32,6 +32,11 @@ detected_vbxe		dta b(0)
 .var default_font		.byte
 
 .var use_folders		.byte
+; Hero data
+.var hero_state hero
+; ORIGINAL
+.var hero_XPos .byte
+.var hero_YPos .byte
 
 .proc clear_game_screen
 				mwa #screen_mem screen_tmp

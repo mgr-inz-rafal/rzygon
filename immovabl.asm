@@ -180,13 +180,7 @@ ACTION_MENU_SLOT_3
 				dta d"          ",b($9b)
 ACTION_MENU_SLOT_4
 				dta d"Lekcewa",b(90),b($9b)
-
-				
-; Hero data
-.var hero_state hero
-; ORIGINAL
-.var hero_XPos .byte
-.var hero_YPos .byte
+		
 ;.var hero_XPos=$5c .byte
 ;.var hero_YPos=$8e .byte
 ; DEBUG
