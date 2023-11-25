@@ -3,7 +3,6 @@
 ; .var			addr0		.word;
 ; .var			addr1		.word;
 				
-; finale_loader
 ; 				ldy #0
 ; @				lda finale_file,y
 ; 				sta io_buffer,y
