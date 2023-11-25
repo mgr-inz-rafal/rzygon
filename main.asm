@@ -110,7 +110,7 @@ io_buffer_size	equ	$ff
 post_satan_marker
 				; SATAN_MARKER_00 org logic_dll
 				; SATAN_MARKER_01 icl 'logic_dlls\l000_dll.asm'
-org 			post_satan_marker
+				org	post_satan_marker
 				
 finale_loader
 				
