@@ -78,7 +78,6 @@ use regex::Regex;
 
 const CART_PATH: &str = "../../build/rzygon.bin";
 const MAIN_ASM_PATH: &str = "../../main.asm";
-const MAIN_XEX_PATH: &str = "../../build/main.xex";
 const RELOC_FILES_PATH: &str = "../../build/relocated";
 const BUILD_PATH: &str = "../../build.bat";
 const WORKING_DIR: &str = "../..";
@@ -86,6 +85,7 @@ const BANK_SIZE: usize = 1024 * 8;
 const CART_SIZE: usize = 128 * BANK_SIZE;
 const DATA_PATH: &str = "../../build/";
 const RELOC_SCRIPT: &str = "../../relocate.bat";
+const REVERT_SCRIPT: &str = "../../revert_main_asm.bat";
 
 fn fill_banks_adventure_pictures(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
     println!("\n\n*** ADVENTURE PICTURES ***\n");
@@ -864,6 +864,7 @@ fn relocate_logic_dlls() {
                 .spawn()
                 .expect("can't spawn child process");
             println!("Altirra pid={}", child.id());
+
             thread::sleep(Duration::from_secs(2));
             // Doesn't always work so...
             let _ = child.kill().expect("should have killed altirra");
@@ -874,35 +875,31 @@ fn relocate_logic_dlls() {
                 .spawn()
                 .expect("should spawn kill task");
             thread::sleep(Duration::from_secs(1));
+            //child.wait();
+
             println!("child killed")
         }
-        panic!();
 
-        // {
-        //     let mut main_file = File::open(MAIN_XEX_PATH).expect("cannot open main xex file");
-        //     let mut buf = vec![];
-        //     let _ = main_file
-        //         .read_to_end(&mut buf)
-        //         .expect("cannot read main xex file");
+        {
+            let t = format!("{}/{}", RELOC_FILES_PATH, target);
+            println!("move to {t}");
+            std::fs::rename("../../dupareloc.txt", t).expect("should move file");
+        }
 
-        //     let relocated_dll: Vec<_> = buf.into_iter().skip(6).take(5887).collect();
-        //     let mut file = fs::OpenOptions::new()
-        //         .create(true)
-        //         .append(false)
-        //         .truncate(true)
-        //         .write(true)
-        //         .open(format!("{}/{}", RELOC_FILES_PATH, target))
-        //         .expect("cannot open file");
-        //     file.write_all(relocated_dll.as_slice()).expect("should write relocated dll");
-
-        //     panic!();
-        // }
+        {
+            let mut child = Command::new(REVERT_SCRIPT)
+                .current_dir(WORKING_DIR)
+                .spawn()
+                .expect("can't spawn child process");
+            let _result = child.wait().expect("error waiting for child process");
+            println!("change to main.asm reverted");
+        }
     }
 }
 
 fn main() {
-    relocate_logic_dlls();
-    panic!();
+    //relocate_logic_dlls();
+    //panic!();
 
     let mut file = File::open(CART_PATH).expect("cannot open cart file");
     let mut buffer = Vec::with_capacity(CART_SIZE); // 128 8kb banks
