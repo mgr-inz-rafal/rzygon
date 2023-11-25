@@ -15,6 +15,9 @@ loader_start	equ $8CD5
 				icl 'mt_size.asm'
 
 				;icl 'io_loader.asm'
+
+				; SATAN_MARKER_00 org logic_dll
+				; SATAN_MARKER_01 icl 'logic_dlls\l000_dll.asm'
 				
 				org pstart
 
