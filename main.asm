@@ -107,10 +107,14 @@ io_buffer_size	equ	$ff
 				; Music
 				icl 'm_player.asm'
 
+.var	game_state 		game
+.var	current_action			.word
+
+				icl 'immovabl.asm'
+
 post_satan_marker
 				icl 'satan.asm'
 				org	post_satan_marker
-			
 finale_loader
 				
 ; ----------------------
@@ -1135,10 +1139,7 @@ MODUL equ $7750
 
 				org text_font
 				ins 'fnt_msg.bin'
-				
-				;org immovable
-				org $ba3e ; After dli
-				icl 'immovabl.asm'
+			
 								
 				org $02e0
 				dta a(pstart)

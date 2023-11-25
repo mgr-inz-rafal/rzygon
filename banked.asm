@@ -1098,7 +1098,6 @@ vbi_routine
 .var		tmp_pipes			.byte
 .var		file_open_mode		.byte
 .var		filename 			.word
-.var		msg_wait_fire		.byte
 .var		save_load_ok		.byte
 
 ; ------------- END BANKED - MUST BE ASSMBLED BEFORE $4000
