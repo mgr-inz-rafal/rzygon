@@ -16,9 +16,6 @@ loader_start	equ $8CD5
 
 				;icl 'io_loader.asm'
 
-				; SATAN_MARKER_00 org logic_dll
-				; SATAN_MARKER_01 icl 'logic_dlls\l000_dll.asm'
-				
 				org pstart
 
 .zpvar =		$80
@@ -109,6 +106,9 @@ io_buffer_size	equ	$ff
 				
 				; Music
 				icl 'm_player.asm'
+
+				; SATAN_MARKER_00 org logic_dll
+				; SATAN_MARKER_01 icl 'logic_dlls\l000_dll.asm'
 				
 ; ----------------------
 ; Program start
