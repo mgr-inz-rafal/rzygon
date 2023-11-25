@@ -197,6 +197,16 @@ rm_18
 				jmp rm_18
 
 rm_X3
+				// Links to other maps
+ 				mwa io_buffer_cart+6		game_state.link_right
+ 				mwa io_buffer_cart+8		game_state.link_right+2				
+				mwa io_buffer_cart+10	game_state.link_left
+				mwa io_buffer_cart+12	game_state.link_left+2
+				mwa io_buffer_cart+14	game_state.link_top
+				mwa io_buffer_cart+16	game_state.link_top+2
+				mwa io_buffer_cart+18	game_state.link_bottom
+				mwa io_buffer_cart+20	game_state.link_bottom+2
+
 				sta CART_DISABLE_CTL
 				sta wsync
 
