@@ -66,17 +66,26 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs::{self, File},
-    io::{ErrorKind, Read, Write},
+    io::{BufRead, BufReader, ErrorKind, Read, Write},
     path::Path,
+    process::Command,
+    thread,
+    time::Duration,
 };
 
 use itertools::Itertools;
 use regex::Regex;
 
 const CART_PATH: &str = "../../build/rzygon.bin";
+const MAIN_ASM_PATH: &str = "../../main.asm";
+const MAIN_XEX_PATH: &str = "../../build/main.xex";
+const RELOC_FILES_PATH: &str = "../../build/relocated";
+const BUILD_PATH: &str = "../../build.bat";
+const WORKING_DIR: &str = "../..";
 const BANK_SIZE: usize = 1024 * 8;
 const CART_SIZE: usize = 128 * BANK_SIZE;
 const DATA_PATH: &str = "../../build/";
+const RELOC_SCRIPT: &str = "../../relocate.bat";
 
 fn fill_banks_adventure_pictures(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
     println!("\n\n*** ADVENTURE PICTURES ***\n");
@@ -709,6 +718,7 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             let mut file = fs::OpenOptions::new()
                 .create(true)
                 .append(false)
+                .truncate(true)
                 .write(true)
                 .open(p_stripped)
                 .expect("cannot open file");
@@ -722,6 +732,7 @@ fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
             let mut file = fs::OpenOptions::new()
                 .create(true)
                 .append(false)
+                .truncate(true)
                 .write(true)
                 .open(p_rendered)
                 .expect("cannot open file");
@@ -795,7 +806,104 @@ fn fill_banks_dlls(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
     }
 }
 
+fn relocate_logic_dlls() {
+    println!("\n\n*** RELOCATING LOGIC DLLs CODE ***\n");
+
+    let logic_dll_files = &[
+        ("L000_DLL.asm", "l00.dll"),
+        ("L001_DLL.asm", "l01.dll"),
+        ("L002_DLL.asm", "l02.dll"),
+        ("L003_DLL.asm", "l03.dll"),
+        ("L004_DLL.asm", "l04.dll"),
+        ("L005_DLL.asm", "l05.dll"),
+        ("L006_DLL.asm", "l06.dll"),
+        ("L007_DLL.asm", "l07.dll"),
+    ];
+
+    for (source, target) in logic_dll_files {
+        println!("Processing {} into {}", source, target);
+        let mut result_file = vec![];
+        {
+            let main_file = File::open(MAIN_ASM_PATH).expect("cannot open main file");
+            let reader = BufReader::new(main_file);
+            for line in reader.lines() {
+                let line = line.expect("should read line");
+                result_file.push(line.clone());
+                if line.contains("SATAN_MARKER_00") {
+                    result_file.push("\torg logic_dll".to_string());
+                }
+                if line.contains("SATAN_MARKER_01") {
+                    result_file.push(format!("\ticl 'logic_dlls\\{}'", source));
+                }
+            }
+        }
+        {
+            let mut file = fs::OpenOptions::new()
+                .create(true)
+                .append(false)
+                .truncate(true)
+                .write(true)
+                .open(MAIN_ASM_PATH)
+                .expect("cannot open file");
+            for line in result_file {
+                write!(file, "{}\n", line).expect("should write file");
+            }
+        }
+
+        {
+            let mut child = Command::new(BUILD_PATH)
+                .current_dir(WORKING_DIR)
+                .spawn()
+                .expect("can't spawn child process");
+            let _result = child.wait().expect("error waiting for child process");
+        }
+
+        {
+            let mut child = Command::new(RELOC_SCRIPT)
+                .current_dir(WORKING_DIR)
+                .spawn()
+                .expect("can't spawn child process");
+            println!("Altirra pid={}", child.id());
+            thread::sleep(Duration::from_secs(2));
+            // Doesn't always work so...
+            let _ = child.kill().expect("should have killed altirra");
+            // ...try brute force
+            Command::new("taskkill")
+                .arg("/im")
+                .arg("altirra64.exe")
+                .spawn()
+                .expect("should spawn kill task");
+            thread::sleep(Duration::from_secs(1));
+            println!("child killed")
+        }
+        panic!();
+
+        // {
+        //     let mut main_file = File::open(MAIN_XEX_PATH).expect("cannot open main xex file");
+        //     let mut buf = vec![];
+        //     let _ = main_file
+        //         .read_to_end(&mut buf)
+        //         .expect("cannot read main xex file");
+
+        //     let relocated_dll: Vec<_> = buf.into_iter().skip(6).take(5887).collect();
+        //     let mut file = fs::OpenOptions::new()
+        //         .create(true)
+        //         .append(false)
+        //         .truncate(true)
+        //         .write(true)
+        //         .open(format!("{}/{}", RELOC_FILES_PATH, target))
+        //         .expect("cannot open file");
+        //     file.write_all(relocated_dll.as_slice()).expect("should write relocated dll");
+
+        //     panic!();
+        // }
+    }
+}
+
 fn main() {
+    relocate_logic_dlls();
+    panic!();
+
     let mut file = File::open(CART_PATH).expect("cannot open cart file");
     let mut buffer = Vec::with_capacity(CART_SIZE); // 128 8kb banks
     let read = file
