@@ -108,10 +108,9 @@ io_buffer_size	equ	$ff
 				icl 'm_player.asm'
 
 post_satan_marker
-				; SATAN_MARKER_00 org logic_dll
-				; SATAN_MARKER_01 icl 'logic_dlls\l000_dll.asm'
+				icl 'satan.asm'
 				org	post_satan_marker
-				
+			
 finale_loader
 				
 ; ----------------------
