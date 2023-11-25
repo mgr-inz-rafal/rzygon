@@ -898,14 +898,11 @@ hero_data_dead_finish
 ; Puts single char (stored in A) in the
 ; "transparent chars" table.
 .proc add_single_char_to_transparent_chars
-				is_on_transchar_list_already
-				lda tmp_transchar
-				cpx #1
-				beq @+
-				ldy TRANSCHAR_COUNT
-				sta TRANSCHARS,y
+				;is_on_transchar_list_already
+				ldx TRANSCHAR_COUNT
+				sta TRANSCHARS,x
 				inc TRANSCHAR_COUNT
-@				rts
+				rts
 .endp
 
 ; Provides a short delay

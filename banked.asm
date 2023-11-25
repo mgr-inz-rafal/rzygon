@@ -1094,7 +1094,7 @@ vbi_routine
 //.var		tmp_channel 		.word
 .var		load_map_item_tmp	.byte
 .zpvar		load_map_object_tmp	.word
-.var		tmp_transchar		.byte
+;.var		tmp_transchar		.byte
 .var		tmp_pipes			.byte
 .var		file_open_mode		.byte
 .var		filename 			.word

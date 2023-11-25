@@ -224,6 +224,18 @@ rm_Q12			lda io_buffer_cart+24,y
 				bne rm_Q12
 				display_level_name
 
+				// Transchars (until $9b)
+rm_Q13			iny
+				lda io_buffer_cart+24,y
+				cmp #$9b
+				beq rm_Q14
+				add_single_char_to_transparent_chars
+				jmp rm_Q13
+
+rm_Q14
+
+
+
 ; 				; 10. Level name 
 ; 				mva #72 io_buffer
 ; 				;io_read_record #io_buffer+1 #io_buffer_size

@@ -84,21 +84,21 @@ hvtsp0			lsr
 
 ; Checks if char in A is already on the transparent
 ; chars list. If yes X=1
-.proc is_on_transchar_list_already
-				sta tmp_transchar
-				ldy #$ff
-iotla0			iny
-				cpy TRANSCHAR_COUNT
-				beq @+1
-				lda TRANSCHARS,y
-				cmp tmp_transchar
-				beq @+
-				jmp iotla0 
-@				ldx #1		; Found it
-				rts
-@				ldx #0		; Reached the end of the list and didn't find
-				rts
-.endp
+; .proc is_on_transchar_list_already
+; 				sta tmp_transchar
+; 				ldy #$ff
+; iotla0			iny
+; 				cpy TRANSCHAR_COUNT
+; 				beq @+1
+; 				lda TRANSCHARS,y
+; 				cmp tmp_transchar
+; 				beq @+
+; 				jmp iotla0 
+; @				ldx #1		; Found it
+; 				rts
+; @				ldx #0		; Reached the end of the list and didn't find
+; 				rts
+; .endp
 
 ; Puts the specified chars in the "transparent chars" table.
 .proc add_to_transparent_chars(.word from_where .byte how_much) .var
