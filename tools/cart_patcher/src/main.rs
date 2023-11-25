@@ -62,6 +62,12 @@
 // Bank 85: L06.DLL
 // Bank 86: L07.DLL
 //
+//
+// ----- ITEMS -----
+// Bank: 29 ($b459..$bfa7) - IT - 2894 bytes
+//
+// Item record structure
+// 0xFF ID Ox9B BYTE_COUNT BYTE0..BYTEN COLOR NAME_LEN NAMEBYTE0..NAMEBYTEn 0X9B
 
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -905,6 +911,23 @@ fn relocate_logic_dlls() {
     }
 }
 
+fn fill_banks_items(start: usize, banks: &mut [Vec<u8>]) {
+    let mut buffer = vec![];
+    let full_path = Path::new(DATA_PATH);
+    let full_path = full_path.join("IT");
+    let mut file =
+        File::open(full_path.clone()).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+        let bank = banks.get_mut(start).unwrap();
+    for i in 0..2894 {
+        bank[i + 0xb459 - 0xA000] = buffer[i];
+    }
+
+}
+
 fn main() {
     relocate_logic_dlls();
 
@@ -941,6 +964,7 @@ fn main() {
     );
     // WARNING: we do not sort these, but rely on the OS, so make sure that files are added in correct order
     fill_banks_dlls(79 - 1, r"[l|L]\d\d\.[d|D][l|L][l|L]", &mut banks);
+    fill_banks_items(29, &mut banks);
 
     let mut cart = vec![];
     for bank in banks {

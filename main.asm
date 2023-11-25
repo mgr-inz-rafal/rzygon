@@ -1152,3 +1152,5 @@ MODUL equ $7750
 ;				io_read_binary
 ;				io_read_binary
 ;				io_close_file				
+;				load_map_item_tmp
+;				load_map_item

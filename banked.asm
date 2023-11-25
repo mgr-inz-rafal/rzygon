@@ -526,7 +526,7 @@ lmi_ERR			rts
 ;	FNAME	= file name with object definition (always 5 characters)
 ;	XXX		= X position of the object
 ;	YYY		= Y position of the object
-.proc load_map_object
+;.proc load_map_object
 ; .var xpos, ypos, xsize, ysize, transparent .byte
 ; .var yoffset .byte
 ; 				; #if .byte ext_ram_banks <> #0
@@ -608,8 +608,8 @@ lmi_ERR			rts
 ;					io_close_file
 ;				#end
 				
-lmo_ERR			rts
-.endp
+;lmo_ERR			rts
+;.endp
 
 ; Needs to be called after the status
 ; message should be removed from screen.
@@ -1096,7 +1096,7 @@ vbi_routine
 .zpvar		load_map_object_tmp	.word
 ;.var		tmp_transchar		.byte
 .var		tmp_pipes			.byte
-.var		file_open_mode		.byte
+.var		file_open_mode		.byte ; Needed in map loading
 .var		filename 			.word
 .var		save_load_ok		.byte
 

@@ -232,7 +232,134 @@ rm_Q13			iny
 				add_single_char_to_transparent_chars
 				jmp rm_Q13
 
-rm_Q14
+rm_Q14   		// Items
+				mva #1 item_being_loaded
+				tya
+				pha
+				;clear_sprites_memory #1
+				pla
+				tay
+				iny
+				lda io_buffer_cart+24,y	; Number of items
+				cmp #0
+				jeq rm_Q15
+				tax
+
+				mwa #ITEM_1_ID show_message_prerequisites.ptr2
+				mwa #io_buffer_cart+25 show_message_prerequisites.ptr
+rm_Q16				
+				inw show_message_prerequisites.ptr
+				dey 
+				cpy #0
+				bne rm_Q16
+
+				; Store item name in show_message_prerequisites.ptr2
+				ldy #4
+rm_Q17			lda (show_message_prerequisites.ptr),y
+				sta (show_message_prerequisites.ptr2),y
+				dey
+				cpy #$ff
+				bne rm_Q17
+
+				dex
+				cpx #$ff
+				jeq rm_Q15 ; All items read
+
+				; Item finished loading - position it's X location accordingly
+				ldy #0
+				adw show_message_prerequisites.ptr #5
+				lda (show_message_prerequisites.ptr),y
+				ldy item_being_loaded
+				cpy #4
+				beq rm_Q18
+				sta HPOSP0,y
+				jmp rm_Q19
+rm_Q18
+ 				sta HPOSM3
+				add #2
+				sta HPOSM2
+				add #2
+				sta HPOSM1
+				add #2
+				sta HPOSM0			
+
+rm_Q19			lda (show_message_prerequisites.ptr),y
+				sta load_map_item_tmp ; Store sprite-Y
+
+				; Look for item in the cart bank
+czopek			ldy #29
+				sta PERSISTENCY_BANK_CTL,y
+
+				mwa #$b459+1 read_font.ptr
+rm_V01
+				ldy #0
+				lda (read_font.ptr),y
+				cmp (show_message_prerequisites.ptr2),y
+				bne rm_V00 ; Not this item
+				iny
+				lda (read_font.ptr),y
+				cmp (show_message_prerequisites.ptr2),y
+				bne rm_V00 ; Not this item
+				iny
+				lda (read_font.ptr),y
+				cmp (show_message_prerequisites.ptr2),y
+				bne rm_V00 ; Not this item
+				iny
+				lda (read_font.ptr),y
+				cmp (show_message_prerequisites.ptr2),y
+				bne rm_V00 ; Not this item
+				iny
+				lda (read_font.ptr),y
+				cmp (show_message_prerequisites.ptr2),y
+				bne rm_V00 ; Not this item
+
+				; Item found
+lewatywa		adw read_font.ptr #5+1 ; +1 for 0x9b at the end of item ID
+				ldy #0
+				lda (read_font.ptr),y
+				tax	; X holds number of bytes for this item
+				
+				; Copy bytes
+rm_T00			iny
+				sty file_open_mode
+				ldy #29
+				sta PERSISTENCY_BANK_CTL,y
+				ldy file_open_mode
+				lda (read_font.ptr),y
+				ldy load_map_item_tmp
+				sta CART_DISABLE_CTL
+				sta pmg_item1,y
+				inc load_map_item_tmp
+				ldy file_open_mode
+				dex
+				cpx #0
+				bne rm_T00
+
+colololo
+				; Copy color
+				iny 
+				sty file_open_mode
+				ldy #29
+				sta PERSISTENCY_BANK_CTL,y
+				ldy file_open_mode
+				lda (read_font.ptr),y
+				ldy item_being_loaded
+				cpy #4
+				beq rm_Q23
+				sta PCOLR0,y
+				jmp rm_U01
+rm_Q23			sta COLOR3
+				jmp rm_U01
+
+rm_V00   		inw read_font.ptr
+				jmp rm_V01
+
+
+rm_U01			; Proceed with next item
+				stx CART_DISABLE_CTL
+				
+
+rm_Q15			; All items read
 
 
 
@@ -391,7 +518,7 @@ rm_Q14
 ; 				;io_read_record #io_buffer+1 #io_buffer_size
 ; 				display_level_name
 				
-rm_ERR			rts
+				rts
 .endp
 
 ; Performs the game initialization
