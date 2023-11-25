@@ -424,6 +424,10 @@ fn fill_banks_scr_templates(banks: &mut [Vec<u8>]) {
 }
 
 fn string2num(bytes: &[u8]) -> u8 {
+    if bytes[0] == 0x39 && bytes[1] == 0x39 && bytes[2] == 0x39 {
+        // Specjal font for Hlejnia
+        return 0xFF - 29;
+    }
     (bytes[0] - 0x30) * 100 + (bytes[1] - 0x30) * 10 + (bytes[2] - 0x30)
 }
 
@@ -869,7 +873,7 @@ fn relocate_logic_dlls() {
                 .expect("can't spawn child process");
             println!("Altirra pid={}", child.id());
 
-            thread::sleep(Duration::from_secs(2));
+            thread::sleep(Duration::from_secs(1));
             // Doesn't always work so...
             let _ = child.kill().expect("should have killed altirra");
             // ...try brute force
@@ -878,7 +882,7 @@ fn relocate_logic_dlls() {
                 .arg("altirra64.exe")
                 .spawn()
                 .expect("should spawn kill task");
-            thread::sleep(Duration::from_secs(1));
+            thread::sleep(Duration::from_millis(300));
             //child.wait();
 
             println!("child killed")
@@ -902,8 +906,7 @@ fn relocate_logic_dlls() {
 }
 
 fn main() {
-    //relocate_logic_dlls();
-    //panic!();
+    relocate_logic_dlls();
 
     let mut file = File::open(CART_PATH).expect("cannot open cart file");
     let mut buffer = Vec::with_capacity(CART_SIZE); // 128 8kb banks
