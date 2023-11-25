@@ -12,7 +12,6 @@
 | $9c60 | $b35f | Logic DLL + instruction and disclaimer text while not in game |
 | ?     | ?     | -- FREE --?                                                   |
 | $b400 | $b7ff | Text font                                                     |
-| $b800 | $b9ff | PMG                                                           |
-| $ba00 | $ba28 | DLI                                                           |
-| $ba3e | ...   | Code                                                          |
-| $bfcd | $bfff | -- FREE --
+| $b800 | $bbff | Free?
+| $bc00 | $bfff | PMG                                                           |
+

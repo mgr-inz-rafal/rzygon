@@ -1,33 +1,35 @@
 ;	@com.wudsn.ide.asm.mainsourcefile=main.asm
 
 ; Activates the currently loaded Display List
-.proc			activate_display_list
+; .proc			activate_display_list
 
-				ldx <display_list
-				ldy >display_list
-				stx SDLSTL
-				sty SDLSTL+1
+				; ldx <display_list
+				; ldy >display_list
+				; stx SDLSTL
+				; sty SDLSTL+1
 				
-				rts
-.endp
+				; rts
+; .endp
 
 ; Loads the specific Display List
-.proc			set_display_list(.word dl_name .byte dl_len) .var
-.zpvar			dl_name .word
-.var			dl_len	.byte
+; .proc			set_display_list(.word dl_name .byte dl_len) .var
+; .zpvar			dl_name .word
+; .var			dl_len	.byte
 
-				dec dl_len
-				ldy #$ff
-sdl_0			iny
-				lda (dl_name),y
-				sta display_list,y
-				dec	dl_len
-				bpl sdl_0
+; 				dec dl_len
+; 				ldy #$ff
+; sdl_0			iny
+; 				lda (dl_name),y
+; 				sta display_list,y
+; 				dec	dl_len
+; 				bpl sdl_0
 				
-				rts 
-.endp
+; 				rts 
+; .endp
 
 ; Display List used for Adventure Message
+klotnitz
+				org sprite_mem
 dl_adventure_message
 				dta b(%11110000)			; DLI - begin
 				dta b(%01110000)
@@ -122,4 +124,5 @@ dl_game_screen
 				dta b($41),a(dl_game_screen)
 dl_game_screen_len	equ *-dl_game_screen
 ; Display List used for initialization
-
+			org klotnitz
+.var		display_list .word

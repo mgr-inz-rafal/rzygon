@@ -52,8 +52,10 @@ cgs0			lda #0
 ; Switches the display list to the game DL
 .proc game_screen
 				; Configure display list
-				set_display_list #dl_game_screen #dl_game_screen_len
-								
+				ldx <dl_game_screen
+				ldy >dl_game_screen
+				stx SDLSTL
+				sty SDLSTL+1									
 				rts
 .endp
 

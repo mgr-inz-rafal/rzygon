@@ -929,7 +929,10 @@ pam_S			music_init @
 				read_font
 ;				io_close_file
 				display_adventure_picture
-				set_display_list #dl_adventure_message #dl_adventure_message_len
+				ldx <dl_adventure_message
+				ldy >dl_adventure_message
+				stx SDLSTL
+				sty SDLSTL+1				
 								
 				show_message_prerequisites
 
@@ -976,7 +979,10 @@ cipeczka
 				show_hero
 				
 				switch_advmessage_state			
-				set_display_list #dl_game_screen #dl_game_screen_len
+				ldx <dl_game_screen
+				ldy >dl_game_screen
+				stx SDLSTL
+				sty SDLSTL+1					
 				dli_switch_from_adventure_message
 				enable_antic
 				

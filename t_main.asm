@@ -39,9 +39,11 @@ TP_ROWCOUNT			equ 10
 
 .proc	title_display_list
 		; Configure display list
-		set_display_list #dl_adventure_message #dl_adventure_message_len
 		dli_switch_to_title_screen
-		activate_display_list
+		ldx <dl_adventure_message
+		ldy >dl_adventure_message
+		stx SDLSTL
+		sty SDLSTL+1	
 		rts
 .endp
 
