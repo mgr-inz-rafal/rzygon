@@ -214,6 +214,20 @@ rm_X3
 				sta CART_DISABLE_CTL
 				sta wsync
 
+				// Level name (until $9b)
+				mva #72 io_buffer_cart
+				ldy #0
+rm_Q12			lda io_buffer_cart+24,y
+				sta io_buffer_cart+1,y
+				iny
+				cmp #$9b
+				bne rm_Q12
+				display_level_name
+
+; 				; 10. Level name 
+; 				mva #72 io_buffer
+; 				;io_read_record #io_buffer+1 #io_buffer_size
+; 				display_level_name
 
 
 ; 				; Read text records from file

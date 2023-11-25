@@ -97,11 +97,11 @@ dmc0			tya
 @			iny
 			dec Xpos
 			dew tmp_adr
-			lda io_buffer,y
+			lda io_buffer_cart,y
 			cmp #$9b
 			bne @-
 			
-			print_string #io_buffer Xpos #23 #0
+			print_string #io_buffer_cart Xpos #23 #0
 			
 			; 2. Display the correctly trimmed name border
 			print_string #LVLNAME_BRD_COR Xpos #22 #0
