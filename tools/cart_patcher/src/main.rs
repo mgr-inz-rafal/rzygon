@@ -77,7 +77,7 @@ use itertools::Itertools;
 use regex::Regex;
 
 const CART_PATH: &str = "../../build/rzygon.bin";
-const MAIN_ASM_PATH: &str = "../../main.asm";
+const MAIN_ASM_PATH: &str = "../../satan.asm";
 const RELOC_FILES_PATH: &str = "../../build/relocated";
 const BUILD_PATH: &str = "../../build.bat";
 const WORKING_DIR: &str = "../..";
