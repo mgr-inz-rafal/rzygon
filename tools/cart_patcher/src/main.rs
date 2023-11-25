@@ -761,7 +761,7 @@ fn fill_banks_dlls(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
     let mut current_bank = start;
     let mut current_bank_size = 0;
     let mut file_counter = 1;
-    let paths = fs::read_dir(DATA_PATH).expect("unable to read data path");
+    let paths = fs::read_dir(format!("{}/relocated", DATA_PATH)).expect("unable to read data path");
     for path in paths {
         let path = path.expect("path error");
         let filename = path.file_name();
@@ -769,7 +769,10 @@ fn fill_banks_dlls(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
 
         if re.is_match(filename_str) {
             let file_size = path.metadata().unwrap().len();
-            println!("\nprocessing file #{file_counter} - '{filename_str}' ({file_size} b)...",);
+            println!(
+                "\nprocessing file #{file_counter} - '{}' ({file_size} b)...",
+                path.path().as_os_str().to_string_lossy(),
+            );
             file_counter += 1;
 
             let mut bank = banks.get_mut(current_bank).unwrap();
@@ -787,7 +790,8 @@ fn fill_banks_dlls(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
             }
 
             let mut buffer = vec![];
-            let full_path = Path::new(DATA_PATH);
+            let xp = format!("{}/relocated", DATA_PATH);
+            let full_path = Path::new(&xp);
             let full_path = full_path.join(filename_str);
             let mut file = File::open(full_path.clone())
                 .unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
