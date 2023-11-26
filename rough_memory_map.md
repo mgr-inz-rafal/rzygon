@@ -13,6 +13,6 @@
 | ?     | ?     | -- FREE --?                                                   |
 | $b400 | $b7ff | Text font                                                     |
 | $b800 | $b85c | DLIs
-| $b85d | $bbff | Free?
-| $bc00 | $bfff | PMG                                                           |
+| $b85d | $baff | Free?
+| $bb00 | $bfff | PMG                                                           |
 

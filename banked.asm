@@ -21,7 +21,8 @@ CART_DISABLE_CTL equ $d580
 				lda pocket_offset
 				pha
 
-				clear_sprites_memory #1
+				lda #1
+				clear_sprites_memory
 				mva #1 item_being_loaded
 
 				; Iterate through all items

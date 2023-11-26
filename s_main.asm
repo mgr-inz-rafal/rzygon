@@ -21,29 +21,33 @@ pmg_item4		equ	sprite_mem+$300			; Missiles
 
 ; Clears memory used by sprites
 ; Saves hero data if necessary.
-.proc clear_sprites_memory(.byte save_hero) .var
-.var save_hero		.byte
+.proc clear_sprites_memory
+				pha
+				; if a=1, don't clear hero
 				hide_sprites
-				mwa #sprite_mem screen_tmp
-				#if .byte save_hero = #0
-					sty HPOSP0
-					adw screen_tmp #$400		; Start at player 0 (not saving a hero)
-				#else
-					adw screen_tmp #$500		; Start at player 1 (saving hero)
-					ldy #0						; Clear missiles
-					lda #0
-@					sta pmg_item4,y
-					iny
-					cpy #0
-					bne @-
-				#end
 				ldy #0
-@				lda #0
+				mwa #pmg_item4 screen_tmp
+csm_2			lda #0
 				sta (screen_tmp),y
-				adw screen_tmp #1
-				cpw screen_tmp #sprite_mem+$800	; Reached the end of the sprites memory?
-				bne @- 
-				rts
+				#if .word screen_tmp == #pmg_hero
+					jmp csm_1
+				#end
+				inw screen_tmp
+				jmp csm_2
+csm_1			pla
+				#if .byte @ == 1
+					mwa #pmg_item1 screen_tmp
+				#else
+					mwa #pmg_hero screen_tmp
+					sty HPOSP0
+				#end
+csm_0			lda #0
+ 				sta (screen_tmp),y
+ 				inw screen_tmp
+				#if .word screen_tmp == #pmg_item3+$100
+					rts
+				#end
+				jmp csm_0
 .endp
 
 ; Moves sprite 0 one row down
@@ -75,8 +79,9 @@ pmg_item4		equ	sprite_mem+$300			; Missiles
 .endp
 
 ; Initializes the sprites used during the game
-.proc setup_sprites				
-				clear_sprites_memory #0
+.proc setup_sprites
+				lda #0
+				clear_sprites_memory
 				ldy #0
 				sty SIZEP0
 				sty SIZEP1

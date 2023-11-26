@@ -236,7 +236,8 @@ rm_Q14   		// Items
 				mva #1 item_being_loaded
 				tya
 				pha
-				;clear_sprites_memory #1
+				lda #1
+				clear_sprites_memory
 				pla
 				tay
 				iny
@@ -888,8 +889,8 @@ rgd
 				
 				; Start with map #3 (Ascii: 0003 = $30 $30 $30 $33)
 ; ORIGINAL
-				mwa #$3030 game_state.current_map		; 00
-				mwa #$3330 game_state.current_map+2		; 03
+				mwa #$3130 game_state.current_map		; 00
+				mwa #$3837 game_state.current_map+2		; 03
 ; DEBUG
 ;				mwa #$3130 game_state.current_map
 ;				mwa #$3537 game_state.current_map+2

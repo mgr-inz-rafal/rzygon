@@ -160,28 +160,6 @@ A_M0003_004		dta d"Wajcha",b($9b)					\ A_M0003_004_ID	equ 4
 A_M0003_005		dta d"Sp",b(76),"uczka",b($9b)			\ A_M0003_005_ID	equ 5
 A_M0003_006		dta d"Kibel",b($9b)						\ A_M0003_006_ID	equ 6
 A_M0003_007		dta d"Krucha czaszka",b($9b)			\ A_M0003_007_ID	equ 7
-A_M0003_008		dta d"Podgrzewacz",b($9b)				\ A_M0003_008_ID	equ 8
-A_M0003_009		dta d"R",b(79),"j much",b($9b)			\ A_M0003_009_ID	equ 9
-A_M0003_010		dta d"Szczelina",b($9b)					\ A_M0003_010_ID	equ 10
-A_M0003_011		dta d"Zapora",b($9b)					\ A_M0003_011_ID	equ 11
-A_M0003_012		dta d"Straszyd",b(76),"o",b($9b)		\ A_M0003_012_ID	equ 12
-A_M0003_013		dta d"Krata",b($9b)						\ A_M0003_013_ID	equ 13
-A_M0003_014		dta d"Drzwi do zakrystii",b($9b)		\ A_M0003_014_ID	equ 14
-A_M0003_015		dta d"P",b(69),"kni",b(69),"ta rura",b($9b)	\ A_M0003_015_ID	equ 15
-A_M0003_016		dta d"Nowoczesne drzwi",b($9b)			\ A_M0003_016_ID	equ 16
-A_M0003_017		dta d"Pan Zwami",b($9b)					\ A_M0003_017_ID	equ 17
-A_M0003_018		dta d"Kurczak mutant",b($9b)			\ A_M0003_018_ID	equ 18
-A_M0003_019		dta d"P",b(76),"aski kurczak",b($9b)	\ A_M0003_019_ID	equ 19
-A_M0003_020		dta d"Umrzyk",b($9b)					\ A_M0003_020_ID	equ 20
-A_M0003_021		dta d"Nagrobek",b($9b)					\ A_M0003_021_ID	equ 21
-A_M0003_022		dta d"Zawa",b(76),b($9b)				\ A_M0003_022_ID	equ 22
-A_M0003_023		dta d"Zag",b(79),"wniony nagrobek",b($9b) \ A_M0003_023_ID	equ 23
-A_M0003_024		dta d"Dupa glisty",b($9b) 				\ A_M0003_024_ID	equ 24
-A_M0003_025		dta d"Szczur serojad",b($9b) 			\ A_M0003_025_ID	equ 25
-A_M0003_026		dta d"Obelisk",b($9b) 					\ A_M0003_026_ID	equ 26
-A_M0003_027		dta d"Kolumna",b($9b) 					\ A_M0003_027_ID	equ 27
-A_M0003_028		dta d"T",b(69),"gi chwast",b($9b) 		\ A_M0003_028_ID	equ 28
-A_M0003_029		dta d"Znicz nap",b(69),"dowy",b($9b)	\ A_M0003_029_ID	equ 29
 A_M0003_030		dta d"Smardz",b($9b)					\ A_M0003_030_ID	equ 30
 A_M0003_031		dta d"Kundel",b($9b)					\ A_M0003_031_ID	equ 31
 A_M0003_032		dta d"Ci",b(69),b(90),"ki g",b(76),"az",b($9b) \ A_M0003_032_ID	equ 32
