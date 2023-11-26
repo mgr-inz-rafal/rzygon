@@ -286,6 +286,8 @@ rm_Q18
 rm_Q19			lda (show_message_prerequisites.ptr),y
 				sta load_map_item_tmp ; Store sprite-Y
 
+				; ----------------------------- LOAD ITEM FROM EXT RAM
+
 				; Look for item in the cart bank
 czopek			ldy #29
 				sta PERSISTENCY_BANK_CTL,y
@@ -312,6 +314,11 @@ rm_V01
 				lda (read_font.ptr),y
 				cmp (show_message_prerequisites.ptr2),y
 				bne rm_V00 ; Not this item
+				jmp lewatywa
+
+rm_V00   		; Keep looking for the item in the cart bank
+				inw read_font.ptr
+				jmp rm_V01
 
 				; Item found
 lewatywa		adw read_font.ptr #5+1 ; +1 for 0x9b at the end of item ID
@@ -335,7 +342,6 @@ rm_T00			iny
 				cpx #0
 				bne rm_T00
 
-colololo
 				; Copy color
 				iny 
 				sty file_open_mode
@@ -347,13 +353,29 @@ colololo
 				cpy #4
 				beq rm_Q23
 				sta PCOLR0,y
-				jmp rm_U01
+				jmp rm_U04
 rm_Q23			sta COLOR3
-				jmp rm_U01
 
-rm_V00   		inw read_font.ptr
-				jmp rm_V01
+				; Copy item name (including the final 0x9b)
+rm_U04			ldy file_open_mode
+				iny
 
+rm_U05
+				iny
+rm_U06			inw read_font.ptr
+				dey
+				cpy #0
+				bne rm_U06
+				dey
+
+rm_U07			iny
+
+				lda (read_font.ptr),y
+				sta ITEM_1_DATA+1,y
+				cmp #$9b
+				bne rm_U07
+
+				; ----------------------------- ITEM FULLY LOADED FROM EXT RAM
 
 rm_U01			; Proceed with next item
 				stx CART_DISABLE_CTL
