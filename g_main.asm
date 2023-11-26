@@ -242,16 +242,22 @@ rm_Q14   		// Items
 				iny
 				lda io_buffer_cart+24,y	; Number of items
 				cmp #0
-				jeq rm_Q15
-				tax
+				jeq rm_Q15   ; No items, finish routine
+				sta filename ; filename - number of items to load stored in X
 
-				mwa #ITEM_1_ID show_message_prerequisites.ptr2
 				mwa #io_buffer_cart+25 show_message_prerequisites.ptr
 rm_Q16				
 				inw show_message_prerequisites.ptr
 				dey 
 				cpy #0
 				bne rm_Q16
+
+				mwa #pmg_item1 read_font.ptr2
+				mwa #ITEM_1_ID szczam
+				mwa #ITEM_1_DATA load_map_object_tmp
+
+rm_ni11			; Here starts the read process for next item
+				mwa szczam show_message_prerequisites.ptr2 ; Here put next item ID instead of hardcoded
 
 				; Store item name in show_message_prerequisites.ptr2
 				ldy #4
@@ -260,10 +266,6 @@ rm_Q17			lda (show_message_prerequisites.ptr),y
 				dey
 				cpy #$ff
 				bne rm_Q17
-
-				dex
-				cpx #$ff
-				jeq rm_Q15 ; All items read
 
 				; Item finished loading - position it's X location accordingly
 				ldy #0
@@ -283,7 +285,8 @@ rm_Q18
 				add #2
 				sta HPOSM0			
 
-rm_Q19			lda (show_message_prerequisites.ptr),y
+rm_Q19			ldy #1
+				lda (show_message_prerequisites.ptr),y
 				sta load_map_item_tmp ; Store sprite-Y
 
 				; ----------------------------- LOAD ITEM FROM EXT RAM
@@ -335,7 +338,7 @@ rm_T00			iny
 				lda (read_font.ptr),y
 				ldy load_map_item_tmp
 				sta CART_DISABLE_CTL
-				sta pmg_item1,y
+				sta (read_font.ptr2),y
 				inc load_map_item_tmp
 				ldy file_open_mode
 				dex
@@ -370,19 +373,30 @@ rm_U06			inw read_font.ptr
 
 rm_U07			iny
 
+kutasik
 				lda (read_font.ptr),y
-				sta ITEM_1_DATA+1,y
+				iny
+				sta (load_map_object_tmp),y
+				dey
 				cmp #$9b
 				bne rm_U07
 
 				; ----------------------------- ITEM FULLY LOADED FROM EXT RAM
 
 rm_U01			; Proceed with next item
+				adw show_message_prerequisites.ptr #2
+				inc item_being_loaded
+				adw szczam #(ITEM_2_DATA-ITEM_1_DATA)
+				adw load_map_object_tmp #(ITEM_2_DATA-ITEM_1_DATA)
+				adw read_font.ptr2 #(pmg_item2-pmg_item1)
+				#if .byte item_being_loaded <= filename
+					jmp rm_ni11
+				#end
 				stx CART_DISABLE_CTL
 				
 
 rm_Q15			; All items read
-
+				stx CART_DISABLE_CTL
 
 
 ; 				; 10. Level name 

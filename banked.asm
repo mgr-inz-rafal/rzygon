@@ -1093,11 +1093,11 @@ vbi_routine
 .zpvar 		screen_tmp			.word
 //.var		tmp_channel 		.word
 .var		load_map_item_tmp	.byte
-.zpvar		load_map_object_tmp	.word
+.zpvar		load_map_object_tmp	.word ; Needed in map object loading
 ;.var		tmp_transchar		.byte
 .var		tmp_pipes			.byte
 .var		file_open_mode		.byte ; Needed in map loading
-.var		filename 			.word
+.var		filename 			.word ; First byte needed and already used
 .var		save_load_ok		.byte
 
 ; ------------- END BANKED - MUST BE ASSMBLED BEFORE $4000
