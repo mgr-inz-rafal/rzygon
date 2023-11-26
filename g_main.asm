@@ -374,7 +374,6 @@ rm_U06			inw read_font.ptr
 
 rm_U07			iny
 
-kutasik
 				lda (read_font.ptr),y
 				iny
 				sta (load_map_object_tmp),y
@@ -389,7 +388,11 @@ rm_U01			; Proceed with next item
 				inc item_being_loaded
 				adw szczam #(ITEM_2_DATA-ITEM_1_DATA)
 				adw load_map_object_tmp #(ITEM_2_DATA-ITEM_1_DATA)
-				adw read_font.ptr2 #(pmg_item2-pmg_item1)
+				#if .byte item_being_loaded = #4
+					mwa #pmg_item4 read_font.ptr2
+				#else
+					adw read_font.ptr2 #(pmg_item2-pmg_item1)
+				#end
 				#if .byte item_being_loaded <= filename
 					jmp rm_ni11
 				#end
@@ -889,8 +892,8 @@ rgd
 				
 				; Start with map #3 (Ascii: 0003 = $30 $30 $30 $33)
 ; ORIGINAL
-				mwa #$3130 game_state.current_map		; 00
-				mwa #$3837 game_state.current_map+2		; 03
+				mwa #$3030 game_state.current_map		; 00
+				mwa #$3330 game_state.current_map+2		; 03
 ; DEBUG
 ;				mwa #$3130 game_state.current_map
 ;				mwa #$3537 game_state.current_map+2
