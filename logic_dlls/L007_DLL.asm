@@ -5,7 +5,7 @@
 .proc process_logic
 				mwa #0 current_action
 					
-				; "Wejœcie do gabinetu" = MAP0167.MAP
+				; "Wejï¿½cie do gabinetu" = MAP0167.MAP
 				is_on_30313736
 				cpx #1
 				bne pl01
@@ -45,7 +45,7 @@ pl04
 				process_logic_M0168
 				rts
 pl05
-				; "Zejœcie do groty" - MAP0181.MAP
+				; "Zejï¿½cie do groty" - MAP0181.MAP
 				is_on_30313138
 				cpx #1
 				bne pl06
@@ -69,7 +69,7 @@ pl07
 				process_logic_M0179
 				rts
 pl08
-				; "G³êbsza grota" = M0006.MAP
+				; "Gï¿½ï¿½bsza grota" = M0006.MAP
 				is_on_30303630
 				cpx #1
 				bne pl09
@@ -1039,6 +1039,15 @@ aoaM0003_8
 				rts
 .endp
 
+A_M0003_001		dta d"Prycza",b($9b)					\ A_M0003_001_ID	equ 1
+A_M0003_002		dta d"Drewniane drzwi",b($9b)			\ A_M0003_002_ID	equ 2
+A_M0003_003		dta d"Druciana krata",b($9b)			\ A_M0003_003_ID	equ 3
+A_M0003_082		dta "Panel pompy",b($9b)				\ A_M0003_082_ID	equ 82
+A_M0003_083		dta "D",b(69),"bowa k",b(76),"oda",b($9b)	\ A_M0003_083_ID	equ 83
+A_M0003_058		dta d"Stalowe drzwi",b($9b) 			\ A_M0003_058_ID	equ 58
+A_M0003_020		dta d"Umrzyk",b($9b)					\ A_M0003_020_ID	equ 20
+A_M0003_088		dta "Kruchy sufit",b($9b) 				\ A_M0003_088_ID	equ 88
+
 ; Assures that all actions done to the
 ; particular map are visible when
 ; map is preloaded.
@@ -1585,4 +1594,7 @@ aoaM0174_1
 				stx screen_mem+8*40+26
 				rts
 .endp
+
+A_M0003_081		dta b(88),"ona ordynatora",b($9b)		\ A_M0003_081_ID	equ 81
+A_M0003_080		dta "Barchanowy fotel",b($9b)			\ A_M0003_080_ID	equ 80
 

@@ -152,10 +152,6 @@ A_M0003_054		dta d"Kupa kupy",b($9b) 				\ A_M0003_054_ID	equ 54
 A_M0003_055		dta d"Dupa trupa",b($9b) 				\ A_M0003_055_ID	equ 55
 A_M0003_056		dta d"Stopy trupa",b($9b) 				\ A_M0003_056_ID	equ 56
 A_M0003_057		dta d"Dziura z gwintem",b($9b) 			\ A_M0003_057_ID	equ 57
-A_M0003_058		dta d"Stalowe drzwi",b($9b) 			\ A_M0003_058_ID	equ 58
-A_M0003_001		dta d"Prycza",b($9b)					\ A_M0003_001_ID	equ 1
-A_M0003_002		dta d"Drewniane drzwi",b($9b)			\ A_M0003_002_ID	equ 2
-A_M0003_003		dta d"Druciana krata",b($9b)			\ A_M0003_003_ID	equ 3
 A_M0003_004		dta d"Wajcha",b($9b)					\ A_M0003_004_ID	equ 4
 A_M0003_005		dta d"Sp",b(76),"uczka",b($9b)			\ A_M0003_005_ID	equ 5
 A_M0003_006		dta d"Kibel",b($9b)						\ A_M0003_006_ID	equ 6

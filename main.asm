@@ -221,7 +221,6 @@ A_M0003_016		dta d"Nowoczesne drzwi",b($9b)			\ A_M0003_016_ID	equ 16
 A_M0003_017		dta d"Pan Zwami",b($9b)					\ A_M0003_017_ID	equ 17
 A_M0003_018		dta d"Kurczak mutant",b($9b)			\ A_M0003_018_ID	equ 18
 A_M0003_019		dta d"P",b(76),"aski kurczak",b($9b)	\ A_M0003_019_ID	equ 19
-A_M0003_020		dta d"Umrzyk",b($9b)					\ A_M0003_020_ID	equ 20
 A_M0003_021		dta d"Nagrobek",b($9b)					\ A_M0003_021_ID	equ 21
 A_M0003_022		dta d"Zawa",b(76),b($9b)				\ A_M0003_022_ID	equ 22
 A_M0003_023		dta d"Zag",b(79),"wniony nagrobek",b($9b) \ A_M0003_023_ID	equ 23
@@ -248,15 +247,10 @@ A_M0003_076		dta "Baba Wanga",b($9b)					\ A_M0003_076_ID	equ 76
 A_M0003_077		dta "O",b(76),"tarzyk",b($9b)			\ A_M0003_077_ID	equ 77
 A_M0003_078		dta b(68),"limaczek",b($9b)				\ A_M0003_078_ID	equ 78
 A_M0003_079		dta "Panel sterowania",b($9b)			\ A_M0003_079_ID	equ 79
-A_M0003_080		dta "Barchanowy fotel",b($9b)			\ A_M0003_080_ID	equ 80
-A_M0003_081		dta b(88),"ona ordynatora",b($9b)		\ A_M0003_081_ID	equ 81
-A_M0003_082		dta "Panel pompy",b($9b)				\ A_M0003_082_ID	equ 82
-A_M0003_083		dta "D",b(69),"bowa k",b(76),"oda",b($9b)	\ A_M0003_083_ID	equ 83
 A_M0003_084		dta "Mo",b(75),"dzie",b(90),b($9b)		\ A_M0003_084_ID	equ 84
 A_M0003_085		dta "Drakul",b($9b)						\ A_M0003_085_ID	equ 85
 A_M0003_086		dta "Aspersorium",b($9b)				\ A_M0003_086_ID	equ 86
 A_M0003_087		dta "Z",b(76),"a wiadomo",b(83),b(67),b($9b) \ A_M0003_087_ID	equ 87
-A_M0003_088		dta "Kruchy sufit",b($9b) 				\ A_M0003_088_ID	equ 88
 A_M0003_089		dta "Betonowy szalunek",b($9b) 			\ A_M0003_089_ID	equ 89
 
 ; Definition of the messages
