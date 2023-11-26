@@ -1040,11 +1040,9 @@ aoaM0003_8
 .endp
 
 A_M0003_001		dta d"Prycza",b($9b)					\ A_M0003_001_ID	equ 1
-A_M0003_002		dta d"Drewniane drzwi",b($9b)			\ A_M0003_002_ID	equ 2
 A_M0003_003		dta d"Druciana krata",b($9b)			\ A_M0003_003_ID	equ 3
 A_M0003_082		dta "Panel pompy",b($9b)				\ A_M0003_082_ID	equ 82
 A_M0003_083		dta "D",b(69),"bowa k",b(76),"oda",b($9b)	\ A_M0003_083_ID	equ 83
-A_M0003_058		dta d"Stalowe drzwi",b($9b) 			\ A_M0003_058_ID	equ 58
 A_M0003_020		dta d"Umrzyk",b($9b)					\ A_M0003_020_ID	equ 20
 A_M0003_088		dta "Kruchy sufit",b($9b) 				\ A_M0003_088_ID	equ 88
 

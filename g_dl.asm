@@ -127,6 +127,8 @@ dl_game_screen_len	equ *-dl_game_screen
 
 ; Represents the game state
 ; Strings representing action objects
+A_M0003_058		dta d"Stalowe drzwi",b($9b) 			\ A_M0003_058_ID	equ 58
+A_M0003_002		dta d"Drewniane drzwi",b($9b)			\ A_M0003_002_ID	equ 2
 A_M0003_033		dta d"Przycisk no",b(90),"ny",b($9b)	\ A_M0003_033_ID	equ 33
 A_M0003_034		dta d"Mocarna bariera",b($9b)			\ A_M0003_034_ID	equ 34
 A_M0003_035		dta d"Wrota piekie",b(76),b($9b)		\ A_M0003_035_ID	equ 35

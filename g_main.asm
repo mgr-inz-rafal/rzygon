@@ -332,6 +332,7 @@ lewatywa		adw read_font.ptr #5+1 ; +1 for 0x9b at the end of item ID
 				
 				; Copy bytes
 rm_T00			iny
+sratko
 				sty file_open_mode
 				ldy #29
 				sta PERSISTENCY_BANK_CTL,y
@@ -388,6 +389,7 @@ rm_U01			; Proceed with next item
 				inc item_being_loaded
 				adw szczam #(ITEM_2_DATA-ITEM_1_DATA)
 				adw load_map_object_tmp #(ITEM_2_DATA-ITEM_1_DATA)
+kutasik
 				#if .byte item_being_loaded = #4
 					mwa #pmg_item4 read_font.ptr2
 				#else
@@ -822,39 +824,44 @@ rgd
 ; S = 62
 ; Q = 47
 				lda CH		; $02FC (hard to look-up in atari.inc)
-				 ; cmp #63	; A = left
-				 ; jne @+
-				 ; follow_left
-				 ; lda #$ff
-				 ; sta CH
-				 ; jmp rg0
-; @				cmp #58 ; D = right
-				 ; jne @+
-				 ; follow_right #0
-				 ; lda #$ff
-				 ; sta CH
-				 ; jmp rg0
-; @				cmp #46 ; W = up
-				 ; jne @+
-				 ; follow_up #0
-				 ; lda #$ff
-				 ; sta CH
-				 ; jmp rg0
-; @				cmp #62 ; S = down
-				 ; jne @+
-				 ; follow_down #0
-				 ; lda #$ff
-				 ; sta CH
-				 ; jmp rg0
-; @				cmp #47 ; Q = various debug calls
-				 ; jne @+
- 				; remove_from_pocket #ACTI_ASS_PLUG
- 				; lda logic_flags_002
- 				; eor #LF_WORM_PLUGGED
- 				; sta logic_flags_002
-				 ; lda #$ff
-				 ; sta CH
-				 ; jmp rg0
+
+				; Debug navigation
+
+				 cmp #63	; A = left
+				 jne @+
+				 follow_left
+				 lda #$ff
+				 sta CH
+				 jmp rg0
+@				cmp #58 ; D = right
+				 jne @+
+				 follow_right #0
+				 lda #$ff
+				 sta CH
+				 jmp rg0
+@				cmp #46 ; W = up
+				 jne @+
+				 follow_up #0
+				 lda #$ff
+				 sta CH
+				 jmp rg0
+@				cmp #62 ; S = down
+				 jne @+
+				 follow_down #0
+				 lda #$ff
+				 sta CH
+				 jmp rg0
+@				cmp #47 ; Q = various debug calls
+				 jne @+
+ 				remove_from_pocket #ACTI_ASS_PLUG
+ 				lda logic_flags_002
+ 				eor #LF_WORM_PLUGGED
+ 				sta logic_flags_002
+				 lda #$ff
+				 sta CH
+				 jmp rg0
+
+
 				cmp #28 ; ESC - back to start screen
 				jne @+
 				lda #$ff
