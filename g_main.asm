@@ -708,7 +708,6 @@ rg9				lda current_action
 				cmp #0
 				beq rgc
 				display_action_menu
-				jmp rg8
 				process_action_menu
 				
 				; Invoke appropriate action handler
