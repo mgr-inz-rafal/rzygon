@@ -785,7 +785,6 @@ smp_X
 ; Shows the message on the status bar
 .proc show_status_message_INTERNAL(.word id) .var
 .zpvar id .word
-.var line .byte
 				store_level_name
 				clear_status_bar
 				
@@ -800,7 +799,18 @@ smp_X
 				stx NMIEN	
 				show_message_prerequisites
 				mva #21 show_adventure_message_INTERNAL.line
+				mwa #ADV_MESSAGE_BUFFER ext_ram_tmp
 ssm0			
+				adv_buffer_read_record
+				lda io_buffer_cart
+				cmp #$ff
+				beq ssm1
+				print_string #io_buffer_cart #3 show_adventure_message_INTERNAL.line #0
+				inc show_adventure_message_INTERNAL.line
+				inw ext_ram_tmp
+				jmp ssm0
+ssm1
+
 				; #if .byte ext_ram_banks <> #0
 				; 	extended_mem ext_ram_bank_msg
 				; 	mem_read_record_OPT1
@@ -810,15 +820,15 @@ ssm0
 ;					bmi ssm1
 ;				#end
 
-				lda io_buffer
-				cmp #$9b
-				beq ssm1
-				cmp #$ff
-				beq ssm1 
-				print_string #io_buffer #3 show_adventure_message_INTERNAL.line #0
-				inc show_adventure_message_INTERNAL.line
-				jmp ssm0
-ssm1
+;				lda ADV_MESSAGE_BUFFER
+;				cmp #$9b
+;				beq ssm1
+;				cmp #$ff
+;				beq ssm1 
+;				print_string #ADV_MESSAGE_BUFFER #3 show_adventure_message_INTERNAL.line #0
+;				inc show_adventure_message_INTERNAL.line
+;				jmp ssm0
+;ssm1
 ;				#if .byte ext_ram_banks = #0
 ;					io_close_file
 ;				#end
