@@ -286,240 +286,240 @@ spi8			pla
 ;---------------- g_main.asm
 ; Loads the map item from disks and set ups
 ; sprites accordingly
-.proc load_map_item
-				; Store item ID in the item buffer
-				txa
-				pha
-				ldx item_being_loaded
-				lda #1
-				add #20
-lmia			dex
-				cpx #0
-				beq @+
-				add #ITEM_DATA_LEN
-				jmp lmia
-@				tax
-				ldy #0
-@;				lda io_buffer,y
-				sta ITEM_1_DATA,x				
-				iny
-				inx
-				cpy #5
-				bne @-
-				pla
-				tax
+; .proc load_map_item
+; 				; Store item ID in the item buffer
+; 				txa
+; 				pha
+; 				ldx item_being_loaded
+; 				lda #1
+; 				add #20
+; lmia			dex
+; 				cpx #0
+; 				beq @+
+; 				add #ITEM_DATA_LEN
+; 				jmp lmia
+; @				tax
+; 				ldy #0
+; @;				lda io_buffer,y
+; 				sta ITEM_1_DATA,x				
+; 				iny
+; 				inx
+; 				cpy #5
+; 				bne @-
+; 				pla
+; 				tax
 
-				; Load item
-				string2byte #io_buffer+10
-				sta load_map_item_tmp
+; 				; Load item
+; 				string2byte #io_buffer+10
+; 				sta load_map_item_tmp
 
-				; #if .byte ext_ram_banks <> #0
-				; 	; Load from extended RAM
-				; 	mwa #EXTRAM_ITEMS ext_ram_tmp
-				; #else
-					; build_item_file_name
-					; open_object_file				; Reuse the "font file open" code.
-					; jmi lmi_ERR
-;				#end
+; 				; #if .byte ext_ram_banks <> #0
+; 				; 	; Load from extended RAM
+; 				; 	mwa #EXTRAM_ITEMS ext_ram_tmp
+; 				; #else
+; 					; build_item_file_name
+; 					; open_object_file				; Reuse the "font file open" code.
+; 					; jmi lmi_ERR
+; ;				#end
 
-lmiB				
-				; #if .byte ext_ram_banks <> #0
-				; 	extended_mem ext_ram_bank
-				; 	mem_read_record #io_buffer+5
-				; 	main_mem
-				; #else	
-;					io_read_record #io_buffer+5 #io_buffer_size-5
-;				#end
+; lmiB				
+; 				; #if .byte ext_ram_banks <> #0
+; 				; 	extended_mem ext_ram_bank
+; 				; 	mem_read_record #io_buffer+5
+; 				; 	main_mem
+; 				; #else	
+; ;					io_read_record #io_buffer+5 #io_buffer_size-5
+; ;				#end
 				
-@				lda io_buffer+5
-				cmp #$ff			; This indicates that the item ID has been read
-				bne lmiB			
+; @				lda io_buffer+5
+; 				cmp #$ff			; This indicates that the item ID has been read
+; 				bne lmiB			
 				
-				; Check if we have read the item we need
-				#if .dword io_buffer <> io_buffer+6 .or .byte io_buffer+4 <> io_buffer+10
-					jmp lmiB
-				#end
-				; #if .byte ext_ram_banks <> #0
-				; 	extended_mem ext_ram_bank
-				; 	mem_read_binary_opt1
-				; 	main_mem
-				; #else
-;					jsr io_read_binary_OPT1
-;				#end
-				ldy #0
-				; sty tmp_channel+1
-				; ldy io_buffer
-				; sty tmp_channel
+; 				; Check if we have read the item we need
+; 				#if .dword io_buffer <> io_buffer+6 .or .byte io_buffer+4 <> io_buffer+10
+; 					jmp lmiB
+; 				#end
+; 				; #if .byte ext_ram_banks <> #0
+; 				; 	extended_mem ext_ram_bank
+; 				; 	mem_read_binary_opt1
+; 				; 	main_mem
+; 				; #else
+; ;					jsr io_read_binary_OPT1
+; ;				#end
+; 				ldy #0
+; 				; sty tmp_channel+1
+; 				; ldy io_buffer
+; 				; sty tmp_channel
 							
-				; #if .byte ext_ram_banks <> #0
-				; 	extended_mem ext_ram_bank
-				; 	mem_read_binary #io_buffer tmp_channel
-				; 	main_mem
-				; #else
-	;				io_read_binary #io_buffer tmp_channel
-;				#end
-				; ldy tmp_channel
-				; lda #0
-				; sta tmp_channel
+; 				; #if .byte ext_ram_banks <> #0
+; 				; 	extended_mem ext_ram_bank
+; 				; 	mem_read_binary #io_buffer tmp_channel
+; 				; 	main_mem
+; 				; #else
+; 	;				io_read_binary #io_buffer tmp_channel
+; ;				#end
+; 				; ldy tmp_channel
+; 				; lda #0
+; 				; sta tmp_channel
 				
-lmi0			cpy #0
-				jeq lmi1
+; lmi0			cpy #0
+; 				jeq lmi1
 				
-				tya
-				pha
+; 				tya
+; 				pha
 				
-				ldy load_map_item_tmp
+; 				ldy load_map_item_tmp
 				
-				txa
-				pha
+; 				txa
+; 				pha
 				
 				
-				tya
-				pha			
-				; ldy tmp_channel
-				; lda io_buffer,y
-				; sta tmp_channel+1
-				; inc tmp_channel
-				pla
-				tay
-;				lda tmp_channel+1
-				ldx item_being_loaded
-				cpx #1
-				bne @+ 
-				sta pmg_item1,y
-				jmp lmi2
-@				cpx #2
-				bne @+
-				sta pmg_item2,y
-				jmp lmi2
-@				cpx #3
-				bne @+
-				sta pmg_item3,y
-				jmp lmi2
-@				sta pmg_item4,y
+; 				tya
+; 				pha			
+; 				; ldy tmp_channel
+; 				; lda io_buffer,y
+; 				; sta tmp_channel+1
+; 				; inc tmp_channel
+; 				pla
+; 				tay
+; ;				lda tmp_channel+1
+; 				ldx item_being_loaded
+; 				cpx #1
+; 				bne @+ 
+; 				sta pmg_item1,y
+; 				jmp lmi2
+; @				cpx #2
+; 				bne @+
+; 				sta pmg_item2,y
+; 				jmp lmi2
+; @				cpx #3
+; 				bne @+
+; 				sta pmg_item3,y
+; 				jmp lmi2
+; @				sta pmg_item4,y
 				
-lmi2			pla
-				tax				
-				iny
-				sty load_map_item_tmp
+; lmi2			pla
+; 				tax				
+; 				iny
+; 				sty load_map_item_tmp
 				
-				pla
-				tay
+; 				pla
+; 				tay
 				
-				dey
-				jmp lmi0 
+; 				dey
+; 				jmp lmi0 
 				
-lmi1			; Read color			
-				; #if .byte ext_ram_banks <> #0
-				; 	extended_mem ext_ram_bank
-				; 	mem_read_binary_opt1
-				; 	main_mem
-				; #else
-;					jsr io_read_binary_OPT1
-;				#end
-				lda io_buffer
-				ldy item_being_loaded
-				cpy #4
-				beq @+ 
-				sta PCOLR0,y
-				jmp lmi3
-@				sta COLOR3
-lmi3			
-				; Move sprite accordingly
-				string2byte #io_buffer+$57
-				ldy item_being_loaded
-				cpy #1
-				bne @+
-				sta item1_tmp_pos
-@				cpy #4
-				beq @+
-				sta HPOSP0,y
-				jmp lmi4
-@ 				sta HPOSM3
-				add #2
-				sta HPOSM2
-				add #2
-				sta HPOSM1
-				add #2
-				sta HPOSM0
+; lmi1			; Read color			
+; 				; #if .byte ext_ram_banks <> #0
+; 				; 	extended_mem ext_ram_bank
+; 				; 	mem_read_binary_opt1
+; 				; 	main_mem
+; 				; #else
+; ;					jsr io_read_binary_OPT1
+; ;				#end
+; 				lda io_buffer
+; 				ldy item_being_loaded
+; 				cpy #4
+; 				beq @+ 
+; 				sta PCOLR0,y
+; 				jmp lmi3
+; @				sta COLOR3
+; lmi3			
+; 				; Move sprite accordingly
+; 				string2byte #io_buffer+$57
+; 				ldy item_being_loaded
+; 				cpy #1
+; 				bne @+
+; 				sta item1_tmp_pos
+; @				cpy #4
+; 				beq @+
+; 				sta HPOSP0,y
+; 				jmp lmi4
+; @ 				sta HPOSM3
+; 				add #2
+; 				sta HPOSM2
+; 				add #2
+; 				sta HPOSM1
+; 				add #2
+; 				sta HPOSM0
 			
-				; Read item name length
-lmi4			
-				; #if .byte ext_ram_banks <> #0
-				; 	extended_mem ext_ram_bank
-				; 	mem_read_binary_opt1
-				; 	lda io_buffer
-				; 	pha
-				; 	main_mem
-				; 	pla
-				; #else
-					; stx tmp_channel
-					; jsr io_read_binary_OPT1
-				;#end
-				tay
-				mva #1 load_map_item_tmp
-lmi5			tya
-				pha
-				; #if .byte ext_ram_banks <> #0
-				; 	extended_mem ext_ram_bank
-				; 	mem_read_binary_opt1
-				; 	lda io_buffer
-				; 	pha
-				; 	main_mem
-				; 	pla
-				; #else
-					; ldx tmp_channel 
-					; jsr io_read_binary_OPT1
-;				#end
-				ldy item_being_loaded
-				cpy #1
-				bne lmi6
-				ldx load_map_item_tmp
-				sta ITEM_1_DATA,x
-				inx
-				lda #$9b
-				sta ITEM_1_DATA,x
-				stx load_map_item_tmp
-				jmp lmi9
-lmi6			cpy #2
-				bne lmi7
-				ldx load_map_item_tmp
-				sta ITEM_2_DATA,x
-				inx
-				lda #$9b
-				sta ITEM_2_DATA,x
-				stx load_map_item_tmp
-				jmp lmi9
-lmi7			cpy #3
-				bne lmi8
-				ldx load_map_item_tmp
-				sta ITEM_3_DATA,x
-				inx
-				lda #$9b
-				sta ITEM_3_DATA,x
-				stx load_map_item_tmp
-				jmp lmi9
-lmi8			ldx load_map_item_tmp
-				sta ITEM_4_DATA,x
-				inx
-				lda #$9b
-				sta ITEM_4_DATA,x
-				stx load_map_item_tmp
-lmi9			pla
-				tay
-				dey
-				cpy #0
-				jne lmi5
+; 				; Read item name length
+; lmi4			
+; 				; #if .byte ext_ram_banks <> #0
+; 				; 	extended_mem ext_ram_bank
+; 				; 	mem_read_binary_opt1
+; 				; 	lda io_buffer
+; 				; 	pha
+; 				; 	main_mem
+; 				; 	pla
+; 				; #else
+; 					; stx tmp_channel
+; 					; jsr io_read_binary_OPT1
+; 				;#end
+; 				tay
+; 				mva #1 load_map_item_tmp
+; lmi5			tya
+; 				pha
+; 				; #if .byte ext_ram_banks <> #0
+; 				; 	extended_mem ext_ram_bank
+; 				; 	mem_read_binary_opt1
+; 				; 	lda io_buffer
+; 				; 	pha
+; 				; 	main_mem
+; 				; 	pla
+; 				; #else
+; 					; ldx tmp_channel 
+; 					; jsr io_read_binary_OPT1
+; ;				#end
+; 				ldy item_being_loaded
+; 				cpy #1
+; 				bne lmi6
+; 				ldx load_map_item_tmp
+; 				sta ITEM_1_DATA,x
+; 				inx
+; 				lda #$9b
+; 				sta ITEM_1_DATA,x
+; 				stx load_map_item_tmp
+; 				jmp lmi9
+; lmi6			cpy #2
+; 				bne lmi7
+; 				ldx load_map_item_tmp
+; 				sta ITEM_2_DATA,x
+; 				inx
+; 				lda #$9b
+; 				sta ITEM_2_DATA,x
+; 				stx load_map_item_tmp
+; 				jmp lmi9
+; lmi7			cpy #3
+; 				bne lmi8
+; 				ldx load_map_item_tmp
+; 				sta ITEM_3_DATA,x
+; 				inx
+; 				lda #$9b
+; 				sta ITEM_3_DATA,x
+; 				stx load_map_item_tmp
+; 				jmp lmi9
+; lmi8			ldx load_map_item_tmp
+; 				sta ITEM_4_DATA,x
+; 				inx
+; 				lda #$9b
+; 				sta ITEM_4_DATA,x
+; 				stx load_map_item_tmp
+; lmi9			pla
+; 				tay
+; 				dey
+; 				cpy #0
+; 				jne lmi5
 				
-				inc item_being_loaded
+; 				inc item_being_loaded
 
-				; #if .byte ext_ram_banks = #0
-//					ldx tmp_channel
-//					io_close_file
-				; #end
+; 				; #if .byte ext_ram_banks = #0
+; //					ldx tmp_channel
+; //					io_close_file
+; 				; #end
 				
-lmi_ERR			rts
-.endp
+; lmi_ERR			rts
+; .endp
 
 ; Loads the map object which definition is stored in I/O buffer
 ; Object definition has the following format:
