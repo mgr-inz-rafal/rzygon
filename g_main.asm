@@ -273,7 +273,10 @@ rm_Q17			lda (show_message_prerequisites.ptr),y
 				adw show_message_prerequisites.ptr #5
 				lda (show_message_prerequisites.ptr),y
 				ldy item_being_loaded
-				cpy #4
+				cpy #1
+				bne rm_Q1812
+				sta item1_tmp_pos
+rm_Q1812		cpy #4
 				beq rm_Q18
 				sta HPOSP0,y
 				jmp rm_Q19
@@ -705,6 +708,7 @@ rg9				lda current_action
 				cmp #0
 				beq rgc
 				display_action_menu
+				jmp rg8
 				process_action_menu
 				
 				; Invoke appropriate action handler
