@@ -921,11 +921,10 @@ fn fill_banks_items(start: usize, banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-        let bank = banks.get_mut(start).unwrap();
+    let bank = banks.get_mut(start).unwrap();
     for i in 0..2894 {
         bank[i + 0xb459 - 0xA000] = buffer[i];
     }
-
 }
 
 fn main() {
