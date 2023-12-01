@@ -785,6 +785,7 @@ smp_X
 ; Shows the message on the status bar
 .proc show_status_message_INTERNAL(.word id) .var
 .zpvar id .word
+				disantic
 				store_level_name
 				clear_status_bar
 				
@@ -838,6 +839,7 @@ ssm1
 				lda msg_wait_fire
 				cmp #0
 				bne @+
+				enantic
 				wait_for_fire #0
 				recover_from_status_message
 @				rts

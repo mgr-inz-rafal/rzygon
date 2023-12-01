@@ -16,6 +16,27 @@
 				rts
 .endp
 
+.proc delay5
+				mva #1 to_be_delayed
+				delay
+				rts
+.endp
+
+.proc disantic
+				lda SDMCTL
+				sta sparta_bank
+				lda #0
+				sta SDMCTL
+				delay5
+				rts
+.endp
+
+.proc enantic
+				lda sparta_bank
+				sta SDMCTL
+				rts
+.endp
+
 ; Disables ANTIC and DLI
 .proc disable_antic
 				lda SDMCTL

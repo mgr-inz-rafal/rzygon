@@ -3,7 +3,7 @@
 ; Some global variables
 .var			ext_ram_bank		.byte
 .var			ext_ram_bank_msg	.byte
-.var			sparta_bank			.byte
+.var			sparta_bank			.byte ; USED!
 .zpvar			ext_ram_tmp			.word
 .zpvar			buf_addr_tmp		.word
 
