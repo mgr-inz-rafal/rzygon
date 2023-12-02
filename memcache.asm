@@ -4,7 +4,7 @@
 .var			ext_ram_bank		.byte
 .var			ext_ram_bank_msg	.byte
 .var			sparta_bank			.byte ; USED!
-.zpvar			ext_ram_tmp			.word
+.zpvar			ext_ram_tmp			.word ; USED
 .zpvar			buf_addr_tmp		.word
 
 EXTRAM_OBJECTS		equ		$4000			; 15kb for "ob"

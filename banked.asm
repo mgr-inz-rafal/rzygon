@@ -24,6 +24,7 @@ CART_DISABLE_CTL equ $d580
 				lda #1
 				clear_sprites_memory
 				mva #1 item_being_loaded
+				mwa #POCKET_NAME_1 write_item_name.tmp
 
 				; Iterate through all items
 spi3			ldy pocket_offset
@@ -59,7 +60,6 @@ aa233Zz
 					; open_object_file				; Reuse the "font file open" code.
 ;				#end
 				look_for_item
-
 						
 				; Item found
 				adw read_font.ptr #5+1 ; +1 for 0x9b at the end of item ID
@@ -170,14 +170,11 @@ spi2
 ;					jsr io_read_binary_OPT1
 ;				#end
 
-kalafior		
+		
 				; Need sprite color						
 				ldy read_font.ptr2
 				iny
-				sty tmp
-				ldy #29
-				sta PERSISTENCY_BANK_CTL,y
-				ldy tmp
+				sta PERSISTENCY_BANK_CTL+29
 				lda (read_font.ptr),y
 				pha ; Color on stack
 				sta CART_DISABLE_CTL
@@ -208,6 +205,28 @@ spi7			pla ; Color from stack
 				jmp spi4
 @				sta COLOR3
 spi4			
+
+				; Need item name length
+				ldy read_font.ptr2
+				iny
+				iny
+kalafior		sta PERSISTENCY_BANK_CTL+29
+				lda (read_font.ptr),y
+				tax ; Len in X
+
+				iny
+
+gromnica		inw read_font.ptr
+				dey
+				cpy #0
+				bne gromnica
+zakonnica
+				lda (read_font.ptr),y
+				sta (write_item_name.tmp),y
+				iny
+				dex
+				cpx #0
+				bne zakonnica
 
 				; Read item name length
 				; #if .byte ext_ram_banks <> #0
@@ -302,6 +321,7 @@ szczur
 				lda item_being_loaded
 				cmp #5
 				beq spi8 
+				adw write_item_name.tmp #POCKET_NAME_2-POCKET_NAME_1
  				jmp spi3
 
 ; 				; Restore pocket offset and exit								 
