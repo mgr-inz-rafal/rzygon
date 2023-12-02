@@ -299,6 +299,9 @@ spi4
 szczur
  				adb pocket_offset #5
 				inc item_being_loaded
+				lda item_being_loaded
+				cmp #5
+				beq spi8 
  				jmp spi3
 
 ; 				; Restore pocket offset and exit								 
