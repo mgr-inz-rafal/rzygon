@@ -301,7 +301,10 @@ ipse_X			rts
 .proc pocket_page_refresh
 				synchro
 				disable_antic
+				lda #0
+				sta NMIEN
 				show_pocket_items
+				sta CART_DISABLE_CTL
 				show_pocket_item_names
 				find_first_item_to_highlight
 				enable_antic
