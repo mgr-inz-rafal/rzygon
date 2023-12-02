@@ -111,11 +111,13 @@ spiC
 spi6
 
 				; Align center of the item vertically
-
-;;;;;;;;;				lda io_buffer
-;;;;;;;;;				lsr
-;;;;;;;;;				sta io_buffer+1
-;;;;;;;;;				sbw tmp io_buffer+1
+				lda file_open_mode
+				pha
+				lsr
+				sta file_open_mode
+				sbw tmp file_open_mode
+				pla
+				sta file_open_mode
 
 				; Read all bytes
 				inw read_font.ptr
