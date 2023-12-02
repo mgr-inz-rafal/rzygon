@@ -137,6 +137,23 @@ rm_X
 				rts
 .endp.
 
+.proc copy_font
+				ldy #0
+				mwa #$a000 show_message_prerequisites.ptr
+				mwa #level_font show_message_prerequisites.ptr2
+rm_17
+				lda (show_message_prerequisites.ptr),y
+				sta (show_message_prerequisites.ptr2),y
+				inw show_message_prerequisites.ptr
+				inw show_message_prerequisites.ptr2
+				#if .word show_message_prerequisites.ptr2 = #level_font+1024
+					jmp rm_X2
+				#end
+				jmp rm_17
+rm_X2
+				rts
+.endp
+
 // MAP structure:
 // FONT ID - 9b
 // BUILDER COUNT - 9b
@@ -162,19 +179,7 @@ rm_X
 				// Font bank: io_buffer_cart+4
 				ldy io_buffer_cart+4
 				sta PERSISTENCY_BANK_CTL,y
-				ldy #0
-				mwa #$a000 show_message_prerequisites.ptr
-				mwa #level_font show_message_prerequisites.ptr2
-rm_17
-				lda (show_message_prerequisites.ptr),y
-				sta (show_message_prerequisites.ptr2),y
-				inw show_message_prerequisites.ptr
-				inw show_message_prerequisites.ptr2
-				#if .word show_message_prerequisites.ptr2 = #level_font+1024
-					jmp rm_X2
-				#end
-				jmp rm_17
-rm_X2
+				copy_font
 
 				// Logic DLL: io_buffer_cart+5
 				ldy io_buffer_cart+5

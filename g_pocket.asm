@@ -48,6 +48,28 @@ pocket_move_delay	equ	30
 
 ; Shows the pocket background on the screen
 .proc show_pocket_background
+				lda #0
+				sta NMIEN
+
+				sta PERSISTENCY_BANK_CTL+27
+				sta wsync
+
+				mwa #$B1CA show_advmessage_border.ptr
+				mwa #screen_mem show_advmessage_border.ptr2
+
+				ldy #0
+sab_0
+				lda (show_advmessage_border.ptr),y
+				sta (show_advmessage_border.ptr2),y
+				#if .word show_advmessage_border.ptr = #$B4EA
+					sta CART_DISABLE_CTL
+					sta wsync
+					rts
+				#end
+				inw show_advmessage_border.ptr
+				inw show_advmessage_border.ptr2
+				jmp sab_0
+
 				; lda pocket_loaded
 				; cmp #1
 				; beq @+
@@ -415,7 +437,13 @@ hci_X			rts
 				hide_hero
 				switch_pocket_state
 				
+				lda #0
+				sta NMIEN
+				ldy #28 ; Pocket font is stored here
+				sta PERSISTENCY_BANK_CTL,y
+				copy_font
 				show_pocket_background
+				enable_antic
 								
 				show_pocket_items
 				show_pocket_item_names
