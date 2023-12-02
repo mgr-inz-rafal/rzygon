@@ -163,6 +163,41 @@ rm_X2
 // LINK TO OTHER MAP - 9b
 // LINK TO OTHER MAP - 9b
 
+.proc look_for_item
+				ldy #29
+				sta PERSISTENCY_BANK_CTL,y
+
+				mwa #$b459+1 read_font.ptr
+rm_V01
+				ldy #0
+				lda (read_font.ptr),y
+				cmp (show_message_prerequisites.ptr2),y
+				bne rm_V00 ; Not this item
+				iny
+				lda (read_font.ptr),y
+				cmp (show_message_prerequisites.ptr2),y
+				bne rm_V00 ; Not this item
+				iny
+				lda (read_font.ptr),y
+				cmp (show_message_prerequisites.ptr2),y
+				bne rm_V00 ; Not this item
+				iny
+				lda (read_font.ptr),y
+				cmp (show_message_prerequisites.ptr2),y
+				bne rm_V00 ; Not this item
+				iny
+				lda (read_font.ptr),y
+				cmp (show_message_prerequisites.ptr2),y
+				bne rm_V00 ; Not this item
+				jmp rm_V0X
+
+rm_V00   		; Keep looking for the item in the cart bank
+				inw read_font.ptr
+				jmp rm_V01
+rm_V0X
+				rts
+.endp
+
 ; Reads entire map structure from disk and
 ; writes it on the screen
 .proc read_map
@@ -263,7 +298,7 @@ rm_Q16
 				mwa #ITEM_1_DATA load_map_object_tmp
 
 rm_ni11			; Here starts the read process for next item
-				mwa szczam show_message_prerequisites.ptr2 ; Here put next item ID instead of hardcoded
+				mwa szczam show_message_prerequisites.ptr2
 
 				; Store item name in show_message_prerequisites.ptr2
 				ldy #4
@@ -301,39 +336,10 @@ rm_Q19			ldy #1
 				; ----------------------------- LOAD ITEM FROM EXT RAM
 
 				; Look for item in the cart bank
-czopek			ldy #29
-				sta PERSISTENCY_BANK_CTL,y
-
-				mwa #$b459+1 read_font.ptr
-rm_V01
-				ldy #0
-				lda (read_font.ptr),y
-				cmp (show_message_prerequisites.ptr2),y
-				bne rm_V00 ; Not this item
-				iny
-				lda (read_font.ptr),y
-				cmp (show_message_prerequisites.ptr2),y
-				bne rm_V00 ; Not this item
-				iny
-				lda (read_font.ptr),y
-				cmp (show_message_prerequisites.ptr2),y
-				bne rm_V00 ; Not this item
-				iny
-				lda (read_font.ptr),y
-				cmp (show_message_prerequisites.ptr2),y
-				bne rm_V00 ; Not this item
-				iny
-				lda (read_font.ptr),y
-				cmp (show_message_prerequisites.ptr2),y
-				bne rm_V00 ; Not this item
-				jmp lewatywa
-
-rm_V00   		; Keep looking for the item in the cart bank
-				inw read_font.ptr
-				jmp rm_V01
+				look_for_item
 
 				; Item found
-lewatywa		adw read_font.ptr #5+1 ; +1 for 0x9b at the end of item ID
+				adw read_font.ptr #5+1 ; +1 for 0x9b at the end of item ID
 				ldy #0
 				lda (read_font.ptr),y
 				tax	; X holds number of bytes for this item

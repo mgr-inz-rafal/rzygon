@@ -443,7 +443,6 @@ hci_X			rts
 				sta PERSISTENCY_BANK_CTL,y
 				copy_font
 				show_pocket_background
-				enable_antic
 								
 				show_pocket_items
 				show_pocket_item_names

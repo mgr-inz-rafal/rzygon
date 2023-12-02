@@ -19,7 +19,7 @@ CART_DISABLE_CTL equ $d580
 
 				; Remember pocket offset
 				lda pocket_offset
-				pha
+				pha ; czy to pha jest potem pla?
 
 				lda #1
 				clear_sprites_memory
@@ -38,9 +38,17 @@ spi3			ldy pocket_offset
 				jmp spi8
 
 @
-				mwa POCKET,y		io_buffer				 
-				mwa POCKET+2,y		io_buffer+2			 
-				mva POCKET+4,y		io_buffer+4
+				
+				mwa #POCKET		show_message_prerequisites.ptr2
+aa233z				
+				cpy #0
+				beq aa233Zz
+				inw show_message_prerequisites.ptr2
+				dey
+				jmp aa233z
+aa233Zz
+				;mwa POCKET+2,y		show_message_prerequisites.ptr2+2			 
+				;mva POCKET+4,y		show_message_prerequisites.ptr2+4
 								
 				; #if .byte ext_ram_banks <> #0
 				; 	; Load from extended RAM
@@ -49,7 +57,15 @@ spi3			ldy pocket_offset
 					; build_item_file_name
 					; open_object_file				; Reuse the "font file open" code.
 ;				#end
-				
+				look_for_item
+
+						
+				; Item found
+				adw read_font.ptr #5+1 ; +1 for 0x9b at the end of item ID
+				ldy #0
+				lda (read_font.ptr),y
+				sta file_open_mode ; file_open_mode holds number of bytes for this item
+			
 spiC			
 				; #if .byte ext_ram_banks <> #0
 				; 	extended_mem ext_ram_bank
@@ -58,14 +74,14 @@ spiC
 				; #else	
 ;					io_read_record #io_buffer+5 #io_buffer_size-5
 ;				#end
-@				lda io_buffer+5
-				cmp #$ff			; This indicates that the item ID has been read
-				bne spiC			
+; @				lda io_buffer+5
+; 				cmp #$ff			; This indicates that the item ID has been read
+; 				bne spiC			
 				
-				; Check if we have read the item we need
-				#if .dword io_buffer <> io_buffer+6 .or .byte io_buffer+4 <> io_buffer+10
-					jmp spiC
-				#end
+; 				; Check if we have read the item we need
+; 				#if .dword io_buffer <> io_buffer+6 .or .byte io_buffer+4 <> io_buffer+10
+; 					jmp spiC
+; 				#end
 
 				; Read size of the item
 				; #if .byte ext_ram_banks <> #0
@@ -94,33 +110,30 @@ spiC
 spi6
 
 				; Align center of the item vertically
-				lda io_buffer
-				lsr
-				sta io_buffer+1
-				sbw tmp io_buffer+1
 
+;;;;;;;;;				lda io_buffer
+;;;;;;;;;				lsr
+;;;;;;;;;				sta io_buffer+1
+;;;;;;;;;				sbw tmp io_buffer+1
+
+kalafior
 				; Read all bytes
-				ldy io_buffer
-spi0			cpy #0
-				jeq spi1
-				tya
-				pha
-				; #if .byte ext_ram_banks <> #0
-				; 	extended_mem ext_ram_bank
-				; 	mem_read_binary_opt1
-				; 	main_mem
-				; #else
-;					jsr io_read_binary_OPT1
-;				#end				
-				txa
-				pha
-				
-				lda io_buffer
+				inw read_font.ptr
+				ldy #0
+spi0			sty read_font.ptr2
+				ldy #29
+				sta PERSISTENCY_BANK_CTL,y
+				ldy read_font.ptr2
+				lda (read_font.ptr),y
+				pha ; byte on stack
+				sta CART_DISABLE_CTL
+
 				ldy tmp
 
 				ldx item_being_loaded
+				pla 
 				cpx #1
-				bne @+ 
+				bne @+
 				sta pmg_item1,y
 				jmp spi2
 @				cpx #2
@@ -133,18 +146,14 @@ spi0			cpy #0
 				jmp spi2
 @				sta pmg_item4,y
 
-spi2			pla
-				tax
-				
-				ldy tmp
+spi2
+				ldy read_font.ptr2
 				iny
-				sty tmp
-
-				pla
-				tay
-				dey
-				
-				jmp spi0
+				inc tmp
+				dec file_open_mode
+				lda file_open_mode
+				cmp #0
+				bne spi0
 				 
 spi1			; Read color and position the sprite accordingly			
 				; #if .byte ext_ram_banks <> #0
