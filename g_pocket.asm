@@ -437,26 +437,28 @@ hci_X			rts
 				hide_hero
 				switch_pocket_state
 				
-				lda #0
-				sta NMIEN
 				ldy #28 ; Pocket font is stored here
 				sta PERSISTENCY_BANK_CTL,y
 				copy_font
 				show_pocket_background
 								
 				show_pocket_items
-				show_pocket_item_names
+				sta CART_DISABLE_CTL
+				enable_antic
+cipeczka		jmp cipeczka
+				;show_pocket_item_names
 				lda POCKET
 				cmp #0
 				beq sp0 ; Pocket is empty
 				find_first_item_to_highlight
 				
-sp0				enable_antic
+sp0	;			enable_antic
+
 				pocket_main_routine
-				disable_antic
+;				disable_antic
 
 				show_hero
-				enable_antic
+;				enable_antic
 				switch_pocket_state
 				pla
 				sta default_font

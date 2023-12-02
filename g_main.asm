@@ -138,6 +138,8 @@ rm_X
 .endp.
 
 .proc copy_font
+				lda #0
+				sta NMIEN
 				ldy #0
 				mwa #$a000 show_message_prerequisites.ptr
 				mwa #level_font show_message_prerequisites.ptr2
@@ -598,7 +600,8 @@ rm_Q15			; All items read
 ;				spawn_in_pocket #ACTI_PNEUMO
 ;				spawn_in_pocket #ACTI_PENKNIFE
 ;				spawn_in_pocket #ACTI_ESSENCE
-;				spawn_in_pocket #ACTI_FLASK
+				spawn_in_pocket #ACTI_FLASK
+				spawn_in_pocket #ACTI_SNOT
 ;				spawn_in_pocket #ACTI_CANDLEWICK
 ;				spawn_in_pocket #ACTI_HOLYWATER
 ;				spawn_in_pocket #ACTI_PESTLE
@@ -645,7 +648,7 @@ rm_Q15			; All items read
 ;				spawn_in_pocket #ACTI_SWORD
 ;				spawn_in_pocket #ACTI_ICE_WATER
 ;				spawn_in_pocket #ACTI_EGG
-;				spawn_in_pocket #ACTI_SHIT_SCRAP
+				spawn_in_pocket #ACTI_SHIT_SCRAP
 ;				spawn_in_pocket #ACTI_CHICK
 ;				spawn_in_pocket #ACTI_SOLDERTOOL
 ;				spawn_in_pocket #ACTI_COFFIN_HND

@@ -19,7 +19,7 @@ CART_DISABLE_CTL equ $d580
 
 				; Remember pocket offset
 				lda pocket_offset
-				pha ; czy to pha jest potem pla?
+				pha
 
 				lda #1
 				clear_sprites_memory
@@ -39,6 +39,7 @@ spi3			ldy pocket_offset
 
 @
 				
+kulfon
 				mwa #POCKET		show_message_prerequisites.ptr2
 aa233z				
 				cpy #0
@@ -116,7 +117,6 @@ spi6
 ;;;;;;;;;				sta io_buffer+1
 ;;;;;;;;;				sbw tmp io_buffer+1
 
-kalafior
 				; Read all bytes
 				inw read_font.ptr
 				ldy #0
@@ -155,7 +155,7 @@ spi2
 				cmp #0
 				bne spi0
 				 
-spi1			; Read color and position the sprite accordingly			
+				; Read color and position the sprite accordingly			
 				; #if .byte ext_ram_banks <> #0
 				; 	extended_mem ext_ram_bank
 				; 	mem_read_binary_opt1
@@ -167,7 +167,19 @@ spi1			; Read color and position the sprite accordingly
 ;					ldx tmp_channel 
 ;					jsr io_read_binary_OPT1
 ;				#end
-								
+
+kalafior		
+				; Need sprite color						
+				ldy read_font.ptr2
+				iny
+				sty tmp
+				ldy #29
+				sta PERSISTENCY_BANK_CTL,y
+				ldy tmp
+				lda (read_font.ptr),y
+				pha ; Color on stack
+				sta CART_DISABLE_CTL
+
 				lda item_being_loaded
 				and #%00000001
 				cmp #1
@@ -187,7 +199,7 @@ spi5			ldy item_being_loaded
 				sta HPOSM1				
 				add #2
 				sta HPOSM0				
-spi7			lda io_buffer
+spi7			pla ; Color from stack
 				cpy #4
 				beq @+ 
 				sta PCOLR0,y
@@ -211,40 +223,40 @@ spi4
 				; Read item name into appropriate slot
 ;				stx tmp_channel
 
-				#if .byte item_being_loaded = #2 .or .byte item_being_loaded = #4
-					lda #20
-					sub io_buffer
-					tax
-					pha
+; 				#if .byte item_being_loaded = #2 .or .byte item_being_loaded = #4
+; 					lda #20
+; 					sub io_buffer
+; 					tax
+; 					pha
 					
-					dex
-					lda item_being_loaded
-					cmp #2
-					bne spib
-					lda #0
-@					sta POCKET_NAME_2,x
-					dex
-					cpx #$ff
-					bne @-
-					jmp spi9
-spib
-					lda #0
-@					sta POCKET_NAME_4,x
-					dex
-					cpx #$ff
-					bne @-
-spi9					
-					pla
-					tax
-				#else
-					ldx #0
-				#end 
-				ldy io_buffer
-spia				
-				tya
-				pha
-				txa
-				pha
+; 					dex
+; 					lda item_being_loaded
+; 					cmp #2
+; 					bne spib
+; 					lda #0
+; @					sta POCKET_NAME_2,x
+; 					dex
+; 					cpx #$ff
+; 					bne @-
+; 					jmp spi9
+; spib
+; 					lda #0
+; @					sta POCKET_NAME_4,x
+; 					dex
+; 					cpx #$ff
+; 					bne @-
+; spi9					
+; 					pla
+; 					tax
+; 				#else
+; 					ldx #0
+; 				#end 
+; 				ldy io_buffer
+; spia				
+; 				tya
+; 				pha
+; 				txa
+; 				pha
 ;				ldx tmp_channel
 				; #if .byte ext_ram_banks <> #0
 				; 	extended_mem ext_ram_bank
@@ -257,35 +269,37 @@ spia
 					; ldx tmp_channel 
 					; jsr io_read_binary_OPT1
 ;				#end
-				pla
-				tax
+; 				pla
+; 				tax
 				
-				store_letter_in_appropriate_name
+; 				store_letter_in_appropriate_name
 
-				pla
-				tay
-				inx
-				dey
-				cpy #0
-				bne spia	
+; 				pla
+; 				tay
+; 				inx
+; 				dey
+; 				cpy #0
+; 				bne spia	
 				
-				mva #$9b io_buffer
-				store_letter_in_appropriate_name			
+; 				mva #$9b io_buffer
+; 				store_letter_in_appropriate_name			
 
-;				ldx tmp_channel				
+; ;				ldx tmp_channel				
 
-				; Close the file
-//				io_close_file
+; 				; Close the file
+; //				io_close_file
 				
-				; Continue with next item
+; 				; Continue with next item
+; 				inc item_being_loaded
+; 				lda item_being_loaded
+; 				cmp #5
+; 				beq spi8 
+szczur
+ 				adb pocket_offset #5
 				inc item_being_loaded
-				lda item_being_loaded
-				cmp #5
-				beq spi8 
-				adb pocket_offset #5
-				jmp spi3
+ 				jmp spi3
 
-				; Restore pocket offset and exit								 
+; 				; Restore pocket offset and exit								 
 spi8			pla
 				sta pocket_offset
 				rts
