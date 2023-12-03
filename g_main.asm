@@ -317,6 +317,9 @@ rm_Q17			lda (show_message_prerequisites.ptr),y
 				should_spawn_this_item
  				cmp #1
 				jeq rm_U013cc
+				is_item_in_pocket show_message_prerequisites.ptr2
+				cmp #1
+				jeq rm_U013cc
 
 				; Item finished loading - position it's X location accordingly
 				ldy #0
