@@ -81,7 +81,7 @@ TITLEPAGE_00
 				dta "                                  "
 				dta "u",b(90),"yj d",b(90),"ojstika aby zmienia",b(67)," strony"
 				dta "                                  "
-				dta "                    v1.2 - 01.2016"
+				dta "v1.3 - 12.2023 (cart alfa release)"
 TITLEPAGE_01
 				dta "  Ciasna plebania, Dom Zakonny    "
 				dta "Ksi",b(69),b(90),"y Werbist",b(79),"w, Bar Mleczny     "
