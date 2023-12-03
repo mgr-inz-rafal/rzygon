@@ -200,6 +200,10 @@ rm_V0X
 				rts
 .endp
 
+rm_U013cc
+				adw show_message_prerequisites.ptr #5
+				jmp read_map.rm_U01
+
 ; Reads entire map structure from disk and
 ; writes it on the screen
 .proc read_map
@@ -302,13 +306,17 @@ rm_Q16
 rm_ni11			; Here starts the read process for next item
 				mwa szczam show_message_prerequisites.ptr2
 
-				; Store item name in show_message_prerequisites.ptr2
+				; Store item ID in show_message_prerequisites.ptr2
 				ldy #4
 rm_Q17			lda (show_message_prerequisites.ptr),y
 				sta (show_message_prerequisites.ptr2),y
 				dey
 				cpy #$ff
 				bne rm_Q17
+
+				should_spawn_this_item
+ 				cmp #1
+				jeq rm_U013cc
 
 				; Item finished loading - position it's X location accordingly
 				ldy #0

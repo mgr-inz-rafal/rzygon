@@ -166,7 +166,7 @@ item_respawn_tab
 .proc should_spawn_this_item_compare
 				ldy #0
 sstic1			lda (screen_tmp),y
-				cmp io_buffer,y
+				cmp (show_message_prerequisites.ptr2),y
 				bne sstic0
 				iny
 				cpy #6
