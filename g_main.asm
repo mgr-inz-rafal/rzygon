@@ -600,8 +600,8 @@ rm_Q15			; All items read
 ;				spawn_in_pocket #ACTI_PNEUMO
 ;				spawn_in_pocket #ACTI_PENKNIFE
 ;				spawn_in_pocket #ACTI_ESSENCE
-				spawn_in_pocket #ACTI_FLASK
-				spawn_in_pocket #ACTI_SNOT
+;				spawn_in_pocket #ACTI_FLASK
+;				spawn_in_pocket #ACTI_SNOT
 ;				spawn_in_pocket #ACTI_CANDLEWICK
 ;				spawn_in_pocket #ACTI_HOLYWATER
 ;				spawn_in_pocket #ACTI_PESTLE
@@ -610,12 +610,12 @@ rm_Q15			; All items read
 ;				spawn_in_pocket #ACTI_VISCERA2
 ;				spawn_in_pocket #ACTI_VISCERA3
 ;				spawn_in_pocket #ACTI_VISCERA4
-				spawn_in_pocket #ACTI_VISCERA5
-				spawn_in_pocket #ACTI_VISCERA6
-				spawn_in_pocket #ACTI_VISCERA7
-				spawn_in_pocket #ACTI_DNA
-				spawn_in_pocket #ACTI_SAW
-				spawn_in_pocket #ACTI_DYNAMITE
+;				spawn_in_pocket #ACTI_VISCERA5
+;				spawn_in_pocket #ACTI_VISCERA6
+;				spawn_in_pocket #ACTI_VISCERA7
+;				spawn_in_pocket #ACTI_DNA
+;				spawn_in_pocket #ACTI_SAW
+;				spawn_in_pocket #ACTI_DYNAMITE
 ;				spawn_in_pocket #ACTI_2_DYNAMS
 ;				spawn_in_pocket #ACTI_GRAVELIGHT
 ;				spawn_in_pocket #ACTI_WD_40
@@ -648,7 +648,7 @@ rm_Q15			; All items read
 ;				spawn_in_pocket #ACTI_SWORD
 ;				spawn_in_pocket #ACTI_ICE_WATER
 ;				spawn_in_pocket #ACTI_EGG
-				spawn_in_pocket #ACTI_SHIT_SCRAP
+;				spawn_in_pocket #ACTI_SHIT_SCRAP
 ;				spawn_in_pocket #ACTI_CHICK
 ;				spawn_in_pocket #ACTI_SOLDERTOOL
 ;				spawn_in_pocket #ACTI_COFFIN_HND
@@ -660,6 +660,7 @@ rm_Q15			; All items read
 ;				spawn_in_pocket #ACTI_SHIT_SCRAP
 ;				spawn_in_pocket #ACTI_WHEEL
 ;				spawn_in_pocket #ACTI_SYRINGE
+;				spawn_in_pocket #ACTI_BORER
 ;				turn_hero_dead
 				
 				

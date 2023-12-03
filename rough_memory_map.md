@@ -9,6 +9,7 @@
 | $8442 | $84ff | -- FREE --                                                    |
 | $8500 | $87ff | RMT player data                                               |
 | $8900 | $8d0c | RMT player                                                    |
+| $8D0D | $9cF5 | -- FREE --                                                    |
 | $9c60 | $b35f | Logic DLL + instruction and disclaimer text while not in game |
 | ?     | ?     | -- FREE --?                                                   |
 | $b400 | $b7ff | Text font                                                     |

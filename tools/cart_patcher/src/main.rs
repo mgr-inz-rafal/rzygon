@@ -824,13 +824,13 @@ fn relocate_logic_dlls() {
     println!("\n\n*** RELOCATING LOGIC DLLs CODE ***\n");
 
     let logic_dll_files = &[
-        // ("L000_DLL.asm", "l00.dll"),
-        // ("L001_DLL.asm", "l01.dll"),
-        // ("L002_DLL.asm", "l02.dll"),
-        // ("L003_DLL.asm", "l03.dll"),
-        // ("L004_DLL.asm", "l04.dll"),
-        // ("L005_DLL.asm", "l05.dll"),
-        // ("L006_DLL.asm", "l06.dll"),
+        ("L000_DLL.asm", "l00.dll"),
+        ("L001_DLL.asm", "l01.dll"),
+        ("L002_DLL.asm", "l02.dll"),
+        ("L003_DLL.asm", "l03.dll"),
+        ("L004_DLL.asm", "l04.dll"),
+        ("L005_DLL.asm", "l05.dll"),
+        ("L006_DLL.asm", "l06.dll"),
         ("L007_DLL.asm", "l07.dll"),
     ];
 

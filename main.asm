@@ -1135,7 +1135,7 @@ TRANSCHAR_COUNT	dta b(0)
 TRANSCHARS		
 :54 dta b(0) ; Max transchars is 52 on MAP0064 (Sala operacyjna), we're allowing more for some not "object" realted transchars to be added
 POCKET
-:51 dta b(0)
+:51 dta b(0),b(0),b(0),b(0),b(0)
 END_POCKET
 ; -> Will use the bytes spared by introducing one_use.asm.
 LEVEL_NAME_BUFFER1
