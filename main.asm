@@ -1176,3 +1176,5 @@ MODUL equ $7750
 // [ ] There is a bug that one item reappears after it's been used, but I can't remember which one :D
 //     It'll be good to fix this.
 // [ ] Load/Save on cart
+// [ ] Actions replayed on a fresh map are slow and visible (should be immediate)
+// [ ] Garbage char on status bar when pocket is visible
