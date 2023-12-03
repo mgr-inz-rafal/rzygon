@@ -1162,7 +1162,7 @@ MODUL equ $7750
 
 
 // TODO:
-// These functions to be removed:
+// [ ] See if these functions (and other functions) to be removed:
 ;				io_find_free_iocb
 ;				io_open_file_OPT1
 ;				io_read_binary
@@ -1170,3 +1170,9 @@ MODUL equ $7750
 ;				io_close_file				
 ;				load_map_item_tmp
 ;				load_map_item
+// [ ] "Key guard" instead of "Straznik klucza", check other maps
+// [ ] "Fire button" cooldown, so that sudden status messages are not closed by accident
+// [ ] Crash when "Odpalaj" is selected in "Przepompownia kalu"
+// [ ] There is a bug that one item reappears after it's been used, but I can't remember which one :D
+//     It'll be good to fix this.
+// [ ] Load/Save on cart
