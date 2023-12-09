@@ -342,10 +342,15 @@ fn fill_banks_adventure_messages(start: usize, banks: &mut [Vec<u8>]) {
                 current_bank_size += 1;
             }
         } else {
-            println!("\tno room in current bank, filling with FF and switching to next");
+            println!("\tno room in current bank");
 
             current_bank += 1;
             current_bank_size = 0;
+            let bank = banks.get_mut(current_bank).unwrap();
+            for i in msg {
+                bank[current_bank_size] = *i;
+                current_bank_size += 1;
+            }
         }
     }
 
