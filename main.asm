@@ -1177,4 +1177,4 @@ MODUL equ $7750
 //     It'll be good to fix this.
 // [ ] Load/Save on cart
 // [ ] Actions replayed on a fresh map are slow and visible (should be immediate)
-// [ ] Garbage char on status bar when pocket is visible
+// [X] Garbage char on status bar when pocket is visible

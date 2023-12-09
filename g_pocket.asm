@@ -61,7 +61,7 @@ pocket_move_delay	equ	30
 sab_0
 				lda (show_advmessage_border.ptr),y
 				sta (show_advmessage_border.ptr2),y
-				#if .word show_advmessage_border.ptr = #$B4EA
+				#if .word show_advmessage_border.ptr = #($B4EA-1)
 					sta CART_DISABLE_CTL
 					sta wsync
 					rts
