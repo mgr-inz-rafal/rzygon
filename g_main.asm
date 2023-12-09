@@ -141,26 +141,6 @@ rm_X
 				lda #0
 				sta NMIEN
 				ldy #0
-				mwa #$a000 show_message_prerequisites.ptr
-				mwa #level_font show_message_prerequisites.ptr2
-rm_17
-				lda (show_message_prerequisites.ptr),y
-				sta (show_message_prerequisites.ptr2),y
-				inw show_message_prerequisites.ptr
-				inw show_message_prerequisites.ptr2
-				#if .word show_message_prerequisites.ptr2 = #level_font+1024
-					jmp rm_X2
-				#end
-				jmp rm_17
-rm_X2
-				rts
-.endp
-
-.proc copy_font_atari
-				lda #0
-				sta NMIEN
-				ldy #0
-				mwa #$E000 show_message_prerequisites.ptr
 				mwa #level_font show_message_prerequisites.ptr2
 rm_17
 				lda (show_message_prerequisites.ptr),y
@@ -241,10 +221,12 @@ rm_U013cc
 				cpy #$ff
 				beq horacy
 				sta PERSISTENCY_BANK_CTL,y
+				mwa #$a000 show_message_prerequisites.ptr
 				copy_font
 				jmp analiusz
 horacy
-				copy_font_atari
+				mwa #$e000 show_message_prerequisites.ptr
+				copy_font
 analiusz
 				// Logic DLL: io_buffer_cart+5
 				ldy io_buffer_cart+5

@@ -442,6 +442,7 @@ hci_X			rts
 				
 				ldy #28 ; Pocket font is stored here
 				sta PERSISTENCY_BANK_CTL,y
+				mwa #$a000 show_message_prerequisites.ptr
 				copy_font
 				show_pocket_background
 								
