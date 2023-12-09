@@ -852,53 +852,20 @@ rgd
 ; W = 46
 ; S = 62
 ; Q = 47
-				lda CH		; $02FC (hard to look-up in atari.inc)
+				jmp handle_debug_keys
+post_handle_debug_keys
 
-				; Debug navigation
+				lda #0
+				sta HELPFG
 
-				 cmp #63	; A = left
-				 jne @+
-				 follow_left
-				 lda #$ff
-				 sta CH
-				 jmp rg0
-@				cmp #58 ; D = right
-				 jne @+
-				 follow_right #0
-				 lda #$ff
-				 sta CH
-				 jmp rg0
-@				cmp #46 ; W = up
-				 jne @+
-				 follow_up #0
-				 lda #$ff
-				 sta CH
-				 jmp rg0
-@				cmp #62 ; S = down
-				 jne @+
-				 follow_down #0
-				 lda #$ff
-				 sta CH
-				 jmp rg0
-@				cmp #47 ; Q = various debug calls
-				 jne @+
- 				remove_from_pocket #ACTI_ASS_PLUG
- 				lda logic_flags_002
- 				eor #LF_WORM_PLUGGED
- 				sta logic_flags_002
-				 lda #$ff
-				 sta CH
-				 jmp rg0
-
-
+				lda CH
 				cmp #28 ; ESC - back to start screen
 				jne @+
 				lda #$ff
 				sta CH
 				rts
-@				jmp rg0
 
-				lda #$ff
+@				lda #$ff
 				sta CH
 				
 ;--------------------------------------
@@ -907,6 +874,40 @@ rgd
 				
 				rts
 .endp
+
+handle_debug_keys
+				lda CH		; $02FC (hard to look-up in atari.inc)
+
+				; Debug navigation
+				 cmp #127	; Shift+A = left
+				 jne @+
+				 follow_left
+				 lda #$ff
+				 sta CH
+				 jmp run_game.post_handle_debug_keys
+@				cmp #122 ; Shift+D = right
+				 jne @+
+				 follow_right #0
+				 lda #$ff
+				 sta CH
+				 jmp run_game.post_handle_debug_keys
+@				cmp #110 ; Shift+W = up
+				 jne @+
+				 follow_up #0
+				 lda #$ff
+				 sta CH
+				 jmp run_game.post_handle_debug_keys
+@				cmp #126 ; Shift+S = down
+				 jne @+
+				 follow_down #0
+				 lda #$ff
+				 sta CH
+@				 jmp run_game.post_handle_debug_keys
+rura
+				 lda #$ff
+				 sta CH
+
+				jmp run_game.post_handle_debug_keys
 
 ; Follows the map to the left
 .proc follow_left
