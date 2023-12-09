@@ -1,14 +1,21 @@
 ;	@com.wudsn.ide.asm.mainsourcefile=main.asm
 
+.var was_one .byte
+
 ; Waits until FIRE on stick 'a' is pressed
-.proc			wait_for_fire(.byte a) .reg
-				deal_with_atract
-				cmp #0
-				bne wff0
+.proc			wait_for_fire
+				lda #0
+				sta was_one
+flaki			deal_with_atract
 				ldx STRIG0
-				jmp wff1 
-wff0			ldx STRIG1
-wff1			cpx #0
-				bne wait_for_fire
+				cpx #1
+				beq golonka
+				lda was_one
+				cmp #1
+				bne flaki 
 				rts
 .endp
+golonka
+				ldx #1
+				stx was_one
+				jmp wait_for_fire.flaki

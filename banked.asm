@@ -888,7 +888,7 @@ ssm1
 				cmp #0
 				bne @+
 				enantic
-				wait_for_fire #0
+				wait_for_fire
 				recover_from_status_message
 @				rts
 .endp
@@ -1029,7 +1029,7 @@ sam1
 cipeczka
 				
 				play_adventure_music
-				wait_for_fire #0
+				wait_for_fire
 				stop_music 
 				disable_antic	
 				
