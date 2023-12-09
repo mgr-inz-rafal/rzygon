@@ -1178,3 +1178,4 @@ MODUL equ $7750
 // [ ] Load/Save on cart
 // [ ] Actions replayed on a fresh map are slow and visible (should be immediate)
 // [X] Garbage char on status bar when pocket is visible
+// [ ] "Pijaczyn;" instead of "Pijaczyna" on 0083
