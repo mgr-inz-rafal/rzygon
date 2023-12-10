@@ -3,6 +3,9 @@
 .var	antic_tmp		.byte
 
 .proc delay_INTERNAL
+				lda to_be_delayed
+				cmp #1
+				beq jadwiga
 				inc CDTMF4
 				lda to_be_delayed
 				lsr
@@ -13,7 +16,7 @@
 				sta CDTMV4+1
 @				lda CDTMF4
 				bne @-
-				rts
+jadwiga			rts
 .endp
 
 .proc delay5
