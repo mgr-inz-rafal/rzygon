@@ -458,10 +458,11 @@ sp0				enable_antic
 
 				pocket_main_routine
 				disable_antic
-
+				switch_pocket_state
+				mva #26 to_be_delayed
+				delay
 				show_hero
 				enable_antic
-				switch_pocket_state
 				pla
 				sta default_font
 				rts

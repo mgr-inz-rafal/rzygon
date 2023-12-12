@@ -33,8 +33,8 @@ pam0		lda STICK0
 			cmp #0
 			bne pam0
 ;			music_play #MUSIC_MENU_OPEN_CLOSE
-			delay
 			clear_action_menu
+			mva #26 to_be_delayed
 			delay
 ;			stop_music
 			
