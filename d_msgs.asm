@@ -28,7 +28,7 @@ TITLE_COLOR_TEXT		equ $0f
 ; In cart version it just selects the bank with ADVMSG.fnt (27)
 .proc build_advmap_font_file_name
 				ldx #27
-				stx io_buffer+$60
+				stx io_buffer_cart+$60
 				rts
 .endp
 

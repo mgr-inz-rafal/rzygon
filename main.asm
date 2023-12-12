@@ -150,7 +150,7 @@ ADV_MESSAGE_BUFFER
 				lda #0
 				sta NMIEN
 
-				ldy io_buffer+$60
+				ldy io_buffer_cart+$60
 				sta PERSISTENCY_BANK_CTL,y
 				sta wsync				
 
@@ -1179,4 +1179,4 @@ MODUL equ $7750
 // [ ] Load/Save on cart
 // [X] Actions replayed on a fresh map are slow and visible (should be immediate)
 // [X] Garbage char on status bar when pocket is visible
-// [ ] "Pijaczyn;" instead of "Pijaczyna" on 0083
+// [X] "Pijaczyn;" instead of "Pijaczyna" on 0083
