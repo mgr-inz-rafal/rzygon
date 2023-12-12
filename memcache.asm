@@ -42,14 +42,14 @@ abrr_X
 .endp
 
 ; Size optimization
-.proc mem_read_record_OPT1
-				mem_read_record #io_buffer
-				rts
-.endp
-.proc mem_read_binary_OPT1
-				mem_read_binary #io_buffer #1
-				rts
-.endp
+; .proc mem_read_record_OPT1
+; 				mem_read_record #io_buffer
+; 				rts
+; .endp
+; .proc mem_read_binary_OPT1
+; 				mem_read_binary #io_buffer #1
+; 				rts
+; .endp
      
 ; Reads binary data from the extended memory
 .proc mem_read_binary(.word buf_addr_tmp .byte length) .var

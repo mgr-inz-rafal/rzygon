@@ -5,29 +5,29 @@
 ; of the logic actions done by player.
 ;=================================================================================
 				
-.proc build_logic_DLL_file_name
-;				mwa drive_id					io_buffer
-				lda #$4c
-				sta io_buffer+2
-				sta io_buffer+7
-				sta io_buffer+8
-				mva #$4c						io_buffer+2	; "L"
-				mwa logic_dll_name_to_be_used	io_buffer+3
-				mwa #$442e						io_buffer+5	; ".D"
-				rts
-.endp
+; .proc build_logic_DLL_file_name
+; ;				mwa drive_id					io_buffer
+; 				lda #$4c
+; 				sta io_buffer+2
+; 				sta io_buffer+7
+; 				sta io_buffer+8
+; 				mva #$4c						io_buffer+2	; "L"
+; 				mwa logic_dll_name_to_be_used	io_buffer+3
+; 				mwa #$442e						io_buffer+5	; ".D"
+; 				rts
+; .endp
 
 ; Preloads the specific logic DLL.
-.proc load_logic_block
-;				rts
+; .proc load_logic_block
+; ;				rts
 				
-				build_logic_DLL_file_name
-;				io_find_free_iocb
-;				io_open_file_OPT1
-;				io_read_binary #logic_dll #5887
-;				io_close_file
-				rts
-.endp
+; 				build_logic_DLL_file_name
+; ;				io_find_free_iocb
+; ;				io_open_file_OPT1
+; ;				io_read_binary #logic_dll #5887
+; ;				io_close_file
+; 				rts
+; .endp
 
 item_respawn_tab
 				; Do not spawn ass plug if worm has been plugged

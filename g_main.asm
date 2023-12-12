@@ -1145,21 +1145,21 @@ lf_ERR			rts
 
 ; Compares the font number in io_buffer and game_state.current_font.
 ; If they are the same, 1 is stored in A
-.proc compare_fonts
-				lda io_buffer
-				cmp game_state.current_font
-				bne @+
-				lda io_buffer+1
-				cmp game_state.current_font+1
-				bne @+
-				lda io_buffer+2
-				cmp game_state.current_font+2
-				bne @+
-				lda #1
-				rts
-@				lda #0
-				rts
-.endp
+; .proc compare_fonts
+				; lda io_buffer
+				; cmp game_state.current_font
+				; bne @+
+				; lda io_buffer+1
+				; cmp game_state.current_font+1
+				; bne @+
+				; lda io_buffer+2
+				; cmp game_state.current_font+2
+				; bne @+
+				; lda #1
+				; rts
+; @				lda #0
+				; rts
+; .endp
 
 ; Opens the map file
 ; .proc open_map_file

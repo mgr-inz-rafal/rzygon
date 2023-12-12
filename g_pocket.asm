@@ -109,24 +109,24 @@ sab_0
 
 ; Stores the letter availabe in io_buffer
 ; in the correct item name slot
-.proc store_letter_in_appropriate_name
-				lda io_buffer
-				ldy item_being_loaded
-				cpy #1
-				bne @+				
-				sta POCKET_NAME_1,x
-				rts
-@				cpy #2
-				bne @+				
-				sta POCKET_NAME_2,x
-				rts
-@				cpy #3
-				bne @+				
-				sta POCKET_NAME_3,x
-				rts
-@				sta POCKET_NAME_4,x
-				rts
-.endp
+; .proc store_letter_in_appropriate_name
+				; lda io_buffer
+				; ldy item_being_loaded
+				; cpy #1
+				; bne @+				
+				; sta POCKET_NAME_1,x
+				; rts
+; @				cpy #2
+				; bne @+				
+				; sta POCKET_NAME_2,x
+				; rts
+; @				cpy #3
+				; bne @+				
+				; sta POCKET_NAME_3,x
+				; rts
+; @				sta POCKET_NAME_4,x
+				; rts
+; .endp
 
 ; Fills item names with $9b which means that
 ; pocket slot is unused

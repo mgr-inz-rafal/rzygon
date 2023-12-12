@@ -61,28 +61,28 @@ ps_3			cpy #0
 ;	CCC		= Length of the chunk segment
 ;	DDD		= Number of repetitions of the chunk segment
 ;	XXX...	= Chunk segment itself
-.proc display_map_chunk
-.zpvar len,rep .byte
-				mva io_buffer Xpos
-				mva io_buffer+1 Ypos
-				mva io_buffer+2 len
-				mva io_buffer+3 rep
+; .proc display_map_chunk
+; .zpvar len,rep .byte
+; 				mva io_buffer Xpos
+; 				mva io_buffer+1 Ypos
+; 				mva io_buffer+2 len
+; 				mva io_buffer+3 rep
 				
-				ldy rep
-dmc0			tya
-				pha
-				print_string #io_buffer+4 Xpos Ypos #0
-				pla
-				tay
-				lda Xpos
-				add len
-				sta Xpos
-				dey
-				cpy #0
-				bne dmc0 
+; 				ldy rep
+; dmc0			tya
+; 				pha
+; 				print_string #io_buffer+4 Xpos Ypos #0
+; 				pla
+; 				tay
+; 				lda Xpos
+; 				add len
+; 				sta Xpos
+; 				dey
+; 				cpy #0
+; 				bne dmc0 
 				
-				rts
-.endp
+; 				rts
+; .endp
 
 ; Displays level name
 ; Level name is stored in the io_buffer
@@ -111,38 +111,38 @@ dmc0			tya
 			rts
 .endp
 
-; Displays the map object
-.proc display_map_object(.byte xsize, xpos, ypos, yoffset) .var
-.zpvar xsize, xpos, ypos	.byte
-.zpvar yoffset				.word
-				mwa #screen_mem screen_tmp
-				lda ypos
-				add yoffset
-				tay
-ps_3			cpy #0
-				beq ps_2
-				adw screen_tmp #40
-				dey
-				jmp ps_3  
+; ; Displays the map object
+; .proc display_map_object(.byte xsize, xpos, ypos, yoffset) .var
+; .zpvar xsize, xpos, ypos	.byte
+; .zpvar yoffset				.word
+; 				mwa #screen_mem screen_tmp
+; 				lda ypos
+; 				add yoffset
+; 				tay
+; ps_3			cpy #0
+; 				beq ps_2
+; 				adw screen_tmp #40
+; 				dey
+; 				jmp ps_3  
 
-ps_2			clc
-				lda screen_tmp
-				adc xpos
-				sta screen_tmp
-				lda screen_tmp+1
-				adc #0
-				sta screen_tmp+1
+; ps_2			clc
+; 				lda screen_tmp
+; 				adc xpos
+; 				sta screen_tmp
+; 				lda screen_tmp+1
+; 				adc #0
+; 				sta screen_tmp+1
 
-				ldy #0
-				#while .byte xsize > #0
-					lda io_buffer+$60,y
-					sta (screen_tmp),y
-					iny
-					dec xsize
-				#end
+; 				ldy #0
+; 				#while .byte xsize > #0
+; 					lda io_buffer+$60,y
+; 					sta (screen_tmp),y
+; 					iny
+; 					dec xsize
+; 				#end
 				
-				rts
-.endp
+; 				rts
+; .endp
 
 ; 800 bytes for fast switching back to
 ; the game map.

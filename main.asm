@@ -28,7 +28,6 @@ screen_mem		equ $2400			; Size = $81f ($2c20 is next free)
 sprite_mem		equ $b800
 text_font		equ $b400
 ;display_list	equ	sprite_mem+$200	; Must fit into unused $300 bytes of sprites memory
-io_buffer		equ	$b900			; Size = io_buffer_size
 io_buffer_cart	equ	1536
 io_buffer_size	equ	$ff
 
