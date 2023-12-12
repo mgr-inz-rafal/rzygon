@@ -161,7 +161,7 @@ item_respawn_tab
 				dta a(logic_flags_013)
 				dta b(LF_FLASK_USED)
 				; End
-				dta b($ff)			
+				dta b($ff),b($ff)			
 				
 .proc should_spawn_this_item_compare
 				ldy #0
@@ -192,7 +192,7 @@ ssti0			ldy #0
 				beq should_spawn_this_item_COMPARED
 				; Check next item
 				adw dupa_tmp #5
-				ldy #0
+				ldy #1
 				lda (dupa_tmp),y
 				cmp #$ff
 				bne ssti0
