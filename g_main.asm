@@ -1120,6 +1120,8 @@ rura
 				; TODO - continue here as we need to parse loaded map
 
 				read_map; reload
+				ldx hero_XPos
+				stx HPOSP0				
 				; bmi lm_ERR
 				
 				; Close map file
