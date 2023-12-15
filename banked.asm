@@ -1031,8 +1031,9 @@ cipeczka
 				play_adventure_music
 				wait_for_fire
 				stop_music 
-				disable_antic	
-				
+				disable_antic
+				mva #26 to_be_delayed
+				delay				
 				; Invalidate font so it will reload on exiting the adventure message
 				invalidate_font
 								

@@ -1180,4 +1180,4 @@ MODUL equ $7750
 // [X] Garbage char on status bar when pocket is visible
 // [X] "Pijaczyn;" instead of "Pijaczyna" on 0083
 // [ ] Double check "Zbadaj" on Mortar - at least once it left the string "$Zbadaj" on the status bar. Also, not sure if the message was ok (it said something about meat smell despite the mortar being empty)
-// [ ] Hero jumps after "Zagadaj" (and problably after "Use")
+// [X] Hero jumps after "Zagadaj" (and problably after "Use")
