@@ -304,7 +304,7 @@ ipse_X			rts
 				lda #0
 				sta NMIEN
 				show_pocket_items
-				sta CART_DISABLE_CTL
+				sta CART_DISABLE_CTL 
 				show_pocket_item_names
 				find_first_item_to_highlight
 				enable_antic
