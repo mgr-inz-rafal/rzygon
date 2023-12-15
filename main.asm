@@ -36,6 +36,8 @@ io_buffer_size	equ	$ff
 
 ; Deal with the memory banks at the very beginning
 ;@TAB_MEM_BANKS  EQU $0400
+				jsr load_intro_1
+
 				lda #1
 				sta $03F8 ; basicf
 				lda $D301
@@ -1124,6 +1126,9 @@ sab_0
 				inw ptr2
 				jmp sab_0
 .endp
+
+load_intro_1
+				rts
 
 				org PLAYER
 				icl "rmtplayr.a65"

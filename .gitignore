@@ -4,3 +4,5 @@ build
 tools/cart_patcher/target
 Altirra64.exe
 dupareloc.txt
+intro/zx5.exe
+*.zx5

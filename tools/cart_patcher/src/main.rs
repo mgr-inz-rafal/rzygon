@@ -68,6 +68,12 @@
 //
 // Item record structure
 // 0xFF ID Ox9B BYTE_COUNT BYTE0..BYTEN COLOR NAME_LEN NAMEBYTE0..NAMEBYTEn 0X9B
+//
+//
+// ----- Intro 1 data -----
+// Bank 26:
+// $A000 - $A08D - part1_2000_24d2_run5000.zez.zx5
+// $A090 - $Abd8 - part2_2800_527b_run5000.zez.zx5
 
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -471,7 +477,7 @@ struct MapObject<'a> {
     bytes: Vec<&'a u8>,
 }
 
-fn maps_dissection(filter: &str, banks: &mut [Vec<u8>]) {
+fn maps_dissection(filter: &str, _banks: &mut [Vec<u8>]) {
     println!("\n\n*** MAPS ***\n");
     let re = Regex::new(filter).expect("unable to build regex");
 
@@ -932,6 +938,34 @@ fn fill_banks_items(start: usize, banks: &mut [Vec<u8>]) {
     }
 }
 
+fn fill_banks_intro_1(banks: &mut [Vec<u8>]) {
+    let mut buffer = vec![];
+    let full_path = Path::new("../../intro/part1_2000_24d2_run5000.zez.zx5");
+    let mut file =
+        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(26).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xa000 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../intro/part2_2800_527b_run5000.zez.zx5");
+    let mut file =
+        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(26).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xA090 + i - 0xa000] = buffer[i];
+    }
+}
+
 fn main() {
     relocate_logic_dlls();
 
@@ -969,6 +1003,7 @@ fn main() {
     // WARNING: we do not sort these, but rely on the OS, so make sure that files are added in correct order
     fill_banks_dlls(79 - 1, r"[l|L]\d\d\.[d|D][l|L][l|L]", &mut banks);
     fill_banks_items(29, &mut banks);
+    fill_banks_intro_1(&mut banks);
 
     let mut cart = vec![];
     for bank in banks {
