@@ -73,7 +73,14 @@
 // ----- Intro 1 data -----
 // Bank 26:
 // $A000 - $A08D - part1_2000_24d2_run5000.zez.zx5
-// $A090 - $Abd8 - part2_2800_527b_run5000.zez.zx5
+// $A090 - $ABD8 - part2_2800_527b_run5000.zez.zx5
+// $ABE0 - $AC6D - x2_part1_2000_24d2_run5000.zez.zx5
+// $AC70 - $BC72 - x2_part2_2800_5289_run5000.zez.zx5
+// $BC80 - $BC8A - x2_part5_528a_528f_run5000.zez.zx5
+//
+// Bank 27:
+// $B4F0 - $B914 - x2_part3_6000_6c7d_run5000.zez.zx5
+// $B920 - $BE0A - x2_part4_8682_8dff_run5000.zez.zx5
 
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -966,6 +973,73 @@ fn fill_banks_intro_1(banks: &mut [Vec<u8>]) {
     }
 }
 
+fn fill_banks_intro_2(banks: &mut [Vec<u8>]) {
+    let mut buffer = vec![];
+    let full_path = Path::new("../../intro/part2/x2_part1_2000_24d2_run5000.zez.zx5");
+    let mut file =
+        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(26).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xABE0 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../intro/part2/x2_part2_2800_5289_run5000.zez.zx5");
+    let mut file =
+        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(26).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xAC70 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../intro/part2/x2_part5_528a_528f_run5000.zez.zx5");
+    let mut file =
+        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(26).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xBC80 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../intro/part2/x2_part3_6000_6c7d_run5000.zez.zx5");
+    let mut file =
+        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(27).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xB4F0 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../intro/part2/x2_part4_8682_8dff_run5000.zez.zx5");
+    let mut file =
+        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(27).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xB920 + i - 0xa000] = buffer[i];
+    }
+}
+
 fn main() {
     relocate_logic_dlls();
 
@@ -1004,6 +1078,7 @@ fn main() {
     fill_banks_dlls(79 - 1, r"[l|L]\d\d\.[d|D][l|L][l|L]", &mut banks);
     fill_banks_items(29, &mut banks);
     fill_banks_intro_1(&mut banks);
+    fill_banks_intro_2(&mut banks);
 
     let mut cart = vec![];
     for bank in banks {
