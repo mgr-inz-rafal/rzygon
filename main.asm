@@ -1127,6 +1127,10 @@ sab_0
 				jmp sab_0
 .endp
 
+; TODO: Continue coding here until $7000
+
+			org $7000
+
 .var destination     .word
 .zpvar 	ZX5_OUTPUT      .word
 copysrc         equ ZX5_OUTPUT+2
@@ -1310,7 +1314,43 @@ load_intro_1
 				lda #$40
 				sta NMIEN
 
-				jmp $5000
+				jsr $5000
+
+				lda #0
+				sta NMIEN
+
+				ldy #26
+				sta PERSISTENCY_BANK_CTL,y
+
+				mwa #$ABE0 ZX5_INPUT
+				mwa #$2000 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$AC70 ZX5_INPUT
+				mwa #$2800 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$BC80 ZX5_INPUT
+				mwa #$528a ZX5_OUTPUT
+				jsr unzx5
+
+				ldy #27
+				sta PERSISTENCY_BANK_CTL,y
+
+				mwa #$B4F0 ZX5_INPUT
+				mwa #$6000 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$B920 ZX5_INPUT
+				mwa #$8682 ZX5_OUTPUT
+				jsr unzx5
+
+				sta CART_DISABLE_CTL 
+
+				lda #$40
+				sta NMIEN
+
+				jsr $5000
 
 				org PLAYER
 				icl "rmtplayr.a65"
