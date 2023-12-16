@@ -1,0 +1,2 @@
+del dupareloc.txt
+Altirra64.exe /debug /debugbrkrun /debugcmd:".loadobj build/main.xex" /debugcmd:".writemem essential_rzygon_part_1.kut $2000 L$4e0" /debugcmd:".writemem essential_rzygon_part_2.kut $2800 L$2AA0" /debugcmd:".writemem essential_rzygon_part_3.kut $6000 L$D00" /debugcmd:".writemem essential_rzygon_part_4.kut $8680 L$7C1"

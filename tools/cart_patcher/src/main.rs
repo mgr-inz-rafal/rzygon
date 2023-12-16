@@ -70,7 +70,7 @@
 // 0xFF ID Ox9B BYTE_COUNT BYTE0..BYTEN COLOR NAME_LEN NAMEBYTE0..NAMEBYTEn 0X9B
 //
 //
-// ----- Intro 1 data -----
+// ----- INTRO DATA -----
 // Bank 26:
 // $A000 - $A08D - part1_2000_24d2_run5000.zez.zx5
 // $A090 - $ABD8 - part2_2800_527b_run5000.zez.zx5
@@ -81,6 +81,16 @@
 // Bank 27:
 // $B4F0 - $B914 - x2_part3_6000_6c7d_run5000.zez.zx5
 // $B920 - $BE0A - x2_part4_8682_8dff_run5000.zez.zx5
+//
+//
+// ----- ESSENTIAL RZYGON PARTS -----
+// Bank 54:
+//
+// $A000 - $B760 - essential_rzygon_part_2.kut.ZX5
+// $B761 - $BBA0 - essential_rzygon_part_4.kut.ZX5
+// $BBA1 - $BDA0 - essential_rzygon_part_3.kut.ZX5
+// $BDA1 - $BFFF - essential_rzygon_part_1.kut.ZX5
+
 
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -104,6 +114,8 @@ const BANK_SIZE: usize = 1024 * 8;
 const CART_SIZE: usize = 128 * BANK_SIZE;
 const DATA_PATH: &str = "../../build/";
 const RELOC_SCRIPT: &str = "../../relocate.bat";
+const EXTRACT_SCRIPT: &str = "../../extract.bat";
+const COMPRESS_SCRIPT: &str = "../../compress.bat";
 const REVERT_SCRIPT: &str = "../../revert_main_asm.bat";
 
 fn fill_banks_adventure_pictures(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
@@ -838,6 +850,47 @@ fn fill_banks_dlls(start: usize, filter: &str, banks: &mut [Vec<u8>]) {
     }
 }
 
+fn extract_essential_rzygon_parts() {
+    println!("\n\n*** EXTRACTING ESSENTIAL RZYGON PARTS ***\n");
+
+    {
+        let mut child = Command::new(BUILD_PATH)
+            .current_dir(WORKING_DIR)
+            .spawn()
+            .expect("can't spawn child process");
+        let _result = child.wait().expect("error waiting for child process");
+    }
+
+    {
+        let mut child = Command::new(EXTRACT_SCRIPT)
+            .current_dir(WORKING_DIR)
+            .spawn()
+            .expect("can't spawn child process");
+        println!("Altirra pid={}", child.id());
+        thread::sleep(Duration::from_secs(1));
+        // Doesn't always work so...
+        let _ = child.kill().expect("should have killed altirra");
+        // ...try brute force
+        Command::new("taskkill")
+            .arg("/im")
+            .arg("altirra64.exe")
+            .spawn()
+            .expect("should spawn kill task");
+        thread::sleep(Duration::from_millis(300));
+        //child.wait();
+
+        println!("child killed")
+    }
+
+    {
+        let mut child = Command::new(COMPRESS_SCRIPT)
+            .current_dir(WORKING_DIR)
+            .spawn()
+            .expect("can't spawn child process");
+        let _result = child.wait().expect("error waiting for child process");
+    }
+}
+
 fn relocate_logic_dlls() {
     println!("\n\n*** RELOCATING LOGIC DLLs CODE ***\n");
 
@@ -948,8 +1001,7 @@ fn fill_banks_items(start: usize, banks: &mut [Vec<u8>]) {
 fn fill_banks_intro_1(banks: &mut [Vec<u8>]) {
     let mut buffer = vec![];
     let full_path = Path::new("../../intro/part1_2000_24d2_run5000.zez.zx5");
-    let mut file =
-        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
     let _ = file
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
@@ -961,8 +1013,7 @@ fn fill_banks_intro_1(banks: &mut [Vec<u8>]) {
 
     let mut buffer = vec![];
     let full_path = Path::new("../../intro/part2_2800_527b_run5000.zez.zx5");
-    let mut file =
-        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
     let _ = file
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
@@ -976,8 +1027,7 @@ fn fill_banks_intro_1(banks: &mut [Vec<u8>]) {
 fn fill_banks_intro_2(banks: &mut [Vec<u8>]) {
     let mut buffer = vec![];
     let full_path = Path::new("../../intro/part2/x2_part1_2000_24d2_run5000.zez.zx5");
-    let mut file =
-        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
     let _ = file
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
@@ -989,8 +1039,7 @@ fn fill_banks_intro_2(banks: &mut [Vec<u8>]) {
 
     let mut buffer = vec![];
     let full_path = Path::new("../../intro/part2/x2_part2_2800_5289_run5000.zez.zx5");
-    let mut file =
-        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
     let _ = file
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
@@ -1002,8 +1051,7 @@ fn fill_banks_intro_2(banks: &mut [Vec<u8>]) {
 
     let mut buffer = vec![];
     let full_path = Path::new("../../intro/part2/x2_part5_528a_528f_run5000.zez.zx5");
-    let mut file =
-        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
     let _ = file
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
@@ -1015,8 +1063,7 @@ fn fill_banks_intro_2(banks: &mut [Vec<u8>]) {
 
     let mut buffer = vec![];
     let full_path = Path::new("../../intro/part2/x2_part3_6000_6c7d_run5000.zez.zx5");
-    let mut file =
-        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
     let _ = file
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
@@ -1028,8 +1075,7 @@ fn fill_banks_intro_2(banks: &mut [Vec<u8>]) {
 
     let mut buffer = vec![];
     let full_path = Path::new("../../intro/part2/x2_part4_8682_8dff_run5000.zez.zx5");
-    let mut file =
-        File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
     let _ = file
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
@@ -1040,7 +1086,58 @@ fn fill_banks_intro_2(banks: &mut [Vec<u8>]) {
     }
 }
 
+fn fill_banks_essential_rzygon_parts(banks: &mut [Vec<u8>]) {
+    let mut buffer = vec![];
+    let full_path = Path::new("../../essential_rzygon_part_2.kut.ZX5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(54).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xA000 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../essential_rzygon_part_4.kut.ZX5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(54).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xB761 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../essential_rzygon_part_3.kut.ZX5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(54).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xBBA1 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../essential_rzygon_part_1.kut.ZX5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(54).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xBDA1 + i - 0xa000] = buffer[i];
+    }
+}
+
 fn main() {
+    extract_essential_rzygon_parts();
     relocate_logic_dlls();
 
     let mut file = File::open(CART_PATH).expect("cannot open cart file");
@@ -1079,6 +1176,7 @@ fn main() {
     fill_banks_items(29, &mut banks);
     fill_banks_intro_1(&mut banks);
     fill_banks_intro_2(&mut banks);
+    fill_banks_essential_rzygon_parts(&mut banks);
 
     let mut cart = vec![];
     for bank in banks {

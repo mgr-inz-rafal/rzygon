@@ -1,1 +1,1 @@
-mads.exe -x -t:ipart2.lab -l:ipart2.lst -o:ipart2.xex ipart2.asm
+..\..\mads.exe -x -t:ipart2.lab -l:ipart2.lst -o:ipart2.xex ipart2.asm
