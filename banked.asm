@@ -834,6 +834,8 @@ smp_X
 .proc show_status_message_INTERNAL(.word id) .var
 .zpvar id .word
 				disantic
+				mva #16 to_be_delayed
+				delay
 				store_level_name
 				clear_status_bar
 				
