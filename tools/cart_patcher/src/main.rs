@@ -1137,7 +1137,7 @@ fn fill_banks_essential_rzygon_parts(banks: &mut [Vec<u8>]) {
 }
 
 fn main() {
-    extract_essential_rzygon_parts();
+//    extract_essential_rzygon_parts();
     relocate_logic_dlls();
 
     let mut file = File::open(CART_PATH).expect("cannot open cart file");

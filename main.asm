@@ -36,7 +36,8 @@ io_buffer_size	equ	$ff
 
 ; Deal with the memory banks at the very beginning
 ;@TAB_MEM_BANKS  EQU $0400
-				jmp load_intro_1
+		//		jmp load_intro_1
+krasula
 
 				lda #1
 				sta $03F8 ; basicf
@@ -1351,6 +1352,35 @@ load_intro_1
 				sta NMIEN
 
 				jsr $5000
+
+				; Restore essential Rzygon parts and jump back
+				lda #0
+				sta NMIEN
+				ldy #54
+				sta PERSISTENCY_BANK_CTL,y
+
+				mwa #$A000 ZX5_INPUT
+				mwa #$2800 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$B761 ZX5_INPUT
+				mwa #$8680 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$BBA1 ZX5_INPUT
+				mwa #$6000 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$BDA1 ZX5_INPUT
+				mwa #$2000 ZX5_OUTPUT
+				jsr unzx5
+
+				sta CART_DISABLE_CTL 
+
+				lda #$40
+				sta NMIEN
+
+				jmp krasula
 
 				org PLAYER
 				icl "rmtplayr.a65"
