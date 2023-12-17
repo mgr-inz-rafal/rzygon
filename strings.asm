@@ -198,4 +198,5 @@ TITLEPAGE_LAST
 				dta "Potrzebny jest tylko jaki",b(83)," DOS.   "
 				dta "                                  "
 				dta "  Powzwodzenia!                   "
+SRAKA_DZIWAKA
 		org KONT

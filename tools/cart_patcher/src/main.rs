@@ -90,7 +90,12 @@
 // $B761 - $BBA0 - essential_rzygon_part_4.kut.ZX5
 // $BBA1 - $BDA0 - essential_rzygon_part_3.kut.ZX5
 // $BDA1 - $BFFF - essential_rzygon_part_1.kut.ZX5
-
+//
+//
+// ----- TITLE INSTRUCTION TEXT -----
+// to be reloaded when re-entering menu
+// Bank 31:
+// $A6D2 - title_text.zez
 
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -1012,7 +1017,7 @@ fn fill_banks_intro_1(banks: &mut [Vec<u8>]) {
     }
 
     let mut buffer = vec![];
-    let full_path = Path::new("../../intro/part2_2800_527b_run5000.zez.zx5");
+    let full_path = Path::new("../../intro/part2_2800_5278_run5000.zez.zx5");
     let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
     let _ = file
         .read_to_end(&mut buffer)
@@ -1136,8 +1141,22 @@ fn fill_banks_essential_rzygon_parts(banks: &mut [Vec<u8>]) {
     }
 }
 
+fn fill_banks_title_text(banks: &mut [Vec<u8>]) {
+    let mut buffer = vec![];
+    let full_path = Path::new("../../title_text.zez");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(31).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xA6D2 + i - 0xa000] = buffer[i];
+    }
+}
+
 fn main() {
-//    extract_essential_rzygon_parts();
+    extract_essential_rzygon_parts();
     relocate_logic_dlls();
 
     let mut file = File::open(CART_PATH).expect("cannot open cart file");
@@ -1177,6 +1196,7 @@ fn main() {
     fill_banks_intro_1(&mut banks);
     fill_banks_intro_2(&mut banks);
     fill_banks_essential_rzygon_parts(&mut banks);
+    fill_banks_title_text(&mut banks);
 
     let mut cart = vec![];
     for bank in banks {

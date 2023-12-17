@@ -869,6 +869,10 @@ post_handle_debug_keys
 				jne @+
 				lda #$ff
 				sta CH
+				disantic
+				mva #16 to_be_delayed
+				delay
+				jsr elefant
 				rts
 
 @				lda #$ff

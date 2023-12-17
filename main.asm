@@ -36,7 +36,7 @@ io_buffer_size	equ	$ff
 
 ; Deal with the memory banks at the very beginning
 ;@TAB_MEM_BANKS  EQU $0400
-		//		jmp load_intro_1
+				jmp load_intro_1
 krasula
 
 				lda #1
@@ -1127,6 +1127,39 @@ sab_0
 				inw ptr2
 				jmp sab_0
 .endp
+
+elefant
+				mwa #$A6D2 show_message_prerequisites.ptr
+				mwa #$9dbe show_message_prerequisites.ptr2
+
+				lda #0
+				sta NMIEN
+
+				ldy #0
+dzdzownica_magda
+				ldx #31
+				sta PERSISTENCY_BANK_CTL,x
+
+				lda (show_message_prerequisites.ptr),y
+				stx CART_DISABLE_CTL 
+				sta (show_message_prerequisites.ptr2),y
+
+				inw show_message_prerequisites.ptr
+				inw show_message_prerequisites.ptr2
+
+				#if .word show_message_prerequisites.ptr2 = #SRAKA_DZIWAKA
+					jmp koza_mariola
+				#end
+				jmp dzdzownica_magda
+
+koza_mariola				
+				sta CART_DISABLE_CTL 
+
+				lda #$40
+				sta NMIEN
+				rts
+
+DUPA_ZENEK
 
 ; TODO: Continue coding here until $7000
 
