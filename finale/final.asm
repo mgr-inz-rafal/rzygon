@@ -1373,7 +1373,8 @@ MODUL equ $5000
  		
 ; Include screen memory from Starquake
 	org $a1f0
-	ins '../../Design/starquake-dump/screen.txt'
+;	ins '../../Design/starquake-dump/screen.txt'
+	ins 'screen.txt'
 ; Include font for Flight
 	org font_base
 	ins 'flight.fnt'
@@ -1381,6 +1382,6 @@ MODUL equ $5000
 	org screen_mem+440
 :120 		dta b(0)
 	org $02e0
-.dw		$2c20
+	dta a($2c20)
 
 ; TODO:
