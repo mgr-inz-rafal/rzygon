@@ -92,6 +92,16 @@
 // $BDA1 - $BFFF - essential_rzygon_part_1.kut.ZX5
 //
 //
+// ----- FINALE PARTS -----
+// Bank 74:
+//
+// $A000 - $AB09 - finale_2c20_411c.zez.zx5
+// $AB12 - $AFDC - finale_4382_5376.zez.zx5
+// $AFE3 - $B24E - finale_8000_90c7.zez.zx5
+// $B257 - $B703 - finale_a1f0_b897.zez.zx5
+// $B70C - $B712 - finale_bab8_bb2f.zez.zx5
+//
+//
 // ----- TITLE INSTRUCTION TEXT -----
 // to be reloaded when re-entering menu
 // Bank 31:
@@ -1091,6 +1101,68 @@ fn fill_banks_intro_2(banks: &mut [Vec<u8>]) {
     }
 }
 
+fn fill_banks_finale(banks: &mut [Vec<u8>]) {
+    let mut buffer = vec![];
+    let full_path = Path::new("../../finale/finale_2c20_411c.zez.zx5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(74).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xa000 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../finale/finale_4382_5376.zez.zx5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(74).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xAB12 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../finale/finale_8000_90c7.zez.zx5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(74).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xAFE3 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../finale/finale_a1f0_b897.zez.zx5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(74).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xB257 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../finale/finale_bab8_bb2f.zez.zx5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(74).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xB70C + i - 0xa000] = buffer[i];
+    }
+}
+
 fn fill_banks_essential_rzygon_parts(banks: &mut [Vec<u8>]) {
     let mut buffer = vec![];
     let full_path = Path::new("../../essential_rzygon_part_2.kut.ZX5");
@@ -1195,6 +1267,7 @@ fn main() {
     fill_banks_items(29, &mut banks);
     fill_banks_intro_1(&mut banks);
     fill_banks_intro_2(&mut banks);
+    fill_banks_finale(&mut banks);
     fill_banks_essential_rzygon_parts(&mut banks);
     fill_banks_title_text(&mut banks);
 

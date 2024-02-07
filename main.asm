@@ -1328,6 +1328,41 @@ ZX5_INPUT         equ    *-2
                   inw    ZX5_INPUT
                   rts	
 
+finale_loader
+				lda #0
+				sta NMIEN
+
+				ldy #74
+				sta PERSISTENCY_BANK_CTL,y
+
+				mwa #$A000 ZX5_INPUT
+				mwa #$2c20 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$AB12 ZX5_INPUT
+				mwa #$4382 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$AFE3 ZX5_INPUT
+				mwa #$8000 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$B257 ZX5_INPUT
+				mwa #$B703 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$B70C ZX5_INPUT
+				mwa #$B712 ZX5_OUTPUT
+				jsr unzx5
+
+				sta CART_DISABLE_CTL 
+
+				lda #$40
+				sta NMIEN
+
+				; Jump to the point of no return
+				jmp $2c20
+
 load_intro_1
 				lda #0
 				sta NMIEN
