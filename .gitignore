@@ -8,3 +8,6 @@ intro/zx5.exe
 *.zx5
 zx5.exe
 intro_new/part1/ipart2.lab
+*.lst
+*.lab
+*.xex

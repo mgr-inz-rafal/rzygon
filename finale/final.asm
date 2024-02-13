@@ -1335,10 +1335,10 @@ kropla_sprite
 dl_starquake
 :6			dta b(%01110000)					; x6 blank 8
 			dta b($4f)							; mode F @ A1F0
-			dta a($a1f0)
+			dta a($51f0)
 :89			dta b($f)							; x45 mode F
 			dta b($4f)							; mode F @ B000
-			dta a($b000)
+			dta a($6000)
 :54			dta b($f)
 			dta b($41),a(dl_starquake)
 dl_starquake_len	equ *-dl_starquake
@@ -1365,22 +1365,26 @@ dl_cdn_len	equ *-dl_flight
 ; RMT player
 	icl "rmtplayr.a65"
 ; RMT module
+
+PLAYER_FINISHES_HERE
+
 	opt h-						;RMT module is standard Atari binary file already
 	ins "ending.rmt"				;include music RMT module
 	opt h+
-MODUL equ $5000
+MODUL equ $48E5
 
  		
 ; Include screen memory from Starquake
-	org $a1f0
+	;org $a1f0
+	org $51f0
 ;	ins '../../Design/starquake-dump/screen.txt'
 	ins 'screen.txt'
 ; Include font for Flight
 	org font_base
 	ins 'flight.fnt'
 ; Clear panel screen memory by loading 0's :)
-	org screen_mem+440
-:120 		dta b(0)
+	; org screen_mem+440
+; :120 		dta b(0)
 	org $02e0
 	dta a($2c20)
 

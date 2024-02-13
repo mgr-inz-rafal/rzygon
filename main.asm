@@ -117,7 +117,6 @@ krasula
 post_satan_marker
 				icl 'satan.asm'
 				org	post_satan_marker
-finale_loader
 				
 ; ----------------------
 ; Program start
@@ -1339,26 +1338,20 @@ finale_loader
 				mwa #$2c20 ZX5_OUTPUT
 				jsr unzx5
 
-				mwa #$AB12 ZX5_INPUT
-				mwa #$4382 ZX5_OUTPUT
+				mwa #$AFCF ZX5_INPUT
+				mwa #$51f0 ZX5_OUTPUT
 				jsr unzx5
 
-				mwa #$AFE3 ZX5_INPUT
+				mwa #$B47D ZX5_INPUT
 				mwa #$8000 ZX5_OUTPUT
-				jsr unzx5
-
-				mwa #$B257 ZX5_INPUT
-				mwa #$B703 ZX5_OUTPUT
-				jsr unzx5
-
-				mwa #$B70C ZX5_INPUT
-				mwa #$B712 ZX5_OUTPUT
 				jsr unzx5
 
 				sta CART_DISABLE_CTL 
 
 				lda #$40
 				sta NMIEN
+				lda #34
+				sta SDMCTL
 
 				; Jump to the point of no return
 				jmp $2c20
