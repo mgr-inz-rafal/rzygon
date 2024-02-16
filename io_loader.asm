@@ -84,6 +84,3 @@
 ; 		jsr ciov		
 ; 		rts
 ; .endp
-
-
-finale_file	dta c"D:MIENTKI.CYC",b($9b)

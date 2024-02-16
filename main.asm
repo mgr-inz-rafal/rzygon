@@ -1328,6 +1328,17 @@ ZX5_INPUT         equ    *-2
                   rts	
 
 finale_loader
+				mwa #$b900 tmp
+dassaddasdasd
+				lda #0
+				tay
+				sta (tmp),y
+				iny
+				inw tmp
+				#if .word tmp <= #$bb2f
+					jmp dassaddasdasd
+				#end
+
 				lda #0
 				sta NMIEN
 
