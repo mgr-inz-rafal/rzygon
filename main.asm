@@ -135,6 +135,11 @@ start
 restart
 				lda #34
 				sta 559
+
+				; TODO: Get slot number from persistencty slot here
+				lda #0
+				sta slot_number
+
 				global_init
 				title_screen				
 				
@@ -144,6 +149,8 @@ restart
 SCREEN_BUFFER
 ADV_MESSAGE_BUFFER
 :273 	dta b(0)	; Longest message is ~270 bytes long
+
+.var slot_number .byte
 
 .proc read_font
 .zpvar	ptr .word
@@ -1453,6 +1460,259 @@ load_intro_1
 				sta NMIEN
 
 				jmp krasula
+
+; Save data (approx. 300b per slot):
+; slot_number				1b			1b   	(max. 27 slots in bank - each on ~300b)
+; pocket_offset				1b			2b
+; POCKET					255b		257b
+; hero_XPos					1b			258b
+; hero_YPos					1b			259b
+; game_flags				1b			260b
+; logic_flags_000			1b			261b
+; logic_flags_001			1b			262b
+; logic_flags_002			1b			263b
+; logic_flags_003			1b			264b
+; logic_flags_004			1b			265b
+; logic_flags_005			1b			266b
+; logic_flags_006			1b			267b
+; logic_flags_007			1b			268b
+; logic_flags_008			1b			269b
+; logic_flags_009			1b			270b
+; logic_flags_010			1b			271b
+; logic_flags_011			1b			272b
+; logic_flags_012			1b			273b
+; logic_flags_013			1b			274b
+; hanging_skull_pos			1b			275b
+; game_state.current_map	4b			279b
+.proc save_game_state_to_file
+				jsr os_gone
+				mwa #CART_RAM_START tmp
+				sta wsync
+				ldx slot_number
+				jsr write_byte_to_cart
+				ldx pocket_offset
+				jsr write_byte_to_cart
+				ldx pocket_offset+1
+				jsr write_byte_to_cart
+				ldx hero_XPos
+				jsr write_byte_to_cart
+				ldx hero_YPos
+				jsr write_byte_to_cart
+				ldx game_flags				
+				jsr write_byte_to_cart
+				ldx hanging_skull_pos
+				jsr write_byte_to_cart
+				ldy #0
+ziobro
+				lda POCKET,y
+				tax
+				jsr write_byte_to_cart
+				iny
+				cpy #0
+				bne ziobro
+
+				ldy #0
+kaminski
+				lda game_state.current_map,y
+				tax
+				jsr write_byte_to_cart
+				iny
+				cpy #5
+				bne kaminski
+
+				ldy #0
+wonsik
+				lda logic_flags_000,y
+				tax
+				jsr write_byte_to_cart
+				iny
+				cpy #15
+				bne wonsik
+
+				jsr os_back
+				sta CART_DISABLE_CTL
+				sta wsync
+
+				; mva #1 save_load_ok
+				; disable_antic
+				; io_find_free_iocb
+				; io_open_file #save_state_file #OPNOT
+				; jmi sgstf_e
+				
+				; ; Store pocket offset
+				; io_write_binary #pocket_offset #1
+				; jmi sgstf_e
+				
+				; ; Store pocket content
+				; io_write_binary #POCKET #51*5
+				; jmi sgstf_e
+				
+				; ; Store hero position
+				; io_write_binary #hero_XPos #1
+				; jmi sgstf_e
+				; io_write_binary #hero_YPos #1
+				; jmi sgstf_e
+
+				; ; Store hero direction (bit in the game_flags)
+				; io_write_binary #game_flags #1
+				; jmi sgstf_e
+				
+				; ; Store the logic state of the game
+				; io_write_binary #logic_flags_000 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_001 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_002 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_003 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_004 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_005 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_006 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_007 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_008 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_009 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_010 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_011 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_012 #1
+				; jmi sgstf_e
+				; io_write_binary #logic_flags_013 #1
+				; jmi sgstf_e
+				; io_write_binary #hanging_skull_pos #1
+				; jmi sgstf_e
+				
+				; ; Store current map number
+				; io_write_binary #game_state.current_map #4
+				; jmi sgstf_e
+				
+				; ; Save process OK
+				; jmp sgstf0
+	
+; sgstf_e			dec save_load_ok
+				
+; sgstf0			io_close_file
+				; enable_antic
+				rts
+.endp
+
+CART_RAM_SIZE   equ $2000
+CART_RAM_END	equ CART_RAM_START+CART_RAM_SIZE
+
+erase_state_sector
+			sta PERSISTENCY_BANK_CTL,y
+			sta WSYNC
+			jsr unlock_cart
+			lda #$80
+			jsr wr555
+			jsr unlock_cart
+			sta PERSISTENCY_BANK_CTL,y
+			sta WSYNC
+			lda #$30
+			sta CART_RAM_START
+			jsr wait_to_complete
+			jsr cart_off
+			rts
+
+cart_off
+			sta $d580
+			sta wsync
+			rts
+
+wait_to_complete
+poll_write
+			lda #0
+			sta workpages
+_poll_again		
+			lda CART_RAM_START
+			cmp CART_RAM_START
+			bne poll_write
+			cmp CART_RAM_START
+			bne poll_write
+			inc workpages
+			bne _poll_again
+			rts
+
+unlock_cart
+			lda #$AA
+			jsr wr555
+			lda #$55
+			jsr wr222
+			rts
+
+.zpvar	.word	current_persistency_address			
+
+os_gone
+		jsr synchro
+		sei
+		lda #0
+		sta NMIEN
+		lda #$fe
+		sta PORTB
+		rts
+
+os_back
+		lda #0
+		lda #$ff
+		sta PORTB
+		lda #192
+		sta NMIEN
+		cli
+		rts
+
+write_byte_to_cart
+			tya
+			pha
+
+			jsr unlock_cart
+			ldy #0
+			lda #$a0
+			jsr wr555
+			sta PERSISTENCY_BANK_CTL+PERSISTENCY_BANK_END
+			txa
+			sta (tmp),y
+			jsr cart_off
+			inw tmp
+			pla
+			tay
+			rts
+
+.var workpages .byte
+PERSISTENCY_BANK_START equ PERSISTENCY_BANK_END-7
+PERSISTENCY_BANK_END equ $7f
+SAVE_SLOT_LEN 	equ 300
+
+; wr555 the value from A
+wr555
+			bit PERSISTENCY_BANK_CTL+PERSISTENCY_BANK_END
+			bvs _wr5c2
+			sta $d502   
+			sta $b555
+			rts     
+_wr5c2  
+			sta $d542   
+			sta $b555			
+			rts
+
+; wr222 the value from A
+wr222
+			bit PERSISTENCY_BANK_CTL+PERSISTENCY_BANK_END
+			bvs _wr2c2
+			sta $d501
+			sta $aaaa
+			rts 
+_wr2c2      
+			sta $d541       
+			sta $aaaa       
+			rts
+
 
 				org PLAYER
 				icl "rmtplayr.a65"

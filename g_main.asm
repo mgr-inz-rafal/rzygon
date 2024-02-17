@@ -791,6 +791,7 @@ rg7
 save_state
 				inc msg_wait_fire
 				show_status_message #STATUSMSG_000
+				enantic 
 				dec msg_wait_fire
 				lda #$ff
 				sta CH
@@ -814,7 +815,8 @@ save_state_03	save_game_state_to_file
 				show_status_message #STATUSMSG_037
 				jmp save_state_02
 save_state_01	show_status_message #STATUSMSG_038
-save_state_02	recover_from_status_message
+save_state_02	
+				recover_from_status_message
 				jmp rgd
 				
 load_state
@@ -1124,8 +1126,6 @@ rura
 				; TODO - continue here as we need to parse loaded map
 
 				read_map; reload
-				ldx hero_XPos
-				stx HPOSP0				
 				; bmi lm_ERR
 				
 				; Close map file
@@ -1268,76 +1268,6 @@ lf_ERR			rts
 .endp
 
 ; Saves the current game state to a file
-.proc save_game_state_to_file
-				; mva #1 save_load_ok
-				; disable_antic
-				; io_find_free_iocb
-				; io_open_file #save_state_file #OPNOT
-				; jmi sgstf_e
-				
-				; ; Store pocket offset
-				; io_write_binary #pocket_offset #1
-				; jmi sgstf_e
-				
-				; ; Store pocket content
-				; io_write_binary #POCKET #51*5
-				; jmi sgstf_e
-				
-				; ; Store hero position
-				; io_write_binary #hero_XPos #1
-				; jmi sgstf_e
-				; io_write_binary #hero_YPos #1
-				; jmi sgstf_e
-
-				; ; Store hero direction (bit in the game_flags)
-				; io_write_binary #game_flags #1
-				; jmi sgstf_e
-				
-				; ; Store the logic state of the game
-				; io_write_binary #logic_flags_000 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_001 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_002 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_003 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_004 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_005 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_006 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_007 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_008 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_009 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_010 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_011 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_012 #1
-				; jmi sgstf_e
-				; io_write_binary #logic_flags_013 #1
-				; jmi sgstf_e
-				; io_write_binary #hanging_skull_pos #1
-				; jmi sgstf_e
-				
-				; ; Store current map number
-				; io_write_binary #game_state.current_map #4
-				; jmi sgstf_e
-				
-				; ; Save process OK
-				; jmp sgstf0
-	
-; sgstf_e			dec save_load_ok
-				
-; sgstf0			io_close_file
-				; enable_antic
-				rts
-.endp
 
 ; Some consts to use with files
 ;drive_id		dta c"D:"
