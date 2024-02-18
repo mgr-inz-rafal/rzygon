@@ -611,6 +611,11 @@ rm_Q15			; All items read
 				mva hero_XPos HPOSP0
 
 				spawn_in_pocket #ACTI_ROSARY
+
+;				spawn_in_pocket #ACTI_HOLYWATER
+;				spawn_in_pocket #ACTI_CANDLEWICK
+;				spawn_in_pocket #ACTI_ESSENCE
+
 				; DEBUG
 ;				spawn_in_pocket #ACTI_BATTERY
 ;				spawn_in_pocket #ACTI_POEM
@@ -940,7 +945,7 @@ rura
 				mwa #$3330 game_state.current_map+2		; 03
 ; DEBUG
 ;				mwa #$3130 game_state.current_map
-;				mwa #$3537 game_state.current_map+2
+;				mwa #$3730 game_state.current_map+2
 				
 				mwa #9999 logic_dll_name_to_be_used
 

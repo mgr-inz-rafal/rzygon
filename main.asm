@@ -1635,7 +1635,7 @@ wonsik
 				mwa #$a000 tmp
 				ldx slot_number
 				cpx #0
-				beq vel_senk
+				jeq vel_senk
 				inx
 karteczka
 				dex
@@ -1645,7 +1645,6 @@ karteczka
 				jmp karteczka
 
 macierewicz		sbw tmp #300
-vel_senk		
 				sta PERSISTENCY_BANK_CTL+$7f
 
 				ldy #0
@@ -1700,6 +1699,12 @@ wonsik_sra
 				sta CART_DISABLE_CTL
 				sta wsync
 				rts
+vel_senk		
+				jsr os_back
+				sta CART_DISABLE_CTL
+				sta wsync
+				recover_from_status_message
+				show_status_message #STATUSMSG_037
 .endp
 
 find_current_save_slot
@@ -1885,7 +1890,7 @@ MODUL equ $7750
 // [X] Crash when "Odpalaj" is selected in "Przepompownia kalu"
 // [ ] There is a bug that one item reappears after it's been used, but I can't remember which one :D
 //     It'll be good to fix this.
-// [ ] Load/Save on cart
+// [X] Load/Save on cart
 // [X] Actions replayed on a fresh map are slow and visible (should be immediate)
 // [X] Garbage char on status bar when pocket is visible
 // [X] "Pijaczyn;" instead of "Pijaczyna" on 0083
@@ -1894,3 +1899,4 @@ MODUL equ $7750
 // [ ] Increase count of available save slots
 // [ ] Add IQ info to initial screen, removing the necessity to have DOS
 // [ ] Add additional credits to finale
+// [ ] Hero not always visible when playing on real atari ¯\_(ツ)_/¯
