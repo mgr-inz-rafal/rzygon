@@ -1629,6 +1629,79 @@ wonsik
 				rts
 .endp
 
+.proc load_game_state_from_file
+				jsr os_gone
+
+				mwa #$a000 tmp
+				ldx slot_number
+				cpx #0
+				beq vel_senk
+				inx
+karteczka
+				dex
+				cpx #0
+				beq macierewicz
+				adw tmp #300
+				jmp karteczka
+
+macierewicz		sbw tmp #300
+vel_senk		
+				sta PERSISTENCY_BANK_CTL+$7f
+
+				ldy #0
+				inw tmp
+				lda (tmp),y
+				sta pocket_offset
+				inw tmp
+				lda (tmp),y
+				sta pocket_offset+1
+				inw tmp
+				lda (tmp),y
+				sta hero_XPos
+				inw tmp
+				lda (tmp),y
+				sta hero_YPos
+				inw tmp
+				lda (tmp),y
+				sta game_flags
+				inw tmp
+				lda (tmp),y
+				sta hanging_skull_pos
+				inw tmp
+				ldy #0
+ziobro_sra
+				lda (tmp),y
+				sta POCKET,y
+				iny
+				cpy #0
+				bne ziobro_sra
+				
+				adw tmp #($ff+1)
+
+				ldy #0
+kaminski_sra
+				lda (tmp),y
+				sta game_state.current_map,y
+				iny
+				cpy #5
+				bne kaminski_sra
+
+				adw tmp #5
+
+				ldy #0
+wonsik_sra
+				lda (tmp),y
+				sta logic_flags_000,y
+				iny
+				cpy #15
+				bne wonsik_sra
+
+				jsr os_back
+				sta CART_DISABLE_CTL
+				sta wsync
+				rts
+.endp
+
 find_current_save_slot
 				lda #0
 				sta read_font.ptr

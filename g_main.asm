@@ -816,6 +816,7 @@ save_state_02   recover_from_status_message
 load_state
 				inc msg_wait_fire
 				show_status_message #STATUSMSG_008
+				enantic
 				dec msg_wait_fire
 				lda #$ff
 				sta CH
@@ -1176,7 +1177,9 @@ lf_ERR			rts
 ; .endp
 
 ; Loads the current game state from a file
-.proc load_game_state_from_file
+//.proc load_game_state_from_file
+
+
 ; 				mva #1 save_load_ok
 ; 				disable_antic
 ; 				io_find_free_iocb
@@ -1258,8 +1261,8 @@ lf_ERR			rts
 				
 ; lgstf0			io_close_file
 ; 				enable_antic
-				rts
-.endp
+;				rts
+;.endp
 
 ; Saves the current game state to a file
 
