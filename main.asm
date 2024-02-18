@@ -1484,6 +1484,7 @@ load_intro_1
 ; game_state.current_map	4b			279b
 .proc save_game_state_to_file
 				jsr os_gone
+wodecki_zbyszek
 				mwa #CART_RAM_START tmp
 				sta wsync
 				ldx slot_number
@@ -1505,7 +1506,15 @@ prawodpodobienstwo
 				pla
 				tax
 rozwarcie		inx
-				stx slot_number
+				cpx #CART_MAX_SAVE_SLOTS
+				bne srakoli
+
+				jsr erase_state_sector
+				lda #0
+				sta slot_number
+				jmp wodecki_zbyszek
+
+srakoli			stx slot_number
 				jsr write_byte_to_cart
 				ldx pocket_offset
 				jsr write_byte_to_cart
@@ -1639,10 +1648,8 @@ tusk			lda read_font.ptr
 				sta CART_DISABLE_CTL
 				rts
 
-CART_RAM_SIZE   equ $2000
-CART_RAM_END	equ CART_RAM_START+CART_RAM_SIZE
-
 erase_state_sector
+			ldy #120
 			sta PERSISTENCY_BANK_CTL,y
 			sta WSYNC
 			jsr unlock_cart
@@ -1656,6 +1663,11 @@ erase_state_sector
 			jsr wait_to_complete
 			jsr cart_off
 			rts
+
+			
+CART_RAM_SIZE   equ $2000
+CART_RAM_END	equ CART_RAM_START+CART_RAM_SIZE
+CART_MAX_SAVE_SLOTS equ 3
 
 cart_off
 			sta $d580
@@ -1806,3 +1818,6 @@ MODUL equ $7750
 // [X] "Pijaczyn;" instead of "Pijaczyna" on 0083
 // [ ] Double check "Zbadaj" on Mortar - at least once it left the string "$Zbadaj" on the status bar. Also, not sure if the message was ok (it said something about meat smell despite the mortar being empty)
 // [X] Hero jumps after "Zagadaj" (and problably after "Use")
+// [ ] Increase count of available save slots
+// [ ] Add IQ info to initial screen, removing the necessity to have DOS
+// [ ] Add additional credits to finale
