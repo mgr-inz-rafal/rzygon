@@ -1489,6 +1489,25 @@ load_intro_1
 				mwa #CART_RAM_START tmp
 				sta wsync
 				ldx slot_number
+
+				cpx #0
+				beq rozwarcie
+
+				txa
+				pha
+
+				; Advance to first free slot
+prawodpodobienstwo
+				adw tmp #300
+				dex
+				cpx #0
+				bne prawodpodobienstwo
+
+				; Store next slot number
+				pla
+				tax
+rozwarcie		inx
+				stx slot_number
 				jsr write_byte_to_cart
 				ldx pocket_offset
 				jsr write_byte_to_cart

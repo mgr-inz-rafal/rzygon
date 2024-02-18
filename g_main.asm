@@ -809,14 +809,8 @@ save_state_00	synchro
 				
 save_state_03	save_game_state_to_file
 				recover_from_status_message
-				lda save_load_ok
-				cmp #1
-				beq save_state_01
-				show_status_message #STATUSMSG_037
-				jmp save_state_02
-save_state_01	show_status_message #STATUSMSG_038
-save_state_02	
-				recover_from_status_message
+				show_status_message #STATUSMSG_038
+save_state_02   recover_from_status_message
 				jmp rgd
 				
 load_state
@@ -844,10 +838,10 @@ load_state_03	restore_hero_walk_animation
 				clear_hero
 				draw_hero
 				show_hero
-				lda save_load_ok
-				cmp #1
-				beq load_state_01
-				show_status_message #STATUSMSG_037
+;;				lda save_load_ok
+;;				cmp #1
+;;				beq load_state_01
+;;				show_status_message #STATUSMSG_037
 				jmp load_state_02
 load_state_01	show_status_message #STATUSMSG_038
 load_state_02	recover_from_status_message
