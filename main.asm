@@ -136,9 +136,7 @@ restart
 				lda #34
 				sta 559
 
-				; TODO: Get slot number from persistencty slot here
-				lda #0
-				sta slot_number
+				jsr find_current_save_slot
 
 				global_init
 				title_screen				
@@ -1621,6 +1619,25 @@ wonsik
 				; enable_antic
 				rts
 .endp
+
+find_current_save_slot
+				lda #0
+				sta read_font.ptr
+				mwa #CART_RAM_START tmp
+				sta PERSISTENCY_BANK_CTL+PERSISTENCY_BANK_END
+				ldy #0
+holecka
+				lda (tmp),y
+				cmp #$ff
+				beq tusk
+				sta read_font.ptr
+				adw tmp #300
+				jmp holecka
+
+tusk			lda read_font.ptr
+				sta slot_number
+				sta CART_DISABLE_CTL
+				rts
 
 CART_RAM_SIZE   equ $2000
 CART_RAM_END	equ CART_RAM_START+CART_RAM_SIZE
