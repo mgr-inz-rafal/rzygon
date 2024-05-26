@@ -791,6 +791,10 @@ ACTI_POEM		dta c"APOEM"
 				load_map
 
 				enable_antic
+
+				// Potential fix for invisible hero on cart
+				// draw_hero
+
 ;cipa			jmp cipa
 				
 				; Check if we are on "Hlejnia" easter egg maps.
@@ -1483,6 +1487,16 @@ load_intro_1
 ; hanging_skull_pos			1b			275b
 ; game_state.current_map	4b			279b
 .proc save_game_state_to_file
+				; lda #$aa 
+				; sta logic_flags_000
+				; lda #$bb
+				; sta logic_flags_013
+
+				; lda #$cc
+				; sta POCKET
+				; lda #$dd
+				; sta END_POCKET-1
+
 				jsr os_gone
 wodecki_zbyszek
 				mwa #CART_RAM_START tmp
@@ -1534,7 +1548,7 @@ ziobro
 				tax
 				jsr write_byte_to_cart
 				iny
-				cpy #0
+				cpy #$ff
 				bne ziobro
 
 				ldy #0
@@ -1543,7 +1557,7 @@ kaminski
 				tax
 				jsr write_byte_to_cart
 				iny
-				cpy #5
+				cpy #4
 				bne kaminski
 
 				ldy #0
@@ -1552,12 +1566,12 @@ wonsik
 				tax
 				jsr write_byte_to_cart
 				iny
-				cpy #15
+				cpy #14
 				bne wonsik
 
-				jsr os_back
 				sta CART_DISABLE_CTL
 				sta wsync
+				jsr os_back
 
 				; mva #1 save_load_ok
 				; disable_antic
@@ -1672,27 +1686,27 @@ ziobro_sra
 				lda (tmp),y
 				sta POCKET,y
 				iny
-				cpy #0
+				cpy #$ff
 				bne ziobro_sra
 				
-				adw tmp #($ff+1)
+				adw tmp #$ff
 
 				ldy #0
 kaminski_sra
 				lda (tmp),y
 				sta game_state.current_map,y
 				iny
-				cpy #5
+				cpy #4
 				bne kaminski_sra
 
-				adw tmp #5
+				adw tmp #4
 
 				ldy #0
 wonsik_sra
 				lda (tmp),y
 				sta logic_flags_000,y
 				iny
-				cpy #15
+				cpy #14
 				bne wonsik_sra
 
 				jsr os_back
@@ -1700,9 +1714,9 @@ wonsik_sra
 				sta wsync
 				rts
 vel_senk		
-				jsr os_back
 				sta CART_DISABLE_CTL
 				sta wsync
+				jsr os_back
 				recover_from_status_message
 				show_status_message #STATUSMSG_037
 .endp
@@ -1785,6 +1799,7 @@ os_gone
 		rts
 
 os_back
+		jsr synchro
 		lda #0
 		lda #$ff
 		sta PORTB
@@ -1899,4 +1914,4 @@ MODUL equ $7750
 // [ ] Increase count of available save slots
 // [ ] Add IQ info to initial screen, removing the necessity to have DOS
 // [ ] Add additional credits to finale
-// [ ] Hero not always visible when playing on real atari ¯\_(ツ)_/¯
+// [ ] Hero not always visible when playing on real atari with Q-MEG ¯\_(ツ)_/¯
