@@ -1759,7 +1759,7 @@ erase_state_sector
 			
 CART_RAM_SIZE   equ $2000
 CART_RAM_END	equ CART_RAM_START+CART_RAM_SIZE
-CART_MAX_SAVE_SLOTS equ 3
+CART_MAX_SAVE_SLOTS equ 3 // TODO: Should be 27 (so keep at 26 for buffer)
 
 cart_off
 			sta $d580
