@@ -1899,7 +1899,7 @@ MODUL equ $7750
 ;				io_close_file				
 ;				load_map_item_tmp
 ;				load_map_item
-// [ ] "Key guard" instead of "Straznik klucza", check other maps
+// [X] "Key guard" instead of "Straznik klucza", check other maps
 // [X] "Fire button" cooldown, so that hero doesn't jump after using an item or 
 // [X] "Fire button" cooldown, so that sudden status messages are not closed by accident
 // [X] Crash when "Odpalaj" is selected in "Przepompownia kalu"
