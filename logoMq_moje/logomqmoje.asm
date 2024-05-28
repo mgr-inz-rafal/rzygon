@@ -85,6 +85,8 @@ synchr2			cmp VCOUNT
 
 vbi_routine
 		jsr RASTERMUSICTRACKER+3	;Play
+		jsr RASTERMUSICTRACKER+3	;Play
+		jsr RASTERMUSICTRACKER+3	;Play
 		jmp XITVBV
 
 VIDEO_RAM_ADDRESS equ $51f0
