@@ -8,6 +8,25 @@ screen_mem	equ $51f0
 			icl '../atari.inc'
 			org	$2c20
 
+			lda #0
+			sta COLOR1 ; Logo
+			sta COLOR2
+
+			ldx <dl_start
+			ldy >dl_start
+			stx SDLSTL
+			sty SDLSTL+1			
+
+			lda #$ff
+zupa
+			inc 1536
+			lda 1536
+			sta COLOR1
+:13			jsr WAIT
+			#if .byte 1536 < #12
+				jmp zupa
+			#end
+
 			ldx #<MODUL
 			ldy #>MODUL
 			lda #0
@@ -17,13 +36,52 @@ screen_mem	equ $51f0
 			lda #7
 			jsr SETVBV
 
-			ldx <dl_start
-			ldy >dl_start
-			stx SDLSTL
-			sty SDLSTL+1			
+			ldy #0
+deser
+			jsr WAIT
+			iny
+			cpy #$0
+			bne deser
+
+			ldy #0
+sniadanie
+			jsr WAIT
+			iny
+			cpy #$0
+			bne sniadanie
+
+			ldy #60
+obiadokolacja
+			jsr WAIT
+			iny
+			cpy #$0
+			bne obiadokolacja
 
 
-chuj		jmp chuj
+			lda #$13
+drugie_danie
+			dec 1536
+			lda 1536
+			sta COLOR1
+:13			jsr WAIT
+			#if .byte 1536 > #0
+				jmp drugie_danie
+			#end
+
+			rts
+
+wait
+				lda COLPM2
+				cmp #1
+				bne synchr1
+				; PAL
+				lda #$90
+				jmp synchr2
+synchr1 		; NTSC
+				lda #$7c
+synchr2			cmp VCOUNT
+				bne synchr2
+				rts
 
 vbi_routine
 		jsr RASTERMUSICTRACKER+3	;Play
