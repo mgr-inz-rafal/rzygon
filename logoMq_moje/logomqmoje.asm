@@ -22,7 +22,11 @@ zupa
 			inc 1536
 			lda 1536
 			sta COLOR1
-:13			jsr WAIT
+			ldx #107
+@			jsr WAIT
+			dex
+			cpx #0
+			bne @-
 			#if .byte 1536 < #12
 				jmp zupa
 			#end
@@ -36,26 +40,17 @@ zupa
 			lda #7
 			jsr SETVBV
 
-			ldy #0
+			ldx #16
+@			ldy #0
 deser
 			jsr WAIT
 			iny
 			cpy #$0
 			bne deser
 
-			ldy #0
-sniadanie
-			jsr WAIT
-			iny
-			cpy #$0
-			bne sniadanie
-
-			ldy #60
-obiadokolacja
-			jsr WAIT
-			iny
-			cpy #$0
-			bne obiadokolacja
+			dex
+			cpx #0
+			bne @-
 
 
 			lda #$13
@@ -63,7 +58,11 @@ drugie_danie
 			dec 1536
 			lda 1536
 			sta COLOR1
-:13			jsr WAIT
+			ldx #107
+@			jsr WAIT
+			dex
+			cpx #0
+			bne @-
 			#if .byte 1536 > #0
 				jmp drugie_danie
 			#end
@@ -71,17 +70,21 @@ drugie_danie
 			rts
 
 wait
-				lda COLPM2
-				cmp #1
-				bne synchr1
-				; PAL
-				lda #$90
-				jmp synchr2
-synchr1 		; NTSC
-				lda #$7c
-synchr2			cmp VCOUNT
-				bne synchr2
-				rts
+		lda PAL
+		cmp #1
+		beq syn_pal
+saas112
+		#if .byte VCOUNT >= #117
+			rts
+		#end
+		jmp saas112
+		rts
+syn_pal
+		#if .byte VCOUNT >= #150
+			rts
+		#end
+		jmp syn_pal
+		rts
 
 vbi_routine
 		jsr RASTERMUSICTRACKER+3	;Play
