@@ -149,6 +149,53 @@ cc_X			sty ITEM_CONTACT_S
 				rts
 .endp
 
+load_intro_0
+				lda #0
+				sta NMIEN
+
+				ldy #26
+				sta PERSISTENCY_BANK_CTL,y
+
+				mwa #$A000 ZX5_INPUT
+				mwa #$2000 ZX5_OUTPUT
+				jsr unzx5
+
+				sta CART_DISABLE_CTL 
+
+				lda #$40
+				sta NMIEN
+
+				jsr $5000
+
+				; Restore essential Rzygon parts and jump back
+				lda #0
+				sta NMIEN
+				ldy #54
+				sta PERSISTENCY_BANK_CTL,y
+
+				mwa #$A000 ZX5_INPUT
+				mwa #$2800 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$B761 ZX5_INPUT
+				mwa #$8680 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$BBA1 ZX5_INPUT
+				mwa #$6000 ZX5_OUTPUT
+				jsr unzx5
+
+				mwa #$BDA1 ZX5_INPUT
+				mwa #$2000 ZX5_OUTPUT
+				jsr unzx5
+
+				sta CART_DISABLE_CTL 
+
+				lda #$40
+				sta NMIEN
+
+				jmp kransal
+
 hero_data_standing
 				dta b(0),b(8),b(28),b(8),b(28),b(28),b(0),b(28)
 				dta b(42),b(20),b(8),b(28),b(20),b(62),b(62),b(62)

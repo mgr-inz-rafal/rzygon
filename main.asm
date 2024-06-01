@@ -36,6 +36,7 @@ io_buffer_size	equ	$ff
 
 ; Deal with the memory banks at the very beginning
 ;@TAB_MEM_BANKS  EQU $0400
+kransal
 				jmp load_intro_1
 krasula
 

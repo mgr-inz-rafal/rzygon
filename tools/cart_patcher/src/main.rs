@@ -91,6 +91,10 @@
 // $BBA1 - $BDA0 - essential_rzygon_part_3.kut.ZX5
 // $BDA1 - $BFFF - essential_rzygon_part_1.kut.ZX5
 //
+// Bank 32:
+//
+// $A000 - $AD61 - essential_rzygon_part_5.kut.zx5
+// $AD65 - $B076 - essential_rzygon_part_6.kut.zx5
 //
 // ----- FINALE PARTS -----
 // Bank 74:
@@ -106,10 +110,9 @@
 //
 // ----- MQ INTRO PART ---
 // Bank 78:
-// $A000 - $A090 - part_1_1_2000_20f2.kut.zx5
-// $A097 - $A16B - part_1_2_4000_40ce.kut.zx5
-// $A16F - $A5B5 - part_2_1_1582_1c1c.kut.zx5
-// $A5B8 - $A9AF - part_2_2_2000_2df3.kut.zx5
+// $A000 - $A090 - part_1_2c20_2d1d.kut.zx5
+// part_2_4382_4a9f.kut.zx5
+// part_3_51f0_774f.kut.zx5
 
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -886,7 +889,7 @@ fn extract_essential_rzygon_parts() {
             .spawn()
             .expect("can't spawn child process");
         println!("Altirra pid={}", child.id());
-        thread::sleep(Duration::from_secs(1));
+        thread::sleep(Duration::from_secs(2));
         // Doesn't always work so...
         let _ = child.kill().expect("should have killed altirra");
         // ...try brute force
@@ -1193,6 +1196,32 @@ fn fill_banks_essential_rzygon_parts(banks: &mut [Vec<u8>]) {
     }
 }
 
+fn fill_banks_essential_rzygon_parts_1(banks: &mut [Vec<u8>]) {
+    let mut buffer = vec![];
+    let full_path = Path::new("../../essential_rzygon_part_5.kut.zx5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(32).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xA000 + i - 0xa000] = buffer[i];
+    }
+
+    let mut buffer = vec![];
+    let full_path = Path::new("../../essential_rzygon_part_6.kut.zx5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+
+    let bank = banks.get_mut(32).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xAD65 + i - 0xa000] = buffer[i];
+    }
+}
+
 fn fill_banks_title_text(banks: &mut [Vec<u8>]) {
     let mut buffer = vec![];
     let full_path = Path::new("../../title_text.zez");
@@ -1208,53 +1237,53 @@ fn fill_banks_title_text(banks: &mut [Vec<u8>]) {
 }
 
 fn fill_banks_mq_logo(banks: &mut [Vec<u8>]) {
-    let mut buffer = vec![];
-    let full_path = Path::new("../../logoMq/part_1_1_2000_20f2.kut.zx5");
-    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
-    let _ = file
-        .read_to_end(&mut buffer)
-        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+    // let mut buffer = vec![];
+    // let full_path = Path::new("../../logoMq/part_1_1_2000_20f2.kut.zx5");
+    // let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    // let _ = file
+    //     .read_to_end(&mut buffer)
+    //     .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(78).unwrap();
-    for i in 0..buffer.len() {
-        bank[0xA000 + i - 0xa000] = buffer[i];
-    }
+    // let bank = banks.get_mut(78).unwrap();
+    // for i in 0..buffer.len() {
+    //     bank[0xA000 + i - 0xa000] = buffer[i];
+    // }
 
-    let mut buffer = vec![];
-    let full_path = Path::new("../../logoMq/part_1_2_4000_40ce.kut.zx5");
-    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
-    let _ = file
-        .read_to_end(&mut buffer)
-        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+    // let mut buffer = vec![];
+    // let full_path = Path::new("../../logoMq/part_1_2_4000_40ce.kut.zx5");
+    // let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    // let _ = file
+    //     .read_to_end(&mut buffer)
+    //     .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(78).unwrap();
-    for i in 0..buffer.len() {
-        bank[0xA097 + i - 0xa000] = buffer[i];
-    }
+    // let bank = banks.get_mut(78).unwrap();
+    // for i in 0..buffer.len() {
+    //     bank[0xA097 + i - 0xa000] = buffer[i];
+    // }
 
-    let mut buffer = vec![];
-    let full_path = Path::new("../../logoMq/part_2_1_1582_1c1c.kut.zx5");
-    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
-    let _ = file
-        .read_to_end(&mut buffer)
-        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+    // let mut buffer = vec![];
+    // let full_path = Path::new("../../logoMq/part_2_1_1582_1c1c.kut.zx5");
+    // let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    // let _ = file
+    //     .read_to_end(&mut buffer)
+    //     .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(78).unwrap();
-    for i in 0..buffer.len() {
-        bank[0xa16f + i - 0xa000] = buffer[i];
-    }
+    // let bank = banks.get_mut(78).unwrap();
+    // for i in 0..buffer.len() {
+    //     bank[0xa16f + i - 0xa000] = buffer[i];
+    // }
 
-    let mut buffer = vec![];
-    let full_path = Path::new("../../logoMq/part_2_2_2000_2df3.kut.zx5");
-    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
-    let _ = file
-        .read_to_end(&mut buffer)
-        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+    // let mut buffer = vec![];
+    // let full_path = Path::new("../../logoMq/part_2_2_2000_2df3.kut.zx5");
+    // let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    // let _ = file
+    //     .read_to_end(&mut buffer)
+    //     .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(78).unwrap();
-    for i in 0..buffer.len() {
-        bank[0xa5b8 + i - 0xa000] = buffer[i];
-    }
+    // let bank = banks.get_mut(78).unwrap();
+    // for i in 0..buffer.len() {
+    //     bank[0xa5b8 + i - 0xa000] = buffer[i];
+    // }
 }
 
 fn main() {
@@ -1299,6 +1328,7 @@ fn main() {
     fill_banks_intro_2(&mut banks);
     fill_banks_finale(&mut banks);
     fill_banks_essential_rzygon_parts(&mut banks);
+    fill_banks_essential_rzygon_parts_1(&mut banks);
     fill_banks_title_text(&mut banks);
     fill_banks_mq_logo(&mut banks);
 
