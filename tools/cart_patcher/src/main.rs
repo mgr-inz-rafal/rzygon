@@ -110,9 +110,9 @@
 //
 // ----- MQ INTRO PART ---
 // Bank 78:
-// $A000 - $A090 - part_1_2c20_2d1d.kut.zx5
-// part_2_4382_4a9f.kut.zx5
-// part_3_51f0_774f.kut.zx5
+// $A000 - $A08F - part_1_2c20_2d1d.kut.zx5
+// $A090 - $A540 - part_2_4382_4a9f.kut.zx5
+// $A541 - $A6D3 - part_3_51f0_774f.kut.zx5
 
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -1237,53 +1237,41 @@ fn fill_banks_title_text(banks: &mut [Vec<u8>]) {
 }
 
 fn fill_banks_mq_logo(banks: &mut [Vec<u8>]) {
-    // let mut buffer = vec![];
-    // let full_path = Path::new("../../logoMq/part_1_1_2000_20f2.kut.zx5");
-    // let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
-    // let _ = file
-    //     .read_to_end(&mut buffer)
-    //     .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+    let mut buffer = vec![];
+    let full_path = Path::new("../../logoMq_moje/part_1_2c20_2d1d.kut.zx5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    // let bank = banks.get_mut(78).unwrap();
-    // for i in 0..buffer.len() {
-    //     bank[0xA000 + i - 0xa000] = buffer[i];
-    // }
+    let bank = banks.get_mut(78).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xA000 + i - 0xa000] = buffer[i];
+    }
 
-    // let mut buffer = vec![];
-    // let full_path = Path::new("../../logoMq/part_1_2_4000_40ce.kut.zx5");
-    // let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
-    // let _ = file
-    //     .read_to_end(&mut buffer)
-    //     .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+    let mut buffer = vec![];
+    let full_path = Path::new("../../logoMq_moje/part_2_4382_4a9f.kut.zx5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    // let bank = banks.get_mut(78).unwrap();
-    // for i in 0..buffer.len() {
-    //     bank[0xA097 + i - 0xa000] = buffer[i];
-    // }
+    let bank = banks.get_mut(78).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xA090 + i - 0xa000] = buffer[i];
+    }
 
-    // let mut buffer = vec![];
-    // let full_path = Path::new("../../logoMq/part_2_1_1582_1c1c.kut.zx5");
-    // let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
-    // let _ = file
-    //     .read_to_end(&mut buffer)
-    //     .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
+    let mut buffer = vec![];
+    let full_path = Path::new("../../logoMq_moje/part_3_51f0_774f.kut.zx5");
+    let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
+    let _ = file
+        .read_to_end(&mut buffer)
+        .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    // let bank = banks.get_mut(78).unwrap();
-    // for i in 0..buffer.len() {
-    //     bank[0xa16f + i - 0xa000] = buffer[i];
-    // }
-
-    // let mut buffer = vec![];
-    // let full_path = Path::new("../../logoMq/part_2_2_2000_2df3.kut.zx5");
-    // let mut file = File::open(full_path).unwrap_or_else(|_| panic!("cannot open {:?}", full_path));
-    // let _ = file
-    //     .read_to_end(&mut buffer)
-    //     .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
-
-    // let bank = banks.get_mut(78).unwrap();
-    // for i in 0..buffer.len() {
-    //     bank[0xa5b8 + i - 0xa000] = buffer[i];
-    // }
+    let bank = banks.get_mut(78).unwrap();
+    for i in 0..buffer.len() {
+        bank[0xA541 + i - 0xa000] = buffer[i];
+    }
 }
 
 fn main() {
