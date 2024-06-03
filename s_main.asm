@@ -210,7 +210,7 @@ load_intro_0
 				mwa #$6000 ZX5_OUTPUT
 				jsr unzx5
 
-				ldy #32
+				ldy #87
 				sta PERSISTENCY_BANK_CTL,y
 
 				mwa #$A000 ZX5_INPUT
