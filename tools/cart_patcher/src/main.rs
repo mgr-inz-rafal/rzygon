@@ -1,6 +1,27 @@
 // The idea is to load the .bin image initialized with `main.xex` and put auxiliary data
 // in additional banks according to the following schema:
 //
+// Bank Summary
+//
+// 00-15 - Main area
+// 16-21 - Adventure pictures
+// 22    - 
+// 23-25 - Adventure messages
+// 26    - Intro data
+// 27-53 - Fonts
+//      Additionally:
+//      27 (near the end) - .SCR templates and intro data
+//      29 (near the end) - ITEMS
+//      31 (near the end) - title text needed when re-entering menu
+// 54    - Essential Rzygoń parts
+// 55-73 - Rendered maps
+// 74    - Finale parts
+// 75-77 - Stripped map data
+// 78    - Mq Intro parts
+// 79-86 - Logic DLLs
+// 87    - More essential Rzygoń parts
+// 
+//
 // ----- ADVENTURE PICTURES -----
 // Banks 16-21: "PXXX.sra"
 //
@@ -91,7 +112,7 @@
 // $BBA1 - $BDA0 - essential_rzygon_part_3.kut.ZX5
 // $BDA1 - $BFFF - essential_rzygon_part_1.kut.ZX5
 //
-// Bank 32:
+// Bank 87:
 //
 // $A000 - $AD61 - essential_rzygon_part_5.kut.zx5
 // $AD65 - $B076 - essential_rzygon_part_6.kut.zx5
@@ -1204,7 +1225,7 @@ fn fill_banks_essential_rzygon_parts_1(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(32).unwrap();
+    let bank = banks.get_mut(87).unwrap();
     for i in 0..buffer.len() {
         bank[0xA000 + i - 0xa000] = buffer[i];
     }
@@ -1216,7 +1237,7 @@ fn fill_banks_essential_rzygon_parts_1(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(32).unwrap();
+    let bank = banks.get_mut(87).unwrap();
     for i in 0..buffer.len() {
         bank[0xAD65 + i - 0xa000] = buffer[i];
     }
