@@ -5,7 +5,7 @@
 //
 // 00-15 - Main area
 // 16-21 - Adventure pictures
-// 22    - 
+// 22    -
 // 23-25 - Adventure messages
 // 26    - Intro data
 // 27-53 - Fonts
@@ -20,7 +20,7 @@
 // 78    - Mq Intro parts
 // 79-86 - Logic DLLs
 // 87    - More essential Rzygoń parts
-// 
+//
 //
 // ----- ADVENTURE PICTURES -----
 // Banks 16-21: "PXXX.sra"
@@ -138,7 +138,7 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs::{self, File},
-    io::{BufRead, BufReader, ErrorKind, Read, Write},
+    io::{self, BufRead, BufReader, ErrorKind, Read, Write},
     path::Path,
     process::Command,
     thread,
@@ -812,14 +812,34 @@ fn maps_dissection(filter: &str, _banks: &mut [Vec<u8>]) {
                 DATA_PATH,
                 filename.to_str().expect("should be able to format path"),
             );
+
+            dbg!(&p_rendered);
+
             let mut file = fs::OpenOptions::new()
                 .create(true)
                 .append(false)
                 .truncate(true)
                 .write(true)
-                .open(p_rendered)
+                .open(&p_rendered)
                 .expect("cannot open file");
             file.write_all(&rendered).expect("unable to write to file");
+
+            if p_rendered.ends_with("M0085.MAP.RENDER") {
+                drop(file);
+                let from = format!(
+                    "{}dissected/{}.RENDER_FIX",
+                    DATA_PATH,
+                    filename.to_str().expect("should be able to format path"),
+                );
+                fs::copy(from, p_rendered).expect("should overwrite file");
+                println!("FIXED M0085.MAP.RENDER");
+                println!("Press Enter to continue...");
+
+                let mut _buffer = String::new();
+                //io::stdin().read_line(&mut buffer).unwrap();
+
+                println!("Continuing...");
+            }
         }
     }
     println!("Maximum count of transchars: {:?}", max_transchars);
