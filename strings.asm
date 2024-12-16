@@ -79,8 +79,8 @@ TITLEPAGE_00
 				dta "Mgr in",b(90),". Rafa",b(76),"'s  Advanced Virtual"
 				dta "  Computer Entertainment Studios  "
 				dta "                                  "
-				dta "                                  "
 				dta "u",b(90),"yj d",b(90),"ojstika aby zmienia",b(67)," strony"
+				dta "                                  "
 				dta "v1.74.997 - 12.2024 (cart edition)"
 TITLEPAGE_01
 				dta "  Ciasna plebania, Dom Zakonny    "
