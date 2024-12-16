@@ -1932,6 +1932,6 @@ MODUL equ $7750
 // [ ] Double check "Zbadaj" on Mortar - at least once it left the string "$Zbadaj" on the status bar. Also, not sure if the message was ok (it said something about meat smell despite the mortar being empty)
 // [X] Hero jumps after "Zagadaj" (and problably after "Use")
 // [X] Increase count of available save slots
-// [ ] Add IQ info to initial screen, removing the necessity to have DOS
+// [X] Add IQ info to initial screen, removing the necessity to have DOS
 // [ ] Add additional credits to finale
 // [ ] Hero not always visible when playing on real atari with Q-MEG ¯\_(ツ)_/¯

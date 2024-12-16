@@ -79,9 +79,9 @@ TITLEPAGE_00
 				dta "Mgr in",b(90),". Rafa",b(76),"'s  Advanced Virtual"
 				dta "  Computer Entertainment Studios  "
 				dta "                                  "
-				dta "u",b(90),"yj d",b(90),"ojstika aby zmienia",b(67)," strony"
 				dta "                                  "
-				dta "v1.3 - 12.2023 (cart alfa release)"
+				dta "u",b(90),"yj d",b(90),"ojstika aby zmienia",b(67)," strony"
+				dta "v1.74.997 - 12.2024 (cart edition)"
 TITLEPAGE_01
 				dta "  Ciasna plebania, Dom Zakonny    "
 				dta "Ksi",b(69),b(90),"y Werbist",b(79),"w, Bar Mleczny     "
@@ -195,8 +195,8 @@ TITLEPAGE_LAST
 				dta "stan gry wciskaj",b(65),"c klawisz ",b(2),"SE-   "
 				dta "LECT",b(2),". Taki zapisany stan mo",b(90),"esz  "
 				dta "potem odczyta",b(67)," za pomoc",b(65)," ",b(2),"OPTION",b(2),"."
-				dta "Potrzebny jest tylko jaki",b(83)," DOS.   "
 				dta "                                  "
+				dta "IQ wymagane do ukonczenia gry:  62"
 				dta "  Powzwodzenia!                   "
 SRAKA_DZIWAKA
 		org KONT
