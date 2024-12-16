@@ -1614,7 +1614,7 @@ erase_state_sector
 			
 CART_RAM_SIZE   equ $2000
 CART_RAM_END	equ CART_RAM_START+CART_RAM_SIZE
-CART_MAX_SAVE_SLOTS equ 3 // TODO: Should be 27 (so keep at 26 for buffer)
+CART_MAX_SAVE_SLOTS equ 26
 
 cart_off
 			sta $d580
@@ -1931,7 +1931,7 @@ MODUL equ $7750
 // [X] "Pijaczyn;" instead of "Pijaczyna" on 0083
 // [ ] Double check "Zbadaj" on Mortar - at least once it left the string "$Zbadaj" on the status bar. Also, not sure if the message was ok (it said something about meat smell despite the mortar being empty)
 // [X] Hero jumps after "Zagadaj" (and problably after "Use")
-// [ ] Increase count of available save slots
+// [X] Increase count of available save slots
 // [ ] Add IQ info to initial screen, removing the necessity to have DOS
 // [ ] Add additional credits to finale
 // [ ] Hero not always visible when playing on real atari with Q-MEG ¯\_(ツ)_/¯
