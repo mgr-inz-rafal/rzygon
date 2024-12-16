@@ -194,6 +194,8 @@ load_intro_0
 				lda #$40
 				sta NMIEN
 
+				lda #34
+				sta 559
 				jsr $2C20
 
 				; Restore essential Rzygon parts and jump back
