@@ -148,7 +148,9 @@ use std::{
 use itertools::Itertools;
 use regex::Regex;
 
-const CART_PATH: &str = "../../build/rzygon.bin";
+//const CART_PATH: &str = "../../build/rzygon.bin";
+const CART_PATH: &str = "../../build/merged_5banks_padded.bin";
+
 const MAIN_ASM_PATH: &str = "../../satan.asm";
 const RELOC_FILES_PATH: &str = "../../build/relocated";
 const BUILD_PATH: &str = "../../build.bat";
