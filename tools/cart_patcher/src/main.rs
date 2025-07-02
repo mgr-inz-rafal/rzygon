@@ -434,8 +434,6 @@ fn fill_banks_fonts(start: usize, banks: &mut [Vec<u8>]) {
     println!("\n\n*** FONTS ***\n");
 
     let paths = [
-        "ADVMSG.fnt",
-        "pocket.fnt",
         "F000.FNT",
         "F001.FNT",
         "F002.FNT",
@@ -461,20 +459,34 @@ fn fill_banks_fonts(start: usize, banks: &mut [Vec<u8>]) {
         "F022.FNT",
         "F023.FNT",
         "F024.FNT",
+        "ADVMSG.fnt",
+        "pocket.fnt",
     ];
 
     let mut current_bank = start;
+    let mut font_index_in_bank = 0;
+
     for path in paths {
-        println!("processing {path} into bank {current_bank}");
+        let offset = font_index_in_bank * 1024;
+        println!("processing {path} into bank {current_bank} at offset {offset}");
+
         let mut buffer = vec![];
         let mut file = File::open(format!("{}/{}", DATA_PATH, path))
             .unwrap_or_else(|_| panic!("cannot open {:?}", path));
 
         file.read_to_end(&mut buffer)
             .expect("unable to read from file");
+
         let bank = banks.get_mut(current_bank).unwrap();
-        bank[..1024].copy_from_slice(&buffer[..1024]);
-        current_bank += 1;
+        bank[offset..offset + 1024].copy_from_slice(&buffer[..1024]);
+
+        font_index_in_bank += 1;
+
+        // Move to next bank after 8 fonts
+        if font_index_in_bank == 8 {
+            current_bank += 1;
+            font_index_in_bank = 0;
+        }
     }
 }
 
@@ -1335,7 +1347,7 @@ fn main() {
 
     fill_banks_adventure_pictures(16, r"[p|P]\d\d\d\.[s|S][r|R][a|A]", &mut banks);
     fill_banks_adventure_messages(23, &mut banks);
-    //fill_banks_fonts(27, &mut banks);
+    fill_banks_fonts(5, &mut banks);
     fill_banks_scr_templates(&mut banks);
     maps_dissection(r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]", &mut banks);
     fill_banks_maps(
