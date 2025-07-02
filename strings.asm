@@ -196,7 +196,7 @@ TITLEPAGE_LAST
 				dta "LECT",b(2),". Taki zapisany stan mo",b(90),"esz  "
 				dta "potem odczyta",b(67)," za pomoc",b(65)," ",b(2),"OPTION",b(2),"."
 				dta "                                  "
-				dta "IQ wymagane do ukonczenia gry:  62"
+				dta "IQ wymagane do uko",b(78),"czenia gry:  62"
 				dta "  Powzwodzenia!                   "
 SRAKA_DZIWAKA
 		org KONT
