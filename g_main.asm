@@ -165,7 +165,7 @@ rm_X2
 // LINK TO OTHER MAP - 9b
 
 .proc look_for_item
-				ldy #29
+				ldy #55
 				sta PERSISTENCY_BANK_CTL,y
 
 				mwa #$b459+1 read_font.ptr
@@ -209,7 +209,7 @@ rm_U013cc
 				lda #0
 				sta NMIEN
 
-				lda #75
+				lda #11
 				sta load_map.slot
 				mwa #io_buffer_cart+4 show_message_prerequisites.ptr2
 				mwa #io_buffer_cart+4+96 show_status_message.id_
@@ -367,7 +367,7 @@ rm_Q19			ldy #1
 rm_T00			iny
 sratko
 				sty file_open_mode
-				ldy #29
+				ldy #55
 				sta PERSISTENCY_BANK_CTL,y
 				ldy file_open_mode
 				lda (read_font.ptr),y
@@ -383,7 +383,7 @@ sratko
 				; Copy color
 				iny 
 				sty file_open_mode
-				ldy #29
+				ldy #55
 				sta PERSISTENCY_BANK_CTL,y
 				ldy file_open_mode
 				lda (read_font.ptr),y

@@ -123,7 +123,7 @@ spi6
 				inw read_font.ptr
 				ldy #0
 spi0			sty read_font.ptr2
-				ldy #29
+				ldy #55
 				sta PERSISTENCY_BANK_CTL,y
 				ldy read_font.ptr2
 				lda (read_font.ptr),y
