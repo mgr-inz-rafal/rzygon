@@ -1147,7 +1147,7 @@ elefant
 
 				ldy #0
 dzdzownica_magda
-				ldx #31
+				ldx #22
 				sta PERSISTENCY_BANK_CTL,x
 
 				lda (show_message_prerequisites.ptr),y
@@ -1271,7 +1271,7 @@ load_intro_1
 				mwa #$528a ZX5_OUTPUT
 				jsr unzx5
 
-				ldy #27
+				ldy #54
 				sta PERSISTENCY_BANK_CTL,y
 
 				mwa #$B4F0 ZX5_INPUT
@@ -1292,7 +1292,7 @@ load_intro_1
 				; Restore essential Rzygon parts and jump back
 				lda #0
 				sta NMIEN
-				ldy #54
+				ldy #9
 				sta PERSISTENCY_BANK_CTL,y
 
 				mwa #$A000 ZX5_INPUT

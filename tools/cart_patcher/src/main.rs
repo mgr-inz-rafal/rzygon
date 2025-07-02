@@ -10,9 +10,9 @@
 // 26    - Intro data
 // 27-53 - Fonts
 //      Additionally:
-//      27 (near the end) - .SCR templates and intro data
-//      29 (near the end) - ITEMS
-//      31 (near the end) - title text needed when re-entering menu
+//      27 (near the end) - .SCR templates and intro data               - now in 54
+//      29 (near the end) - ITEMS                                       - now in 55
+//      31 (near the end) - title text needed when re-entering menu     - now in 22
 // 54    - Essential Rzygoń parts
 // 55-73 - Rendered maps
 // 74    - Finale parts
@@ -486,7 +486,7 @@ fn fill_banks_scr_templates(banks: &mut [Vec<u8>]) {
 
     file.read_to_end(&mut buffer)
         .expect("unable to read from file");
-    let bank = banks.get_mut(27).unwrap();
+    let bank = banks.get_mut(54).unwrap();
     for i in 0..480 {
         bank[i + 0xAFE9 - 0xA000] = buffer[i];
     }
@@ -498,7 +498,7 @@ fn fill_banks_scr_templates(banks: &mut [Vec<u8>]) {
 
     file.read_to_end(&mut buffer)
         .expect("unable to read from file");
-    let bank = banks.get_mut(27).unwrap();
+    let bank = banks.get_mut(54).unwrap();
     for i in 0..800 {
         bank[i + 0xB1CA - 0xA000] = buffer[i];
     }
@@ -637,11 +637,11 @@ fn maps_dissection(filter: &str, _banks: &mut [Vec<u8>]) {
             assert_eq!(parts[num_objects_part].len(), 5);
 
             let logic_dll_number = string2num2(&parts[num_objects_part][0..2]);
-            stripped.push(logic_dll_number + 79); // Logic number dll
+            stripped.push(logic_dll_number + 46); // Logic number dll
             println!(
                 "\n\nLogic DLL for this map: {} in bank {}",
                 logic_dll_number,
-                logic_dll_number + 79
+                logic_dll_number + 46
             );
             stripped.extend(parts[current_part]); // Link to the right
             stripped.extend(parts[current_part + 1]); // Link to the left
@@ -1133,7 +1133,7 @@ fn fill_banks_intro_2(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(27).unwrap();
+    let bank = banks.get_mut(54).unwrap();
     for i in 0..buffer.len() {
         bank[0xB4F0 + i - 0xa000] = buffer[i];
     }
@@ -1145,7 +1145,7 @@ fn fill_banks_intro_2(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(27).unwrap();
+    let bank = banks.get_mut(54).unwrap();
     for i in 0..buffer.len() {
         bank[0xB920 + i - 0xa000] = buffer[i];
     }
@@ -1159,7 +1159,7 @@ fn fill_banks_finale(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(74).unwrap();
+    let bank = banks.get_mut(10).unwrap();
     for i in 0..buffer.len() {
         bank[0xa000 + i - 0xa000] = buffer[i];
     }
@@ -1171,7 +1171,7 @@ fn fill_banks_finale(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(74).unwrap();
+    let bank = banks.get_mut(10).unwrap();
     for i in 0..buffer.len() {
         bank[0xAFCF + i - 0xa000] = buffer[i];
     }
@@ -1183,7 +1183,7 @@ fn fill_banks_finale(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(74).unwrap();
+    let bank = banks.get_mut(10).unwrap();
     for i in 0..buffer.len() {
         bank[0xB47D + i - 0xa000] = buffer[i];
     }
@@ -1197,7 +1197,7 @@ fn fill_banks_essential_rzygon_parts(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(54).unwrap();
+    let bank = banks.get_mut(9).unwrap();
     for i in 0..buffer.len() {
         bank[0xA000 + i - 0xa000] = buffer[i];
     }
@@ -1209,7 +1209,7 @@ fn fill_banks_essential_rzygon_parts(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(54).unwrap();
+    let bank = banks.get_mut(9).unwrap();
     for i in 0..buffer.len() {
         bank[0xB761 + i - 0xa000] = buffer[i];
     }
@@ -1221,7 +1221,7 @@ fn fill_banks_essential_rzygon_parts(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(54).unwrap();
+    let bank = banks.get_mut(9).unwrap();
     for i in 0..buffer.len() {
         bank[0xBBA1 + i - 0xa000] = buffer[i];
     }
@@ -1233,7 +1233,7 @@ fn fill_banks_essential_rzygon_parts(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(54).unwrap();
+    let bank = banks.get_mut(9).unwrap();
     for i in 0..buffer.len() {
         bank[0xBDA1 + i - 0xa000] = buffer[i];
     }
@@ -1247,7 +1247,7 @@ fn fill_banks_essential_rzygon_parts_1(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(87).unwrap();
+    let bank = banks.get_mut(14).unwrap();
     for i in 0..buffer.len() {
         bank[0xA000 + i - 0xa000] = buffer[i];
     }
@@ -1259,7 +1259,7 @@ fn fill_banks_essential_rzygon_parts_1(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(87).unwrap();
+    let bank = banks.get_mut(14).unwrap();
     for i in 0..buffer.len() {
         bank[0xAD65 + i - 0xa000] = buffer[i];
     }
@@ -1273,7 +1273,7 @@ fn fill_banks_title_text(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(31).unwrap();
+    let bank = banks.get_mut(22).unwrap();
     for i in 0..buffer.len() {
         bank[0xA6D2 + i - 0xa000] = buffer[i];
     }
@@ -1287,7 +1287,7 @@ fn fill_banks_mq_logo(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(78).unwrap();
+    let bank = banks.get_mut(15).unwrap();
     for i in 0..buffer.len() {
         bank[0xA000 + i - 0xa000] = buffer[i];
     }
@@ -1299,7 +1299,7 @@ fn fill_banks_mq_logo(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(78).unwrap();
+    let bank = banks.get_mut(15).unwrap();
     for i in 0..buffer.len() {
         bank[0xA090 + i - 0xa000] = buffer[i];
     }
@@ -1311,7 +1311,7 @@ fn fill_banks_mq_logo(banks: &mut [Vec<u8>]) {
         .read_to_end(&mut buffer)
         .unwrap_or_else(|_| panic!("unable to read {:?}", full_path));
 
-    let bank = banks.get_mut(78).unwrap();
+    let bank = banks.get_mut(15).unwrap();
     for i in 0..buffer.len() {
         bank[0xA541 + i - 0xa000] = buffer[i];
     }
@@ -1335,26 +1335,26 @@ fn main() {
 
     fill_banks_adventure_pictures(16, r"[p|P]\d\d\d\.[s|S][r|R][a|A]", &mut banks);
     fill_banks_adventure_messages(23, &mut banks);
-    fill_banks_fonts(27, &mut banks);
+    //fill_banks_fonts(27, &mut banks);
     fill_banks_scr_templates(&mut banks);
     maps_dissection(r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]", &mut banks);
     fill_banks_maps(
-        55,
-        73,
+        27,
+        45,
         r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]\.RENDER",
         &mut banks,
         false,
     );
     fill_banks_maps(
-        75,
-        77,
+        11,
+        13,
         r"[m|M]\d\d\d\d\.[m|M][a|A][p|P]\.STRIP",
         &mut banks,
         true,
     );
     // WARNING: we do not sort these, but rely on the OS, so make sure that files are added in correct order
-    fill_banks_dlls(79 - 1, r"[l|L]\d\d\.[d|D][l|L][l|L]", &mut banks);
-    fill_banks_items(29, &mut banks);
+    fill_banks_dlls(46 - 1, r"[l|L]\d\d\.[d|D][l|L][l|L]", &mut banks);
+    fill_banks_items(55, &mut banks);
     fill_banks_intro_1(&mut banks);
     fill_banks_intro_2(&mut banks);
     fill_banks_finale(&mut banks);

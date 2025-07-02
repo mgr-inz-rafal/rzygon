@@ -176,7 +176,7 @@ load_intro_0
 				lda #0
 				sta NMIEN
 
-				ldy #78
+				ldy #15
 				sta PERSISTENCY_BANK_CTL,y
 
 				mwa #$A000 ZX5_INPUT
@@ -201,7 +201,7 @@ load_intro_0
 				; Restore essential Rzygon parts and jump back
 				lda #0
 				sta NMIEN
-				ldy #54
+				ldy #9
 				sta PERSISTENCY_BANK_CTL,y
 
 				mwa #$A000 ZX5_INPUT
@@ -212,7 +212,7 @@ load_intro_0
 				mwa #$6000 ZX5_OUTPUT
 				jsr unzx5
 
-				ldy #87
+				ldy #14
 				sta PERSISTENCY_BANK_CTL,y
 
 				mwa #$A000 ZX5_INPUT
