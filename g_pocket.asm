@@ -51,7 +51,7 @@ pocket_move_delay	equ	30
 				lda #0
 				sta NMIEN
 
-				sta PERSISTENCY_BANK_CTL+27
+				sta PERSISTENCY_BANK_CTL+54
 				sta wsync
 
 				mwa #$B1CA show_advmessage_border.ptr

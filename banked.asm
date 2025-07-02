@@ -174,7 +174,7 @@ spi2
 				; Need sprite color						
 				ldy read_font.ptr2
 				iny
-				sta PERSISTENCY_BANK_CTL+29
+				sta PERSISTENCY_BANK_CTL+55
 				lda (read_font.ptr),y
 				pha ; Color on stack
 				sta CART_DISABLE_CTL
@@ -210,7 +210,7 @@ spi4
 				ldy read_font.ptr2
 				iny
 				iny
-kalafior		sta PERSISTENCY_BANK_CTL+29
+kalafior		sta PERSISTENCY_BANK_CTL+55
 				lda (read_font.ptr),y
 				tax ; Len in X
 
