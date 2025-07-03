@@ -155,6 +155,7 @@ ADV_MESSAGE_BUFFER
 .proc read_font
 .zpvar	ptr .word
 .zpvar	ptr2 .word
+.var offset_in_bank .word
 				lda #0
 				sta NMIEN
 
@@ -163,6 +164,7 @@ ADV_MESSAGE_BUFFER
 				sta wsync				
 
 				mwa #CART_RAM_START ptr
+				adw ptr offset_in_bank
 				mwa #level_font ptr2
 				ldy #0
 
