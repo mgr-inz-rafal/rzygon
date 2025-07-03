@@ -434,6 +434,7 @@ fn fill_banks_fonts(start: usize, banks: &mut [Vec<u8>]) {
     println!("\n\n*** FONTS ***\n");
 
     let paths = [
+        //----
         "F000.FNT",
         "F001.FNT",
         "F002.FNT",
@@ -442,6 +443,7 @@ fn fill_banks_fonts(start: usize, banks: &mut [Vec<u8>]) {
         "F005.FNT",
         "F006.FNT",
         "F007.FNT",
+        //----
         "F008.FNT",
         "F009.FNT",
         "F010.FNT",
@@ -450,6 +452,7 @@ fn fill_banks_fonts(start: usize, banks: &mut [Vec<u8>]) {
         "F013.FNT",
         "F014.FNT",
         "F015.FNT",
+        //----
         "F016.FNT",
         "F017.FNT",
         "F018.FNT",
@@ -458,6 +461,7 @@ fn fill_banks_fonts(start: usize, banks: &mut [Vec<u8>]) {
         "F021.FNT",
         "F022.FNT",
         "F023.FNT",
+        //----
         "F024.FNT",
         "ADVMSG.fnt",
         "pocket.fnt",
@@ -618,7 +622,7 @@ fn maps_dissection(filter: &str, _banks: &mut [Vec<u8>]) {
             let mut stripped: Vec<u8> = vec![];
             let mut rendered = vec![0u8; 800];
 
-            stripped.push(string2num(parts[0]) + 29); // Font number
+            stripped.push(string2num(parts[0])/* + 29*/); // Font number
 
             let num_builders = string2num(parts[1]);
             println!("\tbuilders: {}", num_builders);

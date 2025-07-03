@@ -220,14 +220,39 @@ rm_U013cc
 				ldy io_buffer_cart+4
 				cpy #$ff
 				beq horacy
+				tya
+				pha
+				clc
+				lsr
+				lsr
+				lsr
+				tay
+				iny
+				iny
+				iny
+				iny
+				iny
 				sta PERSISTENCY_BANK_CTL,y
+				clc
+				asl
+				asl
+				asl
+				sta is_chosen_in_pocket_INTERNAL.item
+				pla
+				sec
+				sbc is_chosen_in_pocket_INTERNAL.item
+				tax
 				mwa #$a000 show_message_prerequisites.ptr
-				copy_font
-				jmp analiusz
+kazach			cpx #0
+				beq uzbek
+				adw show_message_prerequisites.ptr #1024 show_message_prerequisites.ptr
+				dex
+				jmp kazach
+uzbek			jmp analiusz
 horacy
 				mwa #$e000 show_message_prerequisites.ptr
-				copy_font
 analiusz
+				copy_font
 				// Logic DLL: io_buffer_cart+5
 				ldy io_buffer_cart+5
 				ldx io_buffer_cart+5
