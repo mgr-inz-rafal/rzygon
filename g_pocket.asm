@@ -440,9 +440,9 @@ hci_X			rts
 				hide_hero
 				switch_pocket_state
 				
-				ldy #28 ; Pocket font is stored here
+				ldy #8 ; Pocket font is stored here
 				sta PERSISTENCY_BANK_CTL,y
-				mwa #$a000 show_message_prerequisites.ptr
+				mwa #$a000+2048 show_message_prerequisites.ptr
 				copy_font
 				show_pocket_background
 								
