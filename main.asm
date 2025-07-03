@@ -1120,7 +1120,7 @@ ps_1
 				lda #0
 				sta NMIEN
 
-				sta PERSISTENCY_BANK_CTL+27
+				sta PERSISTENCY_BANK_CTL+54
 				sta wsync
 
 				mwa #$AFE9 ptr
