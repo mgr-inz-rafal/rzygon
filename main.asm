@@ -1202,7 +1202,7 @@ dassaddasdasd
 				lda #0
 				sta NMIEN
 
-				ldy #74
+				ldy #10
 				sta PERSISTENCY_BANK_CTL,y
 
 				mwa #$A000 ZX5_INPUT
