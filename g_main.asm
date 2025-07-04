@@ -1130,7 +1130,7 @@ rura
 				lda #0
 				sta NMIEN
 
-				lda #55
+				lda #27
 				sta load_map.slot
 				mwa #screen_mem show_message_prerequisites.ptr2
 				mwa #screen_mem+800 show_status_message.id_
