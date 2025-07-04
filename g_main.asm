@@ -966,11 +966,11 @@ rura
 				
 				; Start with map #3 (Ascii: 0003 = $30 $30 $30 $33)
 ; ORIGINAL
-;				mwa #$3030 game_state.current_map		; 00
-;				mwa #$3330 game_state.current_map+2		; 03
+				mwa #$3030 game_state.current_map		; 00
+				mwa #$3330 game_state.current_map+2		; 03
 ; DEBUG
-				mwa #$3130 game_state.current_map
-				mwa #$3730 game_state.current_map+2
+;				mwa #$3130 game_state.current_map
+;				mwa #$3730 game_state.current_map+2
 				
 				mwa #9999 logic_dll_name_to_be_used
 
