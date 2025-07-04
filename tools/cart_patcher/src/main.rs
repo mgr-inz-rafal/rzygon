@@ -523,7 +523,7 @@ fn fill_banks_scr_templates(banks: &mut [Vec<u8>]) {
 fn string2num(bytes: &[u8]) -> u8 {
     if bytes[0] == 0x39 && bytes[1] == 0x39 && bytes[2] == 0x39 {
         // Specjal font for Hlejnia
-        return 0xFF - 29;
+        return 0xFF /*- 29*/;
     }
     (bytes[0] - 0x30) * 100 + (bytes[1] - 0x30) * 10 + (bytes[2] - 0x30)
 }
