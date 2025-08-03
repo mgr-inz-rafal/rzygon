@@ -1566,7 +1566,19 @@ wonsik_sra
 				cpy #14
 				bne wonsik_sra
 
-				jsr os_back
+				; If hero is dead, turn him dead
+				lda logic_flags_003
+				and #LF_RZYGON_DEAD
+				cmp #LF_RZYGON_DEAD
+				bne @+
+
+				; ---- Don't call 'turn hero dead'
+				mwa #hero_data_dead hero_data_offset
+				mva #hero_anim_time hero_anim_count
+				lda #hc_dead
+				sta PCOLR0					
+
+@				jsr os_back
 				sta CART_DISABLE_CTL
 				sta wsync
 				rts
