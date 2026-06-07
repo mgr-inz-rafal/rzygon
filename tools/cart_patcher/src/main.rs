@@ -948,7 +948,7 @@ fn extract_essential_rzygon_parts() {
             .spawn()
             .expect("can't spawn child process");
         println!("Altirra pid={}", child.id());
-        thread::sleep(Duration::from_secs(2));
+        thread::sleep(Duration::from_secs(4));
         // Doesn't always work so...
         let _ = child.kill().expect("should have killed altirra");
         // ...try brute force
@@ -957,7 +957,7 @@ fn extract_essential_rzygon_parts() {
             .arg("altirra64.exe")
             .spawn()
             .expect("should spawn kill task");
-        thread::sleep(Duration::from_millis(300));
+        thread::sleep(Duration::from_millis(900));
         //child.wait();
 
         println!("child killed")
@@ -1031,7 +1031,7 @@ fn relocate_logic_dlls() {
                 .expect("can't spawn child process");
             println!("Altirra pid={}", child.id());
 
-            thread::sleep(Duration::from_secs(1));
+            thread::sleep(Duration::from_secs(2));
             // Doesn't always work so...
             let _ = child.kill().expect("should have killed altirra");
             // ...try brute force
@@ -1040,7 +1040,7 @@ fn relocate_logic_dlls() {
                 .arg("altirra64.exe")
                 .spawn()
                 .expect("should spawn kill task");
-            thread::sleep(Duration::from_millis(300));
+            thread::sleep(Duration::from_millis(900));
             //child.wait();
 
             println!("child killed")

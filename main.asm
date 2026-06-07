@@ -1578,11 +1578,11 @@ wonsik_sra
 				lda #hc_dead
 				sta PCOLR0					
 
-@				jsr os_back
-				sta CART_DISABLE_CTL
+@				sta CART_DISABLE_CTL
 				sta wsync
+				jsr os_back
 				rts
-vel_senk		
+vel_senk
 				sta CART_DISABLE_CTL
 				sta wsync
 				jsr os_back
@@ -1611,6 +1611,7 @@ tusk			lda read_font.ptr
 
 erase_state_sector
 			ldy #PERSISTENCY_BANK_START
+			sty curbank			; Route flash commands to the chip holding the save sector
 			sta PERSISTENCY_BANK_CTL,y
 			sta WSYNC
 			jsr unlock_cart
@@ -1681,6 +1682,8 @@ write_byte_to_cart
 			tya
 			pha
 
+			lda #PERSISTENCY_BANK_END	; Route flash commands to the chip holding the save bank
+			sta curbank
 			jsr unlock_cart
 			ldy #0
 			lda #$a0
@@ -1695,13 +1698,14 @@ write_byte_to_cart
 			rts
 
 .var workpages .byte
+.var curbank .byte		; Bank number for flash command routing (bit 6 selects chip 0/1)
 PERSISTENCY_BANK_START equ PERSISTENCY_BANK_END-7
 PERSISTENCY_BANK_END equ $3f
 SAVE_SLOT_LEN 	equ 300
 
 ; wr555 the value from A
 wr555
-			bit PERSISTENCY_BANK_CTL+PERSISTENCY_BANK_END
+			bit curbank
 			bvs _wr5c2
 			sta $d502   
 			sta $b555
@@ -1713,7 +1717,7 @@ _wr5c2
 
 ; wr222 the value from A
 wr222
-			bit PERSISTENCY_BANK_CTL+PERSISTENCY_BANK_END
+			bit curbank
 			bvs _wr2c2
 			sta $d501
 			sta $aaaa
