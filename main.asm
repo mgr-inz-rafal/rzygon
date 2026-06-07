@@ -1516,7 +1516,7 @@ karteczka
 				jmp karteczka
 
 macierewicz		sbw tmp #300
-				sta PERSISTENCY_BANK_CTL+$7f
+				sta PERSISTENCY_BANK_CTL+PERSISTENCY_BANK_END
 
 				ldy #0
 				inw tmp
@@ -1610,7 +1610,7 @@ tusk			lda read_font.ptr
 				rts
 
 erase_state_sector
-			ldy #120
+			ldy #PERSISTENCY_BANK_START
 			sta PERSISTENCY_BANK_CTL,y
 			sta WSYNC
 			jsr unlock_cart
@@ -1696,7 +1696,7 @@ write_byte_to_cart
 
 .var workpages .byte
 PERSISTENCY_BANK_START equ PERSISTENCY_BANK_END-7
-PERSISTENCY_BANK_END equ $7f
+PERSISTENCY_BANK_END equ $3f
 SAVE_SLOT_LEN 	equ 300
 
 ; wr555 the value from A
